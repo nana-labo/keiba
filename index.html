@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>レースアーカイブ</title>
+<style>
+  :root{--bg:#eef2f7;--card:#fdfdfb;--ink:#0f1a26;--sub:#5b6b7d;--line:#dbe2eb;--accent:#22618f;--accent-deep:#13344f;--gold:#a8862f;--shadow-1:0 1px 2px rgba(15,40,70,.06),0 2px 8px rgba(15,40,70,.05);--shadow-2:0 2px 6px rgba(15,40,70,.08),0 12px 28px rgba(15,40,70,.10);}
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1;
+    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;padding:0 16px 64px;
+    background-image:radial-gradient(1200px 600px at 80% -10%,rgba(34,97,143,.07),transparent 60%),radial-gradient(900px 500px at -10% 30%,rgba(168,134,47,.05),transparent 55%);}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .wrap{position:relative;z-index:1;max-width:680px;margin:0 auto;padding-top:22px;}
+  header.hero{position:relative;overflow:hidden;color:#fff;border-radius:18px;padding:26px 26px 24px;
+    background:radial-gradient(120% 140% at 110% -10%,#2c7aaf 0%,#1a4e78 40%,#0e2e48 80%);
+    box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 10px 36px rgba(13,52,79,.28);}
+  header.hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(600px 200px at 90% 0%,rgba(255,255,255,.10),transparent 60%);}
+  header.hero h1{margin:0 0 6px;font-size:1.6rem;font-weight:700;letter-spacing:-.015em;line-height:1.2;}
+  header.hero p{margin:0;font-size:.9rem;opacity:.9;}
+  .count{display:inline-block;margin-top:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:4px 12px;border-radius:999px;font-size:.78rem;font-feature-settings:"tnum" 1;}
+  .list{display:flex;flex-direction:column;gap:11px;margin:20px 0 0;}
+  .card{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px;
+    box-shadow:var(--shadow-1);transition:transform .18s cubic-bezier(.2,.7,.2,1),box-shadow .18s,border-color .18s;}
+  .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-2);border-color:#c4d2e1;}
+  .card:active{transform:translateY(0) scale(.995);}
+  .grade{flex:0 0 auto;font-size:.74rem;font-weight:800;color:#fff;border-radius:7px;padding:3px 9px;min-width:38px;text-align:center;letter-spacing:.02em;}
+  .grade.g1{background:linear-gradient(180deg,#b9952f,#9c7c22);}
+  .grade.g2{background:linear-gradient(180deg,#4f7faa,#3a6690);}
+  .grade.g3{background:linear-gradient(180deg,#5f8aa8,#4a7390);}
+  .ttl{flex:1;font-size:.95rem;font-weight:600;line-height:1.4;letter-spacing:-.005em;}
+  .arrow{flex:0 0 auto;color:var(--accent);font-size:1.1rem;font-weight:700;transition:transform .18s;}
+  .card:hover .arrow{transform:translateX(3px);}
+  footer{text-align:center;color:var(--sub);font-size:.72rem;margin-top:30px;letter-spacing:.04em;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <h1>🐎 レースアーカイブ</h1>
+      <p>出馬カード・展開シミュレーション・振り返りをまとめた予想アーカイブ。</p>
+      <span class="count">8 レース収録</span>
+    </header>
+    <div class="list">
+    <a class="card" href="2e7ef05846/">
+      <span class="grade g3">GⅢ</span>
+      <span class="ttl">第62回 北九州記念 GⅢ 出馬カード＆展開シミュレーション</span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="card" href="588cbbaaed/">
+      <span class="grade g3">GⅢ</span>
+      <span class="ttl">第75回 ラジオNIKKEI賞 GⅢ 出馬カード＆展開シミュレーション</span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="card" href="5753f31da2/">
+      <span class="grade g3">GⅢ</span>
+      <span class="ttl">第62回 函館記念 GⅢ 出馬カード＆展開シミュレーション</span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="card" href="d96c9fb0f4/">
+      <span class="grade g3">GⅢ</span>
+      <span class="ttl">第26回 しらさぎステークス GⅢ 出馬カード＆展開シミュレーション</span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="card" href="de49724139/">
+      <span class="grade g3">GⅢ</span>
+      <span class="ttl">第74回 府中牝馬ステークス GⅢ 出馬カード＆展開シミュレーション</span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="card" href="16df67acdc/">
+      <span class="grade g1">GⅠ</span>
+      <span class="ttl">第67回 宝塚記念 GⅠ 出馬カード＆展開シミュレーション</span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="card" href="0dbcbba6f3/">
+      <span class="grade g1">GⅠ</span>
+      <span class="ttl">第76回 安田記念 GⅠ 出馬カード＆展開シミュレーション</span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="card" href="a970bf0440/">
+      <span class="grade g1">GⅠ</span>
+      <span class="ttl">第93回 日本ダービー（東京優駿）GⅠ 出馬カード＆展開シミュレーション</span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    </div>
+    <footer>private archive</footer>
+  </div>
+</body>
+</html>
