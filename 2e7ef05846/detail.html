@@ -388,6 +388,24 @@
     table.prtab td.pr-race{max-width:none;white-space:normal;word-break:break-word;line-height:1.25;}
     table.prtab th:nth-child(1),table.prtab td:nth-child(1){width:13%;white-space:normal;line-height:1.2;}
   }
+  /* モーダル内の全戦績テーブルをスマホで崩さない。
+     非メディアの .cardModalBody 指定(日付12%nowrap・距離7%等)は詳細度が高くモバイル用 table.prtab 指定に勝ってしまい、
+     狭い固定幅＋nowrap で日付↔レース名・距離↔馬場が重なる。同じ .cardModalBody 詳細度＋後方配置で上書きして解消する。
+     頭数(5)・脚質(10)は隠し、日付/距離/馬場は折り返し可に。通過/ペース/上りだけ nowrap を維持して数値を読ませる。 */
+  @media(max-width:520px){
+    .cardModalBody table.prtab{font-size:.6rem;}
+    .cardModalBody table.prtab th,.cardModalBody table.prtab td{padding:3px 1px;}
+    .cardModalBody table.prtab th:nth-child(5),.cardModalBody table.prtab td:nth-child(5),
+    .cardModalBody table.prtab th:nth-child(10),.cardModalBody table.prtab td:nth-child(10){display:none;}
+    .cardModalBody table.prtab th:nth-child(1),.cardModalBody table.prtab td:nth-child(1){width:14%;white-space:normal;line-height:1.2;}
+    .cardModalBody table.prtab th:nth-child(2),.cardModalBody table.prtab td:nth-child(2){width:25%;}
+    .cardModalBody table.prtab th:nth-child(3),.cardModalBody table.prtab td:nth-child(3){width:11%;white-space:normal;}
+    .cardModalBody table.prtab th:nth-child(4),.cardModalBody table.prtab td:nth-child(4){width:7%;white-space:normal;}
+    .cardModalBody table.prtab th:nth-child(6),.cardModalBody table.prtab td:nth-child(6){width:6%;}
+    .cardModalBody table.prtab th:nth-child(7),.cardModalBody table.prtab td:nth-child(7){width:12%;}
+    .cardModalBody table.prtab th:nth-child(8),.cardModalBody table.prtab td:nth-child(8){width:15%;}
+    .cardModalBody table.prtab th:nth-child(9),.cardModalBody table.prtab td:nth-child(9){width:10%;}
+  }
   /* コース特性セクション */
   .courseprofile{margin:10px 0 4px;padding:12px 14px;background:var(--accent-soft);border:1px solid rgba(26,90,138,.12);border-radius:12px;}
   .courseprofile h3{margin:0 0 8px;font-size:.82rem;letter-spacing:.04em;color:#234;font-weight:700;}
