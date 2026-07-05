@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>レースアーカイブ</title>
+<style>
+  :root{--bg:#eef2f7;--card:#fdfdfb;--ink:#0f1a26;--sub:#5b6b7d;--line:#dbe2eb;--accent:#22618f;--accent-deep:#13344f;--gold:#a8862f;--shadow-1:0 1px 2px rgba(15,40,70,.06),0 2px 8px rgba(15,40,70,.05);--shadow-2:0 2px 6px rgba(15,40,70,.08),0 12px 28px rgba(15,40,70,.10);}
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1;
+    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;padding:0 16px 64px;
+    background-image:radial-gradient(1200px 600px at 80% -10%,rgba(34,97,143,.07),transparent 60%),radial-gradient(900px 500px at -10% 30%,rgba(168,134,47,.05),transparent 55%);}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding-top:22px;}
+  header.hero{position:relative;overflow:hidden;color:#fff;border-radius:18px;padding:26px 26px 24px;
+    background:radial-gradient(120% 140% at 110% -10%,#2c7aaf 0%,#1a4e78 40%,#0e2e48 80%);
+    box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 10px 36px rgba(13,52,79,.28);}
+  header.hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(600px 200px at 90% 0%,rgba(255,255,255,.10),transparent 60%);}
+  header.hero h1{margin:0 0 6px;font-size:1.6rem;font-weight:700;letter-spacing:-.015em;line-height:1.2;}
+  header.hero p{margin:0;font-size:.9rem;opacity:.9;}
+  .count{display:inline-block;margin-top:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:4px 12px;border-radius:999px;font-size:.78rem;font-feature-settings:"tnum" 1;}
+  .list{display:flex;flex-direction:column;gap:11px;margin:20px 0 0;}
+  .card{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px;
+    box-shadow:var(--shadow-1);transition:transform .18s cubic-bezier(.2,.7,.2,1),box-shadow .18s,border-color .18s;}
+  .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-2);border-color:#c4d2e1;}
+  .card:active{transform:translateY(0) scale(.995);}
+  .grade{flex:0 0 auto;font-size:.74rem;font-weight:800;color:#fff;border-radius:7px;padding:3px 9px;min-width:38px;text-align:center;letter-spacing:.02em;}
+  .grade.g1{background:linear-gradient(180deg,#b9952f,#9c7c22);}
+  .grade.g2{background:linear-gradient(180deg,#4f7faa,#3a6690);}
+  .grade.g3{background:linear-gradient(180deg,#5f8aa8,#4a7390);}
+  .ttl{flex:1;font-size:.95rem;font-weight:600;line-height:1.4;letter-spacing:-.005em;}
+  .arrow{flex:0 0 auto;color:var(--accent);font-size:1.1rem;font-weight:700;transition:transform .18s;}
+  .card:hover .arrow{transform:translateX(3px);}
+  footer{text-align:center;color:var(--sub);font-size:.72rem;margin-top:30px;letter-spacing:.04em;}
+  .seclabel{font-size:.82rem;font-weight:800;color:var(--accent-deep);letter-spacing:.02em;margin:30px 0 2px;}
+
+  .board{margin:20px 0 4px;}
+  .bhd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  .bhd h2{margin:0;font-size:1.1rem;font-weight:800;letter-spacing:-.01em;color:var(--accent-deep);}
+  .asof{color:var(--sub);font-size:.72rem;font-feature-settings:"tnum" 1;}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 13px;box-shadow:var(--shadow-1);}
+  .kpi b{display:block;font-size:1.5rem;font-weight:800;letter-spacing:-.02em;font-feature-settings:"tnum" 1;}
+  .kpi span{display:block;color:var(--sub);font-size:.74rem;margin-top:2px;}
+  .kpi small{display:block;color:#8494a6;font-size:.67rem;margin-top:3px;}
+  .bnote{background:#fbf4e2;border:1px solid #e7d9b3;color:#7a6326;font-size:.73rem;line-height:1.5;border-radius:10px;padding:9px 12px;margin:12px 0;}
+  .glossary{background:#f2f7fc;border:1px solid #dce8f2;border-radius:10px;padding:9px 12px;margin:0 0 12px;}
+  .glossary summary{cursor:pointer;font-size:.78rem;font-weight:700;color:var(--accent-deep);list-style:none;}
+  .glossary summary::-webkit-details-marker{display:none;}
+  .glossary summary::before{content:"▸ ";}
+  .glossary[open] summary::before{content:"▾ ";}
+  .glossary dl{margin:10px 0 0;font-size:.76rem;line-height:1.6;color:var(--ink);}
+  .glossary dt{font-weight:800;color:var(--accent-deep);margin-top:8px;}
+  .glossary dt:first-child{margin-top:0;}
+  .glossary dd{margin:2px 0 0;color:var(--sub);}
+  .glossary dd b{color:var(--ink);}
+  /* explorer: 左=詳細 / 右=レース選択レール */
+  .explorer{display:grid;grid-template-columns:1fr 250px;gap:12px;margin-top:12px;align-items:start;}
+  .detail{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 17px;box-shadow:var(--shadow-1);min-height:220px;}
+  .dhd{display:flex;align-items:center;gap:9px;}
+  .dhd h4{margin:0;font-size:1.02rem;font-weight:800;letter-spacing:-.01em;color:var(--ink);}
+  .dmeta{color:#8494a6;font-size:.72rem;margin:3px 0 12px;}
+  .dwait{color:var(--sub);font-size:.82rem;margin:10px 0 14px;}
+  .drow{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;margin-bottom:12px;}
+  .dbig{font-size:2rem;font-weight:800;letter-spacing:-.02em;font-feature-settings:"tnum" 1;line-height:1;}
+  .dsub{font-size:.74rem;color:var(--sub);line-height:1.45;}
+  .dsub b{font-size:.9rem;}
+  .dsub .mut{color:#8494a6;}
+  .dt3{font-size:.76rem;color:var(--ink);background:#f2f7fc;border:1px solid #dce8f2;border-radius:9px;padding:8px 10px;margin-bottom:12px;line-height:1.5;}
+  .dt3 b{color:var(--accent-deep);margin-right:6px;}
+  .dt3 .pop{color:#8494a6;}
+  table.dl{width:100%;border-collapse:collapse;font-size:.73rem;}
+  table.dl th,table.dl td{padding:6px 7px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.dl th{color:var(--sub);font-size:.66rem;font-weight:700;}
+  table.dl .rt{text-align:right;font-feature-settings:"tnum" 1;}
+  table.dl .dhit{color:#0d7a4f;font-size:.68rem;font-feature-settings:"tnum" 1;}
+  .dopen{display:inline-block;margin-top:13px;color:var(--accent);text-decoration:none;font-weight:700;font-size:.8rem;}
+  .dopen:hover{text-decoration:underline;}
+  .picker{position:sticky;top:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 11px;box-shadow:var(--shadow-1);}
+  .picker h3{margin:0 0 9px;font-size:.76rem;color:var(--sub);font-weight:700;display:flex;justify-content:space-between;}
+  .picklist{display:flex;flex-direction:column;gap:6px;max-height:430px;overflow-y:auto;padding-right:2px;}
+  .pk{display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;min-height:46px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 10px;cursor:pointer;transition:border-color .15s,background .15s;font-family:inherit;}
+  .pk:hover{border-color:#b9cbdd;background:#f6fafd;}
+  .pk.on{border-color:var(--accent);background:#eef5fb;box-shadow:0 0 0 1px var(--accent) inset;}
+  .pk .pkt{flex:1;min-width:0;font-size:.76rem;font-weight:600;color:var(--ink);line-height:1.28;letter-spacing:-.01em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .rchip{flex:0 0 auto;font-size:.63rem;font-weight:800;border:1px solid;border-radius:20px;padding:2px 7px;white-space:nowrap;font-feature-settings:"tnum" 1;}
+  .rchip.wait{color:#8494a6;border-color:#d4dde6;}
+  .grade{flex:0 0 auto;font-size:.62rem;font-weight:800;color:#fff;border-radius:6px;padding:2px 6px;min-width:30px;text-align:center;letter-spacing:.02em;}
+  .grade.g1{background:linear-gradient(180deg,#b9952f,#9c7c22);}
+  .grade.g2{background:linear-gradient(180deg,#4f7faa,#3a6690);}
+  .grade.g3{background:linear-gradient(180deg,#5f8aa8,#4a7390);}
+  .pill{display:inline-block;font-size:.63rem;font-weight:700;padding:1px 7px;border-radius:20px;border:1px solid;white-space:nowrap;}
+  .pill.pv{color:#0d7a4f;border-color:#b6e0ca;background:#eef9f2;}
+  .pill.pr{color:#8a7736;border-color:#e3d5ac;background:#fbf4e2;}
+  .sub2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+  .mini{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px;box-shadow:var(--shadow-1);}
+  .mini h3{margin:0 0 9px;font-size:.76rem;color:var(--sub);font-weight:700;}
+  .mk{display:flex;align-items:center;gap:8px;margin:6px 0;}
+  .mk .lab{width:20px;text-align:center;font-weight:800;}
+  .mk .bar{flex:1;height:8px;border-radius:5px;background:#e3ebf3;overflow:hidden;}
+  .mk .bar>i{display:block;height:100%;border-radius:5px;}
+  .mk .num{width:96px;text-align:right;font-size:.68rem;color:var(--sub);font-feature-settings:"tnum" 1;}
+  .btp{font-size:.75rem;line-height:1.55;color:var(--ink);margin:0;}
+  .btp b{color:var(--accent-deep);}
+  .btp .mut{color:var(--sub);display:block;margin-top:6px;}
+  @media(max-width:680px){.kpis{grid-template-columns:repeat(2,1fr);}.sub2{grid-template-columns:1fr;}.explorer{grid-template-columns:1fr;}.picker{position:static;order:-1;}.picklist{max-height:none;gap:8px;}.pk{min-height:52px;padding:12px 12px;gap:10px;}.pk .pkt{font-size:.9rem;-webkit-line-clamp:2;}.rchip{font-size:.72rem;padding:3px 9px;}.grade{font-size:.72rem;min-width:38px;padding:3px 8px;}}
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <h1>🐎 予想アーカイブ</h1>
+      <p>予想と実戦成績の記録。</p>
+      <span class="count">8 レース収録</span>
+    </header>
+    <section class="board">
+      <div class="bhd"><h2>📊 実戦成績表</h2><span class="asof">スナップショット 2026-07-05 ・ 結果あり 7レース（検証済 2）</span></div>
+            <details class="glossary">
+        <summary>📖 用語の説明（はじめての方はこちら）</summary>
+        <dl>
+          <dt>ROI（回収率）</dt><dd>賭けた金額に対して戻ってきた金額の割合。<b>1.00で収支トントン</b>、1.00未満はマイナス収支。例：0.35なら1万円賭けて3,500円しか戻っていない状態。</dd>
+          <dt>検証済 / 参考</dt><dd><b>検証済</b>＝レース前の時点で印・買い目が確定保存されていた記録が残っているレース（後出しではない証拠あり）。<b>参考</b>＝それ以外（記録の裏取りがまだ甘いもの）。</dd>
+          <dt>複勝圏内率</dt><dd>その印の馬が<b>3着以内</b>に入った割合。</dd>
+          <dt>印（◎○▲△☆）</dt><dd><b>◎</b>本命（最有力）／<b>○</b>対抗／<b>▲</b>単穴（一発あれば）／<b>△</b>連下（馬券圏内候補）／<b>☆</b>穴（人気より走りそうな妙味馬）。</dd>
+          <dt>券種</dt><dd><b>単勝</b>＝1着を当てる／<b>複勝</b>＝3着以内に入れば的中／<b>馬連</b>＝1・2着の2頭を順不同で当てる／<b>ワイド</b>＝3着以内に入る2頭を当てる／<b>三連複</b>＝1〜3着の3頭を順不同で当てる／<b>三連単</b>＝1〜3着を着順通りに当てる（一番難しく高配当）。</dd>
+          <dt>バックテスト（BT）</dt><dd>過去のレースデータに実際に賭けたと仮定して、後から回収率などを検証すること。</dd>
+          <dt>波乱度</dt><dd>人気通りに決まりにくそうか（大穴が来やすそうか）の目安。</dd>
+        </dl>
+      </details>
+      <div class="kpis">
+<div class="kpi"><b style="color:#9a2c1e">0.35</b><span>実戦ROI（全体）</span><small>15,400円 → 5,450円</small></div>
+<div class="kpi"><b style="color:#9a2c1e">0.50</b><span>検証済ROI</span><small>verified 2レース</small></div>
+<div class="kpi"><b style="color:var(--accent-deep)">3/7</b><span>◎ 複勝圏内率</span><small>勝ち 1（複勝圏=3着内）</small></div>
+<div class="kpi"><b style="color:var(--accent-deep)">7</b><span>結果あり</span><small>2026年 重賞・特別</small></div>
+      </div>
+      <p class="bnote">⚠ n=7 の少数サンプルにつき回収率は参考値。<b>検証済</b>＝レース前に印・買い目が確定保存されていた証跡ありのレース。印はレース結果を一切参照せず判定（後付け禁止）。</p>
+      <div class="explorer">
+        <div class="detail" id="rcDetail"></div>
+        <aside class="picker">
+          <h3>レースを選ぶ<span id="rcCount"></span></h3>
+          <div class="picklist" id="rcList"></div>
+        </aside>
+      </div>
+      <div class="sub2">
+        <div class="mini"><h3>印別的中（複勝圏内率）</h3><div class="mk"><span class="lab" style="color:#c1432d">◎</span><span class="bar"><i style="width:43%;background:#c1432d"></i></span><span class="num">3/7・43%・1勝</span></div><div class="mk"><span class="lab" style="color:#2a72a3">○</span><span class="bar"><i style="width:0%;background:#2a72a3"></i></span><span class="num">0/5・0%</span></div><div class="mk"><span class="lab" style="color:#a8862f">▲</span><span class="bar"><i style="width:29%;background:#a8862f"></i></span><span class="num">2/7・29%</span></div><div class="mk"><span class="lab" style="color:#0d7a4f">△</span><span class="bar"><i style="width:27%;background:#0d7a4f"></i></span><span class="num">4/15・27%・2勝</span></div><div class="mk"><span class="lab" style="color:#6e3895">☆</span><span class="bar"><i style="width:25%;background:#6e3895"></i></span><span class="num">2/8・25%・1勝</span></div></div>
+        <div class="mini"><h3>バックテスト vs 実戦</h3><p class="btp">BT（11年walk-forward・リーク検証済）で<b>採用</b>の穴ロジックは<b>1件</b>：<b>道悪芝・ワイド</b> ROI <b>1.46</b>（最良年除外 1.10）。<span class="mut">実戦は全て良馬場でこの道悪ロジックは出番ゼロ＝offline優位はまだforward未検証。</span></p></div>
+      </div>
+    </section>
+    <script>
+    const RACES = [{"slug":"2e7ef05846","title":"第62回 北九州記念","grade":"GⅢ","gcls":"g3","date":"2026年7月5日","hasResult":false},{"slug":"588cbbaaed","title":"第75回 ラジオNIKKEI賞","grade":"GⅢ","gcls":"g3","date":"2026年6月28日","hasResult":true,"verify":"reference","roi":0.0,"cost":900,"ret":0,"top3":[{"pos":1,"name":"サノノグレーター","pop":1},{"pos":2,"name":"ディールメーカー","pop":8},{"pos":3,"name":"リッツパーティー","pop":2}],"o":{"label":"11着","col":"#5b6b7d"},"lines":[{"k":"馬連","role":"本線","t":2,"c":200,"r":0,"hit":[]},{"k":"ワイド","role":"本線","t":3,"c":300,"r":0,"hit":[]},{"k":"3連複","role":"その他","t":4,"c":400,"r":0,"hit":[]}]},{"slug":"5753f31da2","title":"第62回 函館記念","grade":"GⅢ","gcls":"g3","date":"2026年6月28日","hasResult":true,"verify":"reference","roi":0.0,"cost":500,"ret":0,"top3":[{"pos":1,"name":"ファウストラーゼン","pop":10},{"pos":2,"name":"ケリフレッドアスク","pop":7},{"pos":3,"name":"ピースワンデュック","pop":9}],"o":{"label":"4着","col":"#5b6b7d"},"lines":[{"k":"3連複","role":"本線","t":3,"c":300,"r":0,"hit":[]},{"k":"ワイド","role":"その他","t":2,"c":200,"r":0,"hit":[]}]},{"slug":"d96c9fb0f4","title":"第26回 しらさぎステークス","grade":"GⅢ","gcls":"g3","date":"2026年6月21日","hasResult":true,"verify":"reference","roi":0.945,"cost":1100,"ret":1040,"top3":[{"pos":1,"name":"エルトンバローズ","pop":7},{"pos":2,"name":"キープカルム","pop":6},{"pos":3,"name":"エコロアルバ","pop":1}],"o":{"label":"複勝2着","col":"#0d7a4f"},"lines":[{"k":"馬連","role":"本線","t":1,"c":100,"r":0,"hit":[]},{"k":"ワイド","role":"本線","t":4,"c":400,"r":1040,"hit":["7-11→1,040"]},{"k":"3連複","role":"本線","t":6,"c":600,"r":0,"hit":[]}]},{"slug":"de49724139","title":"第74回 府中牝馬ステークス","grade":"GⅢ","gcls":"g3","date":"2026年6月21日","hasResult":true,"verify":"reference","roi":0.0,"cost":1400,"ret":0,"top3":[{"pos":1,"name":"セキトバイースト","pop":5},{"pos":2,"name":"ウイントワイライト","pop":9},{"pos":3,"name":"ミアネーロ","pop":14}],"o":{"label":"5着","col":"#5b6b7d"},"lines":[{"k":"馬連","role":"本線","t":1,"c":100,"r":0,"hit":[]},{"k":"ワイド","role":"本線","t":5,"c":500,"r":0,"hit":[]},{"k":"3連複","role":"本線","t":8,"c":800,"r":0,"hit":[]}]},{"slug":"16df67acdc","title":"第67回 宝塚記念","grade":"GⅠ","gcls":"g1","date":"2026年6月14日","hasResult":true,"verify":"verified","roi":1.05,"cost":4200,"ret":4410,"top3":[{"pos":1,"name":"メイショウタバル","pop":2},{"pos":2,"name":"クロワデュノール","pop":1},{"pos":3,"name":"ダノンデサイル","pop":3}],"o":{"label":"複勝2着","col":"#0d7a4f"},"lines":[{"k":"馬連","role":"本線","t":5,"c":500,"r":620,"hit":["5-16→620"]},{"k":"ワイド","role":"本線","t":5,"c":500,"r":550,"hit":["1-5→290","5-16→260"]},{"k":"馬連","role":"保険","t":2,"c":200,"r":0,"hit":[]},{"k":"ワイド","role":"保険","t":3,"c":300,"r":780,"hit":["1-5→290","1-16→490"]},{"k":"3連複","role":"その他","t":7,"c":700,"r":1230,"hit":["1-5-16→1,230"]},{"k":"3連複","role":"保険","t":20,"c":2000,"r":1230,"hit":["1-5-16→1,230"]}]},{"slug":"0dbcbba6f3","title":"第76回 安田記念","grade":"GⅠ","gcls":"g1","date":"2026年6月7日","hasResult":true,"verify":"verified","roi":0.0,"cost":4600,"ret":0,"top3":[{"pos":1,"name":"シックスペンス","pop":8},{"pos":2,"name":"ワールズエンド","pop":7},{"pos":2,"name":"ガイアフォース","pop":1}],"o":{"label":"5着","col":"#5b6b7d"},"lines":[{"k":"馬連","role":"本線","t":5,"c":500,"r":0,"hit":[]},{"k":"ワイド","role":"本線","t":7,"c":700,"r":0,"hit":[]},{"k":"馬連","role":"その他","t":4,"c":400,"r":0,"hit":[]},{"k":"3連複","role":"その他","t":21,"c":2100,"r":0,"hit":[]},{"k":"馬連","role":"その他","t":3,"c":300,"r":0,"hit":[]},{"k":"ワイド","role":"その他","t":3,"c":300,"r":0,"hit":[]},{"k":"3連複","role":"その他","t":3,"c":300,"r":0,"hit":[]}]},{"slug":"a970bf0440","title":"第93回 日本ダービー（東京優駿）","grade":"GⅠ","gcls":"g1","date":"2026年5月31日","hasResult":true,"verify":"reference","roi":0.0,"cost":2700,"ret":0,"top3":[{"pos":1,"name":"ロブチェン","pop":1},{"pos":2,"name":"パントルナイーフ","pop":4},{"pos":3,"name":"バステール","pop":11}],"o":{"label":"1着的中","col":"#0d7a4f"},"lines":[{"k":"馬連","role":"本線","t":3,"c":300,"r":0,"hit":[]},{"k":"ワイド","role":"本線","t":3,"c":300,"r":0,"hit":[]},{"k":"3連複","role":"その他","t":6,"c":600,"r":0,"hit":[]},{"k":"3連単","role":"その他","t":12,"c":1200,"r":0,"hit":[]},{"k":"ワイド","role":"その他","t":3,"c":300,"r":0,"hit":[]}]}];
+    (function(){
+      const roiCol = r => r==null ? '#5b6b7d' : (r>=1?'#0d7a4f':(r>=0.7?'#9e5808':'#9a2c1e'));
+      const roiTxt = r => r==null ? '—' : r.toFixed(2);
+      const list=document.getElementById('rcList');
+      const detail=document.getElementById('rcDetail');
+      document.getElementById('rcCount').textContent=' '+RACES.length;
+      function chip(r,i){
+        const roi = r.hasResult ? `<span class="rchip" style="color:${roiCol(r.roi)};border-color:${roiCol(r.roi)}44">ROI ${roiTxt(r.roi)}</span>` : '<span class="rchip wait">結果待ち</span>';
+        return `<button class="pk" data-i="${i}"><span class="grade ${r.gcls}">${r.grade}</span><span class="pkt">${r.title}</span>${roi}</button>`;
+      }
+      list.innerHTML = RACES.map(chip).join('');
+      function select(i){
+        const r=RACES[i];
+        [...list.children].forEach((c,j)=>c.classList.toggle('on', j===i));
+        let h=`<div class="dhd"><span class="grade ${r.gcls}">${r.grade}</span><h4>${r.title}</h4></div>`;
+        h+=`<div class="dmeta">${r.date||''}</div>`;
+        if(!r.hasResult){
+          h+=`<div class="dwait">まだ結果未確定（予想は公開済み）。</div>`;
+          h+=`<a class="dopen" href="${r.slug}/">レースページを開く →</a>`;
+          detail.innerHTML=h; return;
+        }
+        const vp = r.verify==='verified' ? '<span class="pill pv">検証済</span>' : '<span class="pill pr">参考</span>';
+        h+=`<div class="drow"><div class="dbig" style="color:${roiCol(r.roi)}">${roiTxt(r.roi)}</div><div class="dsub">実戦ROI ${vp}<br><span class="mut">${r.cost.toLocaleString()}円 → ${r.ret.toLocaleString()}円</span></div>`;
+        h+=`<div class="dsub">◎結果<br><b style="color:${r.o.col}">${r.o.label}</b></div></div>`;
+        h+=`<div class="dt3"><b>着順TOP3</b> `+ (r.top3||[]).map(t=>`${t.pos}着 ${t.name}<span class="pop">(${t.pop})</span>`).join(' ／ ') +`</div>`;
+        if(r.lines&&r.lines.length){
+          h+=`<table class="dl"><tr><th>券種</th><th>役</th><th class="rt">点</th><th class="rt">払戻</th><th>的中</th></tr>`;
+          h+=r.lines.map(l=>`<tr><td>${l.k}</td><td>${l.role}</td><td class="rt">${l.t}</td><td class="rt" style="color:${l.r>0?'#0d7a4f':'#8494a6'}">${l.r? l.r.toLocaleString():'—'}</td><td class="dhit">${l.hit.join('<br>')||''}</td></tr>`).join('');
+          h+=`</table>`;
+        }
+        h+=`<a class="dopen" href="${r.slug}/">レースページ・振り返りを開く →</a>`;
+        detail.innerHTML=h;
+      }
+      list.addEventListener('click',e=>{const b=e.target.closest('.pk'); if(b) select(+b.dataset.i);});
+      // 既定は結果ありの最初、無ければ先頭
+      let def=RACES.findIndex(r=>r.hasResult); if(def<0)def=0;
+      select(def);
+    })();
+    </script>
+
+    <footer>private archive</footer>
+  </div>
+</body>
+</html>
