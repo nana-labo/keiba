@@ -368,18 +368,20 @@
     .cardModalBody table.prtab{table-layout:fixed;width:100%;font-size:.68rem;}
     .cardModalBody table.prtab th,.cardModalBody table.prtab td{word-break:break-word;overflow-wrap:anywhere;padding:4px 2px;line-height:1.25;}
     /* ペースが1行に収まるのが最重要（パッと見で流れが分かる）。短い列を狭め、通過/ペース/上りは折り返さない。レースは残り幅で折り返す */
-    .cardModalBody table.prtab th:nth-child(1),.cardModalBody table.prtab td:nth-child(1){width:9%;white-space:nowrap;}
+    .cardModalBody table.prtab th:nth-child(1),.cardModalBody table.prtab td:nth-child(1){width:9%;white-space:normal;line-height:1.2;}
     .cardModalBody table.prtab td.pr-race{text-align:left;white-space:normal;}
-    .cardModalBody table.prtab th:nth-child(3),.cardModalBody table.prtab td:nth-child(3){width:6%;}
+    .cardModalBody table.prtab th:nth-child(3),.cardModalBody table.prtab td:nth-child(3){width:5%;}
     .cardModalBody table.prtab th:nth-child(4),.cardModalBody table.prtab td:nth-child(4){width:4%;}
-    .cardModalBody table.prtab th:nth-child(5),.cardModalBody table.prtab td:nth-child(5){width:3.5%;}
-    .cardModalBody table.prtab th:nth-child(6),.cardModalBody table.prtab td:nth-child(6){width:3.5%;}
-    .cardModalBody table.prtab th:nth-child(7),.cardModalBody table.prtab td:nth-child(7){width:9%;white-space:nowrap;}
-    .cardModalBody table.prtab th:nth-child(8),.cardModalBody table.prtab td:nth-child(8){width:12%;white-space:nowrap;}
-    .cardModalBody table.prtab th:nth-child(9),.cardModalBody table.prtab td:nth-child(9){width:6%;white-space:nowrap;}
-    .cardModalBody table.prtab th:nth-child(10),.cardModalBody table.prtab td:nth-child(10){width:8%;white-space:nowrap;}
-    .cardModalBody table.prtab th:nth-child(11),.cardModalBody table.prtab td:nth-child(11){width:6%;white-space:nowrap;}
-    .cardModalBody table.prtab th:nth-child(12),.cardModalBody table.prtab td:nth-child(12){width:7%;}
+    .cardModalBody table.prtab th:nth-child(5),.cardModalBody table.prtab td:nth-child(5){width:3%;}
+    .cardModalBody table.prtab th:nth-child(6),.cardModalBody table.prtab td:nth-child(6){width:3%;}
+    .cardModalBody table.prtab th:nth-child(7),.cardModalBody table.prtab td:nth-child(7){width:8%;white-space:nowrap;}
+    .cardModalBody table.prtab th:nth-child(8),.cardModalBody table.prtab td:nth-child(8){width:10%;white-space:nowrap;}
+    .cardModalBody table.prtab th:nth-child(9),.cardModalBody table.prtab td:nth-child(9){width:5%;white-space:nowrap;}
+    /* 体重・斤量は「534(+10) ▲」のように▲付きだと長くなるので広めに確保し、折り返し可にして
+       固定幅の隣列にはみ出して重なるのを防ぐ（nowrapのままだとtable-layout:fixed下でoverflowが隣に被って文字化けして見える）。 */
+    .cardModalBody table.prtab th:nth-child(10),.cardModalBody table.prtab td:nth-child(10){width:11%;white-space:normal;}
+    .cardModalBody table.prtab th:nth-child(11),.cardModalBody table.prtab td:nth-child(11){width:9%;white-space:normal;}
+    .cardModalBody table.prtab th:nth-child(12),.cardModalBody table.prtab td:nth-child(12){width:6%;}
     .cardModalBody .pastfull-wrap{overflow-x:visible;}
   }
   /* 520px以下（スマホ）：12列の表はどう詰めても潰れるため、行=1レースのカードに組み替える。
@@ -1373,7 +1375,8 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
     // 前走（直近3走＋全10走の記録）: 推しコメント直下に置くためのブロック（カード下部から移設）
     var pastFullBtn = (function(){
       if(!h.past_races||!h.past_races.length) return '';
-      var prows=h.past_races.map(prRowHtml).join('');
+      var hAvg=prAverages(h.past_races);
+      var prows=h.past_races.map(function(r){ return prRowHtml(r,hAvg); }).join('');
       return '<details class="pastfull" data-horse="'+(h.name||'')+'" data-no="'+((h.no_provisional||!h.no||h.no===0)?'想定':h.no)+'" data-mark="'+(h.mark||'')+'"><summary>📋 全'+h.past_races.length+'走の記録（通過・ペース・馬場・斤量）</summary>'
         +'<div class="pastfull-wrap"><table class="prtab"><thead><tr>'
         +prHeadHtml()
@@ -1606,7 +1609,8 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
     // 全戦績テーブル（折りたたみ）
     var pastFullHtml = (function(){
       if(!m.past_races||!m.past_races.length) return '';
-      var rows=m.past_races.map(prRowHtml).join('');
+      var mAvg=prAverages(m.past_races);
+      var rows=m.past_races.map(function(r){ return prRowHtml(r,mAvg); }).join('');
       return '<details class="pastfull" data-horse="'+(m.name||'')+'" data-no="'+((m.no_provisional||!m.no||m.no===0)?'想定':m.no)+'" data-mark="'+(m.mark||'')+'"><summary>📋 全'+m.past_races.length+'走の記録（通過・ペース・斤量）</summary><div class="pastfull-wrap"><table class="prtab"><thead><tr>'+prHeadHtml()+'</tr></thead><tbody>'+rows+'</tbody></table></div></details>';
     })();
     mhtml += '<div class="m" style="--c:'+m.color+'">'
@@ -1876,13 +1880,40 @@ function prHeadHtml(){
     .map(function(c){ return '<th>'+c+'</th>'; }).join('');
 }
 /* そのレースがハンデ戦だったか（レース名に「ハンデ」を含むかで判定） */
-function prIsHcap(r){ return !!(r.race||'').match(/ハンデ/); }
-function prRowHtml(r){
+/* レース名に「ハンデ」の字が入らない実質ハンデ戦（別定/定量戦との誤判定を避けるため、
+   確度の高い恒常ハンデ重賞のみを列挙。都大路S等の条件が変遷し得るOP/L戦は含めない）。
+   競馬側の固定知識でデータからは出てこないため人力メンテ。
+   呼び出し側が本関数より先に実行されるため、varの遅延代入を避け配列は関数内リテラルで持つ（PR_COLSと同じ理由）。 */
+function prIsHcap(r){
+  var nm=r.race||'';
+  if(/ハンデ/.test(nm)) return true;
+  var known=['小倉大賞典','新潟大賞典','中日新聞杯','鳴尾記念','エプソムC','中山金杯','京都金杯',
+    '福島民報杯','京成杯オータムH','函館記念','小倉記念','福島記念','中京記念','新潟記念','ダービー卿チャレンジ'];
+  return known.some(function(k){ return nm.indexOf(k)>-1; });
+}
+/* "534(+10)" のような表記から馬体重の数値部分だけを取り出す */
+function prBwNum(bw){ var m=String(bw||'').match(/^(\d+)/); return m ? parseInt(m[1],10) : null; }
+/* その馬の過去走全体から斤量・馬体重の平均を出す（今回の1走が平均より重いかの基準に使う） */
+function prAverages(rows){
+  var imps=(rows||[]).map(function(r){ return typeof r.impost==='number' ? r.impost : parseFloat(r.impost); }).filter(function(v){ return !isNaN(v); });
+  var bws=(rows||[]).map(function(r){ return prBwNum(r.bw); }).filter(function(v){ return v!==null; });
+  return {
+    impost: imps.length ? imps.reduce(function(a,b){return a+b;},0)/imps.length : null,
+    bw: bws.length ? bws.reduce(function(a,b){return a+b;},0)/bws.length : null,
+  };
+}
+function prRowHtml(r, avg){
+  avg = avg || {};
   var hcap = prIsHcap(r);
   var ga=(r.going&&r.going.indexOf('良')<0)?' style="color:#b5640a;font-weight:700;"':'';
+  var impostVal = typeof r.impost==='number' ? r.impost : parseFloat(r.impost);
+  var impostAbove = avg.impost!=null && !isNaN(impostVal) && impostVal>avg.impost;
   var impostHtml = (r.impost===undefined||r.impost===null||r.impost==='')
     ? '-'
-    : '<span'+(hcap?' style="color:#b5640a;font-weight:700;"':'')+'>'+r.impost+'</span>';
+    : '<span'+((hcap||impostAbove)?' style="color:#b5640a;font-weight:700;"':'')+'>'+r.impost+(impostAbove?' ▲':'')+'</span>';
+  var bwVal = prBwNum(r.bw);
+  var bwAbove = avg.bw!=null && bwVal!=null && bwVal>avg.bw;
+  var bwHtml = !r.bw ? '-' : ('<span'+(bwAbove?' style="color:#b5640a;font-weight:700;"':'')+'>'+r.bw+(bwAbove?' ▲':'')+'</span>');
   var raceHtml = (r.race||'')+(hcap?' <span class="hcapTag" title="ハンデ戦">⚖️ハンデ</span>':'');
   return '<tr>'
     +'<td data-th="日付" class="pr-date">'+(r.date||'')+'</td>'
@@ -1894,7 +1925,7 @@ function prRowHtml(r){
     +'<td data-th="通過" class="pr-pass">'+prNumHtml("pass",r.pass)+'</td>'
     +'<td data-th="ペース">'+prNumHtml("pace",r.pace)+'</td>'
     +'<td data-th="上り">'+prNumHtml("agari",r.agari)+'</td>'
-    +'<td data-th="体重">'+(r.bw||'-')+'</td>'
+    +'<td data-th="体重">'+bwHtml+'</td>'
     +'<td data-th="斤量">'+impostHtml+'</td>'
     +'<td data-th="脚質"><span class="legBadge leg-'+(r.style||'未確認')+'" style="font-size:.56rem;padding:1px 5px;">'+(r.style||'-')+'</span></td>'
     +'</tr>';
