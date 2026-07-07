@@ -380,8 +380,8 @@
     .cardModalBody table.prtab th:nth-child(9),.cardModalBody table.prtab td:nth-child(9){width:5%;white-space:nowrap;}
     /* 体重・斤量は「534(+10) ▲」のように▲付きだと長くなるので広めに確保し、折り返し可にして
        固定幅の隣列にはみ出して重なるのを防ぐ（nowrapのままだとtable-layout:fixed下でoverflowが隣に被って文字化けして見える）。 */
-    .cardModalBody table.prtab th:nth-child(10),.cardModalBody table.prtab td:nth-child(10){width:9%;white-space:normal;}
-    .cardModalBody table.prtab th:nth-child(11),.cardModalBody table.prtab td:nth-child(11){width:7%;white-space:normal;}
+    .cardModalBody table.prtab th:nth-child(10),.cardModalBody table.prtab td:nth-child(10){width:10%;white-space:nowrap;}
+    .cardModalBody table.prtab th:nth-child(11),.cardModalBody table.prtab td:nth-child(11){width:8%;white-space:nowrap;}
     .cardModalBody table.prtab th:nth-child(12),.cardModalBody table.prtab td:nth-child(12){width:6%;}
     .cardModalBody .pastfull-wrap{overflow-x:visible;}
   }
@@ -1911,10 +1911,10 @@ function prRowHtml(r, avg){
   var impostAbove = avg.impost!=null && !isNaN(impostVal) && impostVal>avg.impost;
   var impostHtml = (r.impost===undefined||r.impost===null||r.impost==='')
     ? '-'
-    : '<span'+((hcap||impostAbove)?' style="color:#b5640a;font-weight:700;"':'')+'>'+r.impost+(impostAbove?' ▲':'')+'</span>';
+    : '<span'+((hcap||impostAbove)?' style="color:#b5640a;font-weight:700;"':'')+'>'+r.impost+'</span>';
   var bwVal = prBwNum(r.bw);
   var bwAbove = avg.bw!=null && bwVal!=null && bwVal>avg.bw;
-  var bwHtml = !r.bw ? '-' : ('<span'+(bwAbove?' style="color:#b5640a;font-weight:700;"':'')+'>'+r.bw+(bwAbove?' ▲':'')+'</span>');
+  var bwHtml = !r.bw ? '-' : ('<span'+(bwAbove?' style="color:#b5640a;font-weight:700;"':'')+'>'+r.bw+'</span>');
   var raceHtml = (r.race||'')+(hcap?' <span class="hcapTag" title="ハンデ戦">⚖️ハンデ</span>':'');
   return '<tr>'
     +'<td data-th="日付" class="pr-date">'+(r.date||'')+'</td>'
