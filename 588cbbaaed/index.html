@@ -2391,10 +2391,26 @@ runDefaultSim();
   $("fbCap").addEventListener("click",function(){
     var msg=$("fbMsg");msg.className="fb-msg";msg.textContent="画面を撮影中…";
     function run(){
-      var el=document.documentElement;
-      window.html2canvas(document.body,{scale:Math.min(1,820/window.innerWidth),useCORS:true,logging:false,windowWidth:document.documentElement.clientWidth})
-        .then(function(c){setPrev(c.toDataURL("image/jpeg",0.72));msg.textContent="";})
-        .catch(function(){msg.textContent="撮影に失敗。画像を選ぶで添付してください。";});
+      var vv=window.visualViewport;
+      var width=Math.ceil((vv&&vv.width)||window.innerWidth||document.documentElement.clientWidth);
+      var height=Math.ceil((vv&&vv.height)||window.innerHeight||document.documentElement.clientHeight);
+      var y=Math.max(0, Math.floor(window.scrollY+((vv&&vv.offsetTop)||0)));
+      var scale=Math.min(1, 820/Math.max(width,1));
+      if(/iPhone|iPad|iPod/.test(navigator.userAgent)) scale=Math.min(scale,.72);
+      window.html2canvas(document.body,{
+        x:0,y:y,width:width,height:height,
+        scale:scale,useCORS:true,allowTaint:false,logging:false,
+        backgroundColor:"#ffffff",
+        windowWidth:document.documentElement.clientWidth,
+        windowHeight:document.documentElement.clientHeight,
+        scrollX:0,scrollY:-y,
+        imageTimeout:8000
+      })
+        .then(function(c){
+          try{setPrev(c.toDataURL("image/jpeg",0.68));msg.textContent="";}
+          catch(e){msg.className="fb-msg ng";msg.textContent="撮影に失敗。画像を選ぶで添付してください。";}
+        })
+        .catch(function(){msg.className="fb-msg ng";msg.textContent="撮影に失敗。画像を選ぶで添付してください。";});
     }
     if(window.html2canvas){run();return;}
     var s=document.createElement("script");
