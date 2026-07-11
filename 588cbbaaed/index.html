@@ -2395,6 +2395,9 @@ runDefaultSim();
       var vv=window.visualViewport;
       var width=Math.ceil((vv&&vv.width)||window.innerWidth||document.documentElement.clientWidth);
       var height=Math.ceil((vv&&vv.height)||window.innerHeight||document.documentElement.clientHeight);
+      if(!width||!height){
+        msg.className="fb-msg ng";msg.textContent="画面サイズを取得できませんでした。画像を選ぶで添付してください。";return;
+      }
       var y=Math.max(0, Math.floor(window.scrollY+((vv&&vv.offsetTop)||0)));
       var scale=Math.min(1, 820/Math.max(width,1));
       if(/iPhone|iPad|iPod/.test(navigator.userAgent)) scale=Math.min(scale,.72);
@@ -2408,6 +2411,7 @@ runDefaultSim();
         imageTimeout:8000
       })
         .then(function(c){
+          if(!c.width||!c.height) throw new Error("empty canvas");
           try{setPrev(c.toDataURL("image/jpeg",0.68));msg.textContent="";}
           catch(e){msg.className="fb-msg ng";msg.textContent="撮影に失敗。画像を選ぶで添付してください。";}
         })

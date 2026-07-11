@@ -90,12 +90,6 @@
   .pv-kv dd{margin:0;color:#fff3e2;overflow-wrap:anywhere;}
   .pv-rel{opacity:.55;font-size:.72rem;margin-left:5px;}
   .pv-integ{display:inline-flex;align-items:center;gap:5px;font-weight:700;border-radius:7px;padding:2px 9px;}
-  /* 事前情報チェックリスト（馬カード内） */
-  .info-check{margin:8px 0;padding:8px 10px;background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;font-size:.74rem;display:grid;grid-template-columns:repeat(2,1fr);gap:3px 12px;}
-  .info-check .ic-item{display:grid;grid-template-columns:18px 1fr;gap:5px;align-items:start;}
-  .info-check .ic-ico{font-weight:700;text-align:center;}
-  .info-check .ic-lbl{color:var(--sub);}
-  .info-check .ic-val{font-size:.7rem;color:var(--ink);grid-column:2;line-height:1.4;}
   /* last3 テーブル内で date / jockey を併記する小チップ */
   .past .p .meta{font-size:.62rem;color:var(--sub);margin-top:2px;font-feature-settings:"tnum" 1;}
   /* ⏳ 未確定情報サマリ */
@@ -358,49 +352,23 @@
   table.prtab td.pr-pass{letter-spacing:.02em;}
   .hcapTag{display:inline-block;font-size:.86em;font-weight:700;color:#b5640a;background:rgba(181,100,10,.1);border-radius:5px;padding:0 4px;margin-left:2px;white-space:nowrap;}
   /* 全10走モーダル上部の対象馬ヘッダ（どの馬の記録か明示） */
-  .rlHorseHd{display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:8px 11px;background:var(--accent-soft);border-radius:9px;}
+  .rlHorseHd{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0 0 10px;padding:8px 11px;background:var(--accent-soft);border-radius:9px;}
   .rlHorseHd .rlMk{font-size:1.15rem;font-weight:800;color:var(--accent-deep);line-height:1;}
   .rlHorseHd .rlNo{min-width:22px;height:22px;padding:0 5px;border-radius:6px;background:#334660;color:#fff;font-size:.74rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;}
   .rlHorseHd .rlNm{font-size:1rem;font-weight:700;color:var(--ink);}
-  /* モーダル内は横スクロールにせず1画面に収める（右側が初見で見えない問題を解消）。
-     全列を等幅に割り付け、長い文字は折り返して欠けさせない。
-     521px以上（PC・タブレット）限定：521px未満は下の1本化したカード型レイアウトに切り替える。 */
-  @media(min-width:521px){
-    .cardModalBody table.prtab{table-layout:fixed;width:100%;font-size:.68rem;}
-    .cardModalBody table.prtab th,.cardModalBody table.prtab td{word-break:break-word;overflow-wrap:anywhere;padding:4px 2px;line-height:1.25;}
-    /* ペースが1行に収まるのが最重要（パッと見で流れが分かる）。短い列を狭め、通過/ペース/上りは折り返さない。レースは残り幅で折り返す */
-    .cardModalBody table.prtab th:nth-child(1),.cardModalBody table.prtab td:nth-child(1){width:9%;white-space:normal;line-height:1.2;}
-    .cardModalBody table.prtab th:nth-child(2),.cardModalBody table.prtab td:nth-child(2){width:20%;}
-    .cardModalBody table.prtab td.pr-race{text-align:left;white-space:normal;}
-    .cardModalBody table.prtab th:nth-child(3),.cardModalBody table.prtab td:nth-child(3){width:8%;white-space:nowrap;}
-    .cardModalBody table.prtab th:nth-child(4),.cardModalBody table.prtab td:nth-child(4){width:5%;white-space:normal;}
-    .cardModalBody table.prtab th:nth-child(5),.cardModalBody table.prtab td:nth-child(5){width:3%;}
-    .cardModalBody table.prtab th:nth-child(6),.cardModalBody table.prtab td:nth-child(6){width:3%;}
-    .cardModalBody table.prtab th:nth-child(7),.cardModalBody table.prtab td:nth-child(7){width:8%;white-space:nowrap;}
-    .cardModalBody table.prtab th:nth-child(8),.cardModalBody table.prtab td:nth-child(8){width:10%;white-space:nowrap;}
-    .cardModalBody table.prtab th:nth-child(9),.cardModalBody table.prtab td:nth-child(9){width:5%;white-space:nowrap;}
-    /* 体重・斤量は「534(+10) ▲」のように▲付きだと長くなるので広めに確保し、折り返し可にして
-       固定幅の隣列にはみ出して重なるのを防ぐ（nowrapのままだとtable-layout:fixed下でoverflowが隣に被って文字化けして見える）。 */
-    .cardModalBody table.prtab th:nth-child(10),.cardModalBody table.prtab td:nth-child(10){width:10%;white-space:nowrap;}
-    .cardModalBody table.prtab th:nth-child(11),.cardModalBody table.prtab td:nth-child(11){width:8%;white-space:nowrap;}
-    .cardModalBody table.prtab th:nth-child(12),.cardModalBody table.prtab td:nth-child(12){width:6%;}
-    .cardModalBody .pastfull-wrap{overflow-x:visible;}
-  }
-  /* 520px以下（スマホ）：12列の表はどう詰めても潰れるため、行=1レースのカードに組み替える。
-     thead は隠し、各 td の見出しは data-th 属性から ::before で復元してラベル+値のチップにする。
-     日付とレース名だけ order で先頭に出し見出し化、残りは折り返すチップ列として並べる。 */
+  .rlHorseHd .rlNow{flex:1 1 100%;font-size:.76rem;font-weight:700;color:var(--sub);white-space:normal;line-height:1.6;}
+  /* 全戦績テーブルは列数が多く(13列)、文字量も行ごとに変わる(通過順位の桁数・体重の増減表記等)ため、
+     %固定幅で無理に1画面へ収めようとすると列が足りずに隣へ文字がはみ出して重なる事故が起きる
+     (2026-07-12 実機報告で発覚)。幅は内容に合わせて自然に決め、収まりきらない分は
+     .pastfull-wrap の横スクロールに任せる方式に統一（PC・スマホ共通）。 */
+  .cardModalBody table.prtab{table-layout:auto;width:auto;min-width:100%;}
+  .cardModalBody table.prtab th,.cardModalBody table.prtab td{white-space:nowrap;padding:5px 8px;}
+  .cardModalBody table.prtab td.pr-race{white-space:normal;max-width:240px;}
+  .cardModalBody .pastfull-wrap{overflow-x:auto;}
   @media(max-width:520px){
-    .pastfull-wrap{overflow-x:visible;}
-    table.prtab{table-layout:auto;}
-    table.prtab thead{display:none;}
-    table.prtab, table.prtab tbody{display:block;width:100%;}
-    table.prtab tr{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 7px;border:1px solid var(--line);border-radius:9px;padding:7px 9px;margin-bottom:6px;background:#fff;}
-    table.prtab td{display:inline-flex;align-items:baseline;gap:3px;border:none;padding:0;width:auto!important;text-align:left;white-space:nowrap;font-size:.72rem;}
-    table.prtab td::before{content:attr(data-th);color:var(--sub);font-weight:700;font-size:.62rem;}
-    table.prtab td.pr-date{order:-2;font-size:.66rem;color:var(--sub);}
-    table.prtab td.pr-date::before{content:"";}
-    table.prtab td.pr-race{order:-1;flex:1 1 100%;white-space:normal;word-break:break-word;font-size:.8rem;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:2px;}
-    table.prtab td.pr-race::before{content:"";}
+    table.prtab{font-size:.62rem;table-layout:auto;width:auto;min-width:100%;}
+    table.prtab th,table.prtab td{padding:3px 5px;white-space:nowrap;}
+    table.prtab td.pr-race{overflow:visible;text-overflow:clip;white-space:nowrap;}
   }
   /* コース特性セクション */
   .courseprofile{margin:10px 0 4px;padding:12px 14px;background:var(--accent-soft);border:1px solid rgba(26,90,138,.12);border-radius:12px;}
@@ -540,7 +508,6 @@
     .horsephoto img{width:100%;height:128px;}
     .horsephoto .photocred{text-align:right;}
     .cards{gap:12px;}
-    .info-check{grid-template-columns:1fr;gap:3px 0;}
     /* TOCナビは横スクロール（右に隠れて見られない）をやめ、2〜3行に折り返して全リンクを画面内に出す */
     .tocnav{gap:5px 4px;padding:7px 10px;font-size:.8rem;top:6px;flex-wrap:wrap;justify-content:flex-start;}
     .tocnav a{padding:4px 9px;white-space:nowrap;flex:0 0 auto;}
@@ -1400,7 +1367,7 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
       if(!h.past_races||!h.past_races.length) return '';
       var hAvg=prAverages(h.past_races);
       var prows=h.past_races.map(function(r){ return prRowHtml(r,hAvg); }).join('');
-      return '<details class="pastfull" data-horse="'+(h.name||'')+'" data-no="'+((h.no_provisional||!h.no||h.no===0)?'想定':h.no)+'" data-mark="'+(h.mark||'')+'"><summary>📋 全'+h.past_races.length+'走の記録（通過・ペース・馬場・斤量）</summary>'
+      return '<details class="pastfull" data-horse="'+(h.name||'')+'" data-no="'+((h.no_provisional||!h.no||h.no===0)?'想定':h.no)+'" data-mark="'+(h.mark||'')+'" data-weight="'+(h.weight||'')+'" data-impost="'+(h.impost||'')+'" data-draw="'+(h.draw||'')+'"><summary>📋 全'+h.past_races.length+'走の記録（通過・ペース・馬場・斤量）</summary>'
         +'<div class="pastfull-wrap"><table class="prtab"><thead><tr>'
         +prHeadHtml()
         +'</tr></thead><tbody>'+prows+'</tbody></table></div></details>';
@@ -1417,6 +1384,7 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
       + (h.photo?'<div class="horsephoto"><img src="'+h.photo+'" alt="'+h.name+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"><span class="photocred">写真: netkeiba</span></div>':'')
       + (function(){
           var chips = [];
+          if(h.blinker_first) chips.push('<span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">🔰初ブリンカー</span>');
           if(h.jockey) chips.push('<span class="factChip">🏇 '+h.jockey+'</span>');
           if(h.leg) chips.push('<span class="factChip good">↗ '+h.leg+'</span>');
           if(h.aptitude && h.aptitude.course_fit_tier){
@@ -1432,7 +1400,6 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
           return chips.length ? '<div class="chipRow">'+chips.join('')+'</div>' : '';
         })()
       + (h.oshi?'<div class="oshi">★ 推し：'+h.oshi+'</div>':'')
-      + pastSection
       + (oik?'<details class="fold oikFold" open><summary><span>🏇 追い切り・関係者コメント</span><span class="factChip">'+(h.oikiri||[]).length+'件</span></summary><div class="foldBody">'+oik+'</div></details>':'')
       + (function(){
           // 基本属性（性齢・厩舎）- 安田記念2026 振り返りで「これらが空欄のまま発走を迎えた」反省より必須化
@@ -1471,31 +1438,7 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
         })()
       + (h.weight?'<div class="row"><b>馬体重：</b>'+h.weight+'kg（'+(h.weight_trend||'')+'） - '+weightComment(h.weight)+'</div>':'')
       + (h.temper?'<div class="row"><b>気性：</b>'+h.temper+'</div>':'')
-      + (function(){
-          // 事前情報チェックリスト（取得状況の可視化）- 安田記念2026 振り返りで導入
-          if(!h.info_check) return '';
-          var labels = {
-            one_week_oikiri:'1週前追い切り', final_oikiri:'最終追い切り',
-            pro_oikiri_eval:'プロ調教評価', blinker_change:'装具変更',
-            jockey_change:'騎手乗り替わり', stable_comment:'陣営コメント',
-            paddock:'パドック気配', weight_actual:'当日馬体重(実測)',
-            last3_fresh:'直近3走の鮮度', draw:'枠順'
-          };
-          var items = '';
-          Object.keys(labels).forEach(function(k){
-            if(!(k in h.info_check)) return;
-            var v = h.info_check[k];
-            var ico = '?';
-            if(/^[✅○]/.test(v)) ico='<span class="ic-ico" style="color:#0f8456;">✅</span>';
-            else if(/^[⚠△]/.test(v)) ico='<span class="ic-ico" style="color:#b5640a;">⚠️</span>';
-            else if(/^[❌×]/.test(v)) ico='<span class="ic-ico" style="color:#a8362a;">❌</span>';
-            else if(/^⏳/.test(v)) ico='<span class="ic-ico" style="color:#5b6b7d;">⏳</span>';
-            else ico='<span class="ic-ico" style="color:#5b6b7d;">・</span>';
-            var rest = String(v).replace(/^[✅⚠️❌⏳○△×・\s]+/,'');
-            items += '<div class="ic-item">'+ico+'<span class="ic-lbl">'+labels[k]+(rest?'<span class="ic-val">'+rest+'</span>':'')+'</span></div>';
-          });
-          return items ? '<details class="fold"><summary><span>🧾 事前情報の取得状況</span><span class="factChip">'+Object.keys(h.info_check).length+'項目</span></summary><div class="foldBody"><div class="info-check">'+items+'</div></div></details>' : '';
-        })()
+      + pastSection
       + (tags?'<div class="tags">'+tags+'</div>':'')
       + (function(){
           // Anchored Scorecard 表示（h.scorecard があれば 7軸 0-5 + anchor_score）
@@ -1593,13 +1536,20 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
     var sexAge = m.sex_age ? '<span style="font-size:.7rem;color:var(--sub);">'+m.sex_age+'</span> ' : '';
     // プロフィール行：厩舎・父
     var prof = [];
+    if(m.draw) prof.push(m.draw);
     if(m.trainer && m.trainer!=='-' && m.trainer!=='不明') prof.push(m.trainer);
     if(m.sire && m.sire!=='-' && m.sire!=='不明') prof.push('父'+m.sire);
+    var miniDamSire = (m.pedigree && m.pedigree.dam_sire) || m.dam_sire;
+    if(miniDamSire) prof.push('母父'+miniDamSire);
     var profHtml = prof.length ? '<div class="row">'+prof.join('　/　')+'</div>' : '';
     // 人気・オッズ（確定オッズがあれば実値、なければ想定）
     var oddsHtml = (m.pop && m.odds) ? '<div class="row">'+(m.pop_provisional===false?'':'想定 ')+m.pop+'番人気（'+m.odds+'倍）</div>' : (m.pop?'<div class="row">'+(m.pop_provisional===false?'':'想定 ')+m.pop+'番人気</div>':'');
-    // 調教後馬体重（weight_diff があれば前走比も併記）
-    var weightHtml = m.weight ? '<div class="row">馬体重：'+m.weight+'kg（'+(m.weight_diff||'前走比 未取得')+'）</div>' : '';
+    // 調教後馬体重（weight_diff があれば前走比も併記）・斤量（上位馬と同じく必ず出す）
+    var weightHtml = (m.weight || m.impost) ? '<div class="row">'
+      + (m.weight ? '馬体重：'+m.weight+'kg（'+(m.weight_diff||'前走比 未取得')+'）' : '')
+      + (m.weight && m.impost ? '　/　' : '')
+      + (m.impost ? '斤量：'+m.impost+'kg' : '')
+      + '</div>' : '';
     // 直近2走（last2優先、なければ旧last）。上がりが取れている場合のみ併記
     var recHtml = '';
     if(m.last2 && m.last2.length){
@@ -1620,7 +1570,7 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
         var src=o.url?'<a href="'+o.url+'" target="_blank">'+o.src+'</a>':o.src;
         return '<div><b>'+src+':</b> 「'+emphOikiri(o.text)+'」</div>';
       }).join('');
-      return '<details class="fold oikFold"><summary><span>🏇 追い切り・関係者コメント</span><span class="factChip">'+m.oikiri.length+'件</span></summary><div class="foldBody">'+body+'</div></details>';
+      return '<details class="fold oikFold" open><summary><span>🏇 追い切り・関係者コメント</span><span class="factChip">'+m.oikiri.length+'件</span></summary><div class="foldBody">'+body+'</div></details>';
     })();
     var aptHtml = (function(){
       var a=m.aptitude; if(!a) return '';
@@ -1634,10 +1584,12 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
       if(!m.past_races||!m.past_races.length) return '';
       var mAvg=prAverages(m.past_races);
       var rows=m.past_races.map(function(r){ return prRowHtml(r,mAvg); }).join('');
-      return '<details class="pastfull" data-horse="'+(m.name||'')+'" data-no="'+((m.no_provisional||!m.no||m.no===0)?'想定':m.no)+'" data-mark="'+(m.mark||'')+'"><summary>📋 全'+m.past_races.length+'走の記録（通過・ペース・斤量）</summary><div class="pastfull-wrap"><table class="prtab"><thead><tr>'+prHeadHtml()+'</tr></thead><tbody>'+rows+'</tbody></table></div></details>';
+      return '<details class="pastfull" data-horse="'+(m.name||'')+'" data-no="'+((m.no_provisional||!m.no||m.no===0)?'想定':m.no)+'" data-mark="'+(m.mark||'')+'" data-weight="'+(m.weight||'')+'" data-impost="'+(m.impost||'')+'" data-draw="'+(m.draw||'')+'"><summary>📋 全'+m.past_races.length+'走の記録（通過・ペース・斤量）</summary><div class="pastfull-wrap"><table class="prtab"><thead><tr>'+prHeadHtml()+'</tr></thead><tbody>'+rows+'</tbody></table></div></details>';
     })();
     mhtml += '<div class="m" style="--c:'+m.color+'">'
-      + '<div class="hd"><span class="nm">'+mnoDisp+'</span>'+sexAge+m.name+' <span style="color:var(--sub);font-size:.74rem;">/ '+m.jockey+'</span> <span class="legBadge leg-'+(m.leg||'未確認')+'" style="margin-left:auto;">'+(m.leg||'-')+'</span></div>'
+      + '<div class="hd"><span class="nm">'+mnoDisp+'</span>'+sexAge+m.name
+      + (m.blinker_first?' <span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">🔰初ブリンカー</span>':'')
+      + ' <span style="color:var(--sub);font-size:.74rem;">/ '+m.jockey+'</span> <span class="legBadge leg-'+(m.leg||'未確認')+'" style="margin-left:auto;">'+(m.leg||'-')+'</span></div>'
       + photoHtml
       + profHtml
       + oddsHtml
@@ -1646,6 +1598,7 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
       + miniOik
       + aptHtml
       + pastFullHtml
+      + (m.pop && m.pop<=6 ? '<div class="factChip warn" style="margin:4px 0 0;">⚠️ 人気'+m.pop+'番なのに軽視した理由</div>' : '')
       + '<div class="why">'+m.why+'</div>'
       + '</div>';
   });
@@ -1899,7 +1852,7 @@ function prNumHtml(kind, raw){
    呼び出し側(サヴォーナ等のカード描画)がスクリプト冒頭側にあり本関数より先に実行されるため、
    varの遅延代入に依存せず配列は関数内リテラルで持つ。 */
 function prHeadHtml(){
-  return ['日付','レース','距離','馬場','頭','着','通過','ペース','上り','体重','斤量','脚質']
+  return ['日付','レース','距離','回り','馬場','頭','着','通過','ペース','上り','体重','斤量','脚質']
     .map(function(c){ return '<th>'+c+'</th>'; }).join('');
 }
 /* そのレースがハンデ戦だったか（レース名に「ハンデ」を含むかで判定） */
@@ -1942,6 +1895,7 @@ function prRowHtml(r, avg){
     +'<td data-th="日付" class="pr-date">'+(r.date||'')+'</td>'
     +'<td data-th="レース" class="pr-race" title="'+(r.race||'')+'">'+raceHtml+'</td>'
     +'<td data-th="距離">'+(r.dist||'')+'</td>'
+    +'<td data-th="回り">'+(r.direction||'-')+'</td>'
     +'<td data-th="馬場"'+ga+'>'+(r.going||'')+'</td>'
     +'<td data-th="頭">'+(r.field||'')+'</td>'
     +'<td data-th="着">'+prNumHtml("finish",r.finish)+'</td>'
@@ -2053,11 +2007,19 @@ function runUserSim(){
 }
 function runDefaultSim(){
   var pred = DATA.predicted_scenario || {weather:"晴",going:"良",pace:"平均",bias:"フラット",chaos:"低"};
-  document.querySelector('input[name="weather"][value="'+pred.weather+'"]').checked=true;
-  document.querySelector('input[name="going"][value="'+pred.going+'"]').checked=true;
-  document.querySelector('input[name="pace"][value="'+pred.pace+'"]').checked=true;
-  document.querySelector('input[name="bias"][value="'+pred.bias+'"]').checked=true;
-  document.querySelector('input[name="chaos"][value="'+pred.chaos+'"]').checked=true;
+  // pred.going は「稍」等の略記のことがあり、ラジオの value（良/稍重/重/不良）と食い違うと
+  // querySelector が null を返し、以降のスクリプト全体（買い目・配分シミュ等）が実行されずに
+  // 静かに止まっていた（2026-07-12 発覚）。略記を正規化し、それでも一致しなければ既定にフォールバックする。
+  var going = pred.going === "稍" ? "稍重" : pred.going;
+  function setRadio(name, val){
+    var el = document.querySelector('input[name="'+name+'"][value="'+val+'"]') || document.querySelector('input[name="'+name+'"]');
+    if(el) el.checked = true;
+  }
+  setRadio('weather', pred.weather);
+  setRadio('going', going);
+  setRadio('pace', pred.pace);
+  setRadio('bias', pred.bias);
+  setRadio('chaos', pred.chaos);
   runUserSim();
 }
 function runRandomSim(){
@@ -2412,6 +2374,21 @@ initBetSlip();
   ov.addEventListener('click',function(e){ if(e.target===ov) close(); });
   ov.querySelector('.cardModalHd button').addEventListener('click',close);
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  // 今回のレース条件（距離・回り・馬場）は全馬共通なので1回だけ算出し、全戦績モーダルの
+  // ヘッダーで使い回す（過去走を見ながら「今回はどういう条件か」を見失わないため）。
+  var raceCtx = (function(){
+    var r = DATA.race || {};
+    var meta = r.meta || '';
+    var dm = meta.match(/([芝ダ])(\d{3,4})m/);
+    var dist = dm ? dm[1]+dm[2]+'m' : '';
+    var turn = (r.course_profile && r.course_profile.turn) || '';
+    var dir = (turn.match(/^[右左]/) || [''])[0];
+    var pred = DATA.predicted_scenario || {};
+    var wxText = (r.wx || []).join(' ');
+    var going = pred.going || (wxText.match(/不良|稍重|重|良/) || [''])[0];
+    var goConf = (typeof goingConfirmed === 'function') && goingConfirmed();
+    return { dist: dist, dir: dir, going: going ? ((goConf?'':'想定')+going) : '' };
+  })();
   // 各馬カードの fold / 全戦績 をモーダル化（カード内のみ。ページ末尾の scExplain 等は対象外）
   var sel='.card details.fold, .card details.pastfull, .mini details.pastfull';
   Array.prototype.forEach.call(document.querySelectorAll(sel),function(d){
@@ -2421,11 +2398,26 @@ initBetSlip();
       e.preventDefault();
       var parts=[];
       Array.prototype.forEach.call(d.children,function(c){ if(c!==sum) parts.push(c.outerHTML); });
-      // 全10走モーダルは「どの馬か」を上部に明示（馬名＋馬番＋印）
+      // 全戦績モーダルは「どの馬か」を上部に明示（馬名＋馬番＋印）。過去走一覧を見ながら
+      // 今回のレース条件（体重・斤量・枠・距離・回り・馬場）を見返せるよう、
+      // カード本体やページ上部に戻らなくて済むよう併記する。未取得の項目は「未定」と明示する。
       var hn=d.getAttribute('data-horse')||'', hno=d.getAttribute('data-no')||'', hmk=d.getAttribute('data-mark')||'';
-      var hdr = hn ? '<div class="rlHorseHd">'+(hmk?'<span class="rlMk">'+hmk+'</span>':'')+(hno?'<span class="rlNo">'+hno+'</span>':'')+'<span class="rlNm">'+hn+'</span></div>' : '';
+      var hw=d.getAttribute('data-weight')||'', himp=d.getAttribute('data-impost')||'', hdraw=d.getAttribute('data-draw')||'';
+      var isPastfull = d.classList.contains('pastfull');
+      var nowBits = [];
+      if(isPastfull){
+        nowBits.push('馬体重'+(hw?hw+'kg':'未定'));
+        nowBits.push('斤量'+(himp?himp+'kg':'未定'));
+        if(hdraw) nowBits.push(hdraw);
+        if(raceCtx.dist) nowBits.push(raceCtx.dist);
+        if(raceCtx.dir) nowBits.push(raceCtx.dir+'回り');
+        if(raceCtx.going) nowBits.push('馬場'+raceCtx.going);
+      }
+      var hNow = nowBits.length ? '<span class="rlNow">今回：'+nowBits.join(' / ')+'</span>' : '';
+      var hdr = hn ? '<div class="rlHorseHd">'+(hmk?'<span class="rlMk">'+hmk+'</span>':'')+(hno?'<span class="rlNo">'+hno+'</span>':'')+'<span class="rlNm">'+hn+'</span>'+hNow+'</div>' : '';
       titleEl.textContent=sum.textContent.replace(/\s+/g,' ').trim();
       bodyEl.innerHTML=hdr+parts.join('');
+      bodyEl.scrollTop=0;  // 前に開いた別の馬のスクロール位置が残らないよう、開くたびに先頭へ戻す
       ov.classList.add('open');
       document.body.style.overflow='hidden';  // モーダル展開中は背面ページのスクロールを止める
     });
@@ -2516,6 +2508,9 @@ initBetSlip();
       var vv=window.visualViewport;
       var width=Math.ceil((vv&&vv.width)||window.innerWidth||document.documentElement.clientWidth);
       var height=Math.ceil((vv&&vv.height)||window.innerHeight||document.documentElement.clientHeight);
+      if(!width||!height){
+        msg.className="fb-msg ng";msg.textContent="画面サイズを取得できませんでした。画像を選ぶで添付してください。";return;
+      }
       var y=Math.max(0, Math.floor(window.scrollY+((vv&&vv.offsetTop)||0)));
       var scale=Math.min(1, 820/Math.max(width,1));
       if(/iPhone|iPad|iPod/.test(navigator.userAgent)) scale=Math.min(scale,.72);
@@ -2529,6 +2524,7 @@ initBetSlip();
         imageTimeout:8000
       })
         .then(function(c){
+          if(!c.width||!c.height) throw new Error("empty canvas");
           try{setPrev(c.toDataURL("image/jpeg",0.68));msg.textContent="";}
           catch(e){msg.className="fb-msg ng";msg.textContent="撮影に失敗。画像を選ぶで添付してください。";}
         })
