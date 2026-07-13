@@ -1417,8 +1417,7 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
     // 前走（直近3走＋全10走の記録）: 推しコメント直下に置くためのブロック（カード下部から移設）
     var pastFullBtn = (function(){
       if(!h.past_races||!h.past_races.length) return '';
-      var hAvg=prAverages(h.past_races);
-      var prows=h.past_races.map(function(r){ return prRowHtml(r,hAvg); }).join('');
+      var prows=h.past_races.map(function(r){ return prRowHtml(r,h.impost,h.weight); }).join('');
       return '<details class="pastfull" data-horse="'+(h.name||'')+'" data-no="'+((h.no_provisional||!h.no||h.no===0)?'想定':h.no)+'" data-mark="'+(h.mark||'')+'" data-weight="'+(h.weight||'')+'" data-impost="'+(h.impost||'')+'" data-draw="'+(h.draw||'')+'"><summary>📋 全'+h.past_races.length+'走の記録（通過・ペース・馬場・斤量）</summary>'
         +'<div class="pastfull-wrap"><table class="prtab"><thead><tr>'
         +prHeadHtml()
@@ -1634,8 +1633,7 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
     // 全戦績テーブル（折りたたみ）
     var pastFullHtml = (function(){
       if(!m.past_races||!m.past_races.length) return '';
-      var mAvg=prAverages(m.past_races);
-      var rows=m.past_races.map(function(r){ return prRowHtml(r,mAvg); }).join('');
+      var rows=m.past_races.map(function(r){ return prRowHtml(r,m.impost,m.weight); }).join('');
       return '<details class="pastfull" data-horse="'+(m.name||'')+'" data-no="'+((m.no_provisional||!m.no||m.no===0)?'想定':m.no)+'" data-mark="'+(m.mark||'')+'" data-weight="'+(m.weight||'')+'" data-impost="'+(m.impost||'')+'" data-draw="'+(m.draw||'')+'"><summary>📋 全'+m.past_races.length+'走の記録（通過・ペース・斤量）</summary><div class="pastfull-wrap"><table class="prtab"><thead><tr>'+prHeadHtml()+'</tr></thead><tbody>'+rows+'</tbody></table></div></details>';
     })();
     mhtml += '<div class="m" style="--c:'+m.color+'">'
@@ -1922,26 +1920,28 @@ function prIsHcap(r){
 /* "534(+10)" のような表記から馬体重の数値部分だけを取り出す */
 function prBwNum(bw){ var m=String(bw||'').match(/^(\d+)/); return m ? parseInt(m[1],10) : null; }
 /* その馬の過去走全体から斤量・馬体重の平均を出す（今回の1走が平均より重いかの基準に使う） */
-function prAverages(rows){
-  var imps=(rows||[]).map(function(r){ return typeof r.impost==='number' ? r.impost : parseFloat(r.impost); }).filter(function(v){ return !isNaN(v); });
-  var bws=(rows||[]).map(function(r){ return prBwNum(r.bw); }).filter(function(v){ return v!==null; });
-  return {
-    impost: imps.length ? imps.reduce(function(a,b){return a+b;},0)/imps.length : null,
-    bw: bws.length ? bws.reduce(function(a,b){return a+b;},0)/bws.length : null,
-  };
-}
-function prRowHtml(r, avg){
-  avg = avg || {};
+function prRowHtml(r, todayImpost, todayBw){
   var hcap = prIsHcap(r);
   var ga=(r.going&&r.going.indexOf('良')<0)?' style="color:#b5640a;font-weight:700;"':'';
+  // 今回以上の斤量/体重を経験していて好走(3着以内)していれば実績として安心材料(緑)、
+  // 経験していて凡走なら警戒材料(赤)、未経験(今回が過去最高)なら無色のまま判断材料なしとする。
+  // 単なるkg差分の大小ではなく、その馬自身の実走結果と紐付けて示す（R40: 斤量は過去実走との比較にのみ使う）。
+  var finishNum = parseInt(r.finish, 10);
+  var goodFinish = !isNaN(finishNum) && finishNum<=3;
   var impostVal = typeof r.impost==='number' ? r.impost : parseFloat(r.impost);
-  var impostAbove = avg.impost!=null && !isNaN(impostVal) && impostVal>avg.impost;
+  var todayImp = typeof todayImpost==='number' ? todayImpost : parseFloat(todayImpost);
+  var impostStyle = (!isNaN(todayImp) && !isNaN(impostVal) && impostVal>=todayImp)
+    ? (goodFinish ? ' style="color:#0f8456;"' : ' style="color:#c1432d;"')
+    : '';
   var impostHtml = (r.impost===undefined||r.impost===null||r.impost==='')
     ? '-'
-    : '<span'+((hcap||impostAbove)?' style="color:#b5640a;font-weight:700;"':'')+'>'+r.impost+'</span>';
+    : '<span'+impostStyle+'>'+r.impost+'</span>';
   var bwVal = prBwNum(r.bw);
-  var bwAbove = avg.bw!=null && bwVal!=null && bwVal>avg.bw;
-  var bwHtml = !r.bw ? '-' : ('<span'+(bwAbove?' style="color:#b5640a;font-weight:700;"':'')+'>'+r.bw+'</span>');
+  var todayBwNum = typeof todayBw==='number' ? todayBw : parseFloat(todayBw);
+  var bwStyle = (!isNaN(todayBwNum) && bwVal!=null && bwVal>=todayBwNum)
+    ? (goodFinish ? ' style="color:#0f8456;"' : ' style="color:#c1432d;"')
+    : '';
+  var bwHtml = !r.bw ? '-' : ('<span'+bwStyle+'>'+r.bw+'</span>');
   var raceHtml = (r.race||'')+(hcap?' <span class="hcapTag" title="ハンデ戦">⚖️ハンデ</span>':'');
   return '<tr>'
     +'<td data-th="日付" class="pr-date">'+(r.date||'')+'</td>'
