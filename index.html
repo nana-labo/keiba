@@ -118,6 +118,16 @@
       <p>予想と実戦成績の記録。</p>
       <span class="count">12 レース収録</span>
     </header>
+    <section class="board today">
+      <div class="bhd"><h2>🏇 レースを選ぶ</h2><span class="asof">2026-07-19時点</span></div>
+      <div class="explorer">
+        <div class="detail" id="rcDetail"></div>
+        <aside class="picker">
+          <h3>レースを選ぶ<span id="rcCount"></span></h3>
+          <div class="picklist" id="rcList"></div>
+        </aside>
+      </div>
+    </section>
     <section class="board">
       <div class="bhd"><h2>📊 実戦成績表</h2><span class="asof">スナップショット 2026-07-19 ・ 結果あり 9レース（検証済 2）</span></div>
             <details class="glossary">
@@ -139,13 +149,6 @@
 <div class="kpi"><b style="color:var(--accent-deep)">9</b><span>結果あり</span><small>2026年 重賞・特別</small></div>
       </div>
       <p class="bnote">⚠ n=9 の少数サンプルにつき回収率は参考値。<b>検証済</b>＝レース前に印・買い目が確定保存されていた証跡ありのレース。印はレース結果を一切参照せず判定（後付け禁止）。</p>
-      <div class="explorer">
-        <div class="detail" id="rcDetail"></div>
-        <aside class="picker">
-          <h3>レースを選ぶ<span id="rcCount"></span></h3>
-          <div class="picklist" id="rcList"></div>
-        </aside>
-      </div>
       <div class="sub2">
         <div class="mini"><h3>印別的中（複勝圏内率）</h3><div class="mk"><span class="lab" style="color:#c1432d">◎</span><span class="bar"><i style="width:33%;background:#c1432d"></i></span><span class="num">3/9・33%・1勝</span></div><div class="mk"><span class="lab" style="color:#2a72a3">○</span><span class="bar"><i style="width:0%;background:#2a72a3"></i></span><span class="num">0/6・0%</span></div><div class="mk"><span class="lab" style="color:#a8862f">▲</span><span class="bar"><i style="width:44%;background:#a8862f"></i></span><span class="num">4/9・44%・1勝</span></div><div class="mk"><span class="lab" style="color:#0d7a4f">△</span><span class="bar"><i style="width:25%;background:#0d7a4f"></i></span><span class="num">5/20・25%・2勝</span></div><div class="mk"><span class="lab" style="color:#6e3895">☆</span><span class="bar"><i style="width:18%;background:#6e3895"></i></span><span class="num">2/11・18%・1勝</span></div></div>
         <div class="mini"><h3>バックテスト vs 実戦</h3><p class="btp">BT（11年walk-forward・リーク検証済）で<b>採用</b>の穴ロジックは<b>1件</b>：<b>道悪芝・ワイド</b> ROI <b>1.46</b>（最良年除外 1.10）。<span class="mut">実戦は全て良馬場でこの道悪ロジックは出番ゼロ＝offline優位はまだforward未検証。</span></p></div>
@@ -192,8 +195,26 @@
         if(!r.hasResult){ location.href=`${r.slug}/`; return; }
         select(i);
       });
-      // 既定は未開催の一番上（最新）、無ければ先頭
-      let def=RACES.findIndex(r=>!r.hasResult); if(def<0)def=0;
+      // 既定選択レース：RACESは開催日「降順」（未来が上）に並んでいるため、単純に
+      // 結果待ちの先頭を選ぶと最も先の未来レース（例:7/22）が今日のレース（例:7/19）より
+      // 優先されてしまっていた。結果待ちレースの中から「今日に最も近い」ものを選ぶ
+      // （今日以降が無ければ直近の過去にフォールバック）。
+      function parseJDate(s){
+        const m = s && s.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+        return m ? new Date(+m[1], +m[2]-1, +m[3]) : null;
+      }
+      function daysFromToday(d){
+        if(!d) return Infinity;
+        const t=new Date(); t.setHours(0,0,0,0);
+        const dd=new Date(d); dd.setHours(0,0,0,0);
+        return Math.round((dd-t)/86400000);
+      }
+      let def=0;
+      const pending = RACES.map((r,i)=>({i, diff:daysFromToday(parseJDate(r.date))})).filter(c=>!RACES[c.i].hasResult);
+      if(pending.length){
+        const upcoming = pending.filter(c=>c.diff>=0).sort((a,b)=>a.diff-b.diff);
+        def = (upcoming.length ? upcoming : pending.slice().sort((a,b)=>Math.abs(a.diff)-Math.abs(b.diff)))[0].i;
+      }
       select(def);
     })();
     </script>
