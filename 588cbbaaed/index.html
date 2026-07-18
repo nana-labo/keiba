@@ -2327,8 +2327,9 @@ runDefaultSim();
 <div id="fbModal" class="fb-modal" aria-hidden="true">
   <div class="fb-card" role="dialog" aria-modal="true" aria-label="改善要望フォーム">
     <div class="fb-hd"><span>💬 改善要望・バグ報告</span><button id="fbClose" class="fb-x" type="button" aria-label="閉じる">×</button></div>
-    <label class="fb-l">カテゴリ
-      <select id="fbCat"><option>予想の中身</option><option>UI・使い勝手</option><option>バグ</option><option>データの誤り</option><option>新機能</option><option>その他</option></select></label>
+    <div class="fb-l">カテゴリ
+      <div class="fb-catChips" id="fbCatChips"></div>
+      <select id="fbCat" hidden><option>予想の中身</option><option>UI・使い勝手</option><option>バグ</option><option>データの誤り</option><option>新機能</option><option>その他</option></select></div>
     <label class="fb-l">優先度
       <select id="fbPri"><option>高</option><option selected>中</option><option>低</option></select></label>
     <label class="fb-l">内容
@@ -2349,6 +2350,10 @@ runDefaultSim();
   padding:9px 15px;font-weight:800;font-size:.86rem;box-shadow:0 3px 12px rgba(13,40,70,.28);cursor:pointer;
   font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;}
 .fb-fab:active{transform:translateY(1px);}
+/* レース詳細ページ側の全戦績/メモモーダルが開いている間は、常時表示の要望ボタンが
+   モーダルの×ボタンに重なって押せなくなることがあったため非表示にする（実機報告）。
+   body.kbModalOpen は template.html 側のモーダル開閉と共通のフッククラス。 */
+body.kbModalOpen .fb-fab{display:none;}
 .fb-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:flex-start;justify-content:center;
   background:rgba(6,12,20,.55);padding:22px 12px;overflow:auto;-webkit-overflow-scrolling:touch;}
 .fb-modal.open{display:flex;}
@@ -2360,6 +2365,12 @@ runDefaultSim();
 .fb-l select,.fb-l textarea{width:100%;margin-top:4px;padding:9px 10px;border:1px solid #cfdae6;border-radius:9px;
   font-size:.95rem;font-family:inherit;box-sizing:border-box;background:#fff;color:#13344f;}
 .fb-l textarea{resize:vertical;line-height:1.6;}
+/* カテゴリはフォーム内で最初に目に入るよう、ドロップダウンではなくタップしやすいチップで表示する
+   （「カテゴリをUI上にする」要望対応。実体は非表示selectのままで送信ロジックは変更しない） */
+.fb-catChips{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;}
+.fb-catChip{font-size:.78rem;font-weight:700;padding:7px 13px;border-radius:999px;border:1px solid #cfdae6;
+  background:#f2f7fc;color:#3a5675;cursor:pointer;font-family:inherit;}
+.fb-catChip.on{background:#1a5a8a;border-color:#1a5a8a;color:#fff;}
 .fb-shot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0 4px;}
 .fb-shot button,.fb-file{font-size:.82rem;font-weight:700;padding:7px 12px;border-radius:8px;border:1px solid #cfdae6;
   background:#f2f7fc;color:#1a5a8a;cursor:pointer;}
@@ -2381,8 +2392,39 @@ runDefaultSim();
   var GAS_URL = "https://script.google.com/macros/s/AKfycbyY3NSo4TObpCVdjhIvr9nm5bcODdixah5rxGf895iKLhPZXo2mvHSKgCLbWURXg1Utcw/exec";
   var $=function(id){return document.getElementById(id);};
   var modal=$("fbModal"), shot=null;
-  function open(){modal.classList.add("open");modal.setAttribute("aria-hidden","false");}
-  function close(){modal.classList.remove("open");modal.setAttribute("aria-hidden","true");}
+  // カテゴリのチップUI（実体は非表示selectで、送信時の$("fbCat").value読み取りはそのまま使う）
+  (function(){
+    var sel=$("fbCat"), wrap=$("fbCatChips");
+    function render(){
+      wrap.innerHTML = Array.prototype.map.call(sel.options, function(o){
+        return '<button type="button" class="fb-catChip'+(o.value===sel.value?' on':'')+'" data-v="'+o.value+'">'+o.textContent+'</button>';
+      }).join('');
+    }
+    render();
+    wrap.addEventListener('click', function(e){
+      var b=e.target.closest('.fb-catChip'); if(!b) return;
+      sel.value=b.getAttribute('data-v');
+      render();
+    });
+  })();
+  // body{overflow:hidden}だけではiOSで背面がラバーバンドスクロールしてしまうため、
+  // position:fixedでスクロール位置を凍結し、閉じたら正確に戻す（実機報告対応）。
+  var fbLockY=0;
+  function open(){
+    fbLockY=window.scrollY||window.pageYOffset||0;
+    document.body.style.position="fixed";document.body.style.top=(-fbLockY)+"px";
+    document.body.style.left="0";document.body.style.right="0";document.body.style.width="100%";
+    modal.classList.add("open");modal.setAttribute("aria-hidden","false");
+  }
+  function close(){
+    modal.classList.remove("open");modal.setAttribute("aria-hidden","true");
+    document.body.style.position="";document.body.style.top="";document.body.style.left="";
+    document.body.style.right="";document.body.style.width="";
+    // position:fixed解除直後はレイアウト再計算前でscrollToがずれることがあるため次フレームまで遅らせ、
+    // ページ全体のhtml{scroll-behavior:smooth}に引きずられてアニメーションしないよう instant を明示する
+    var y=fbLockY;
+    requestAnimationFrame(function(){window.scrollTo({top:y,left:0,behavior:"instant"});});
+  }
   $("fbOpen").addEventListener("click",open);
   $("fbClose").addEventListener("click",close);
   modal.addEventListener("click",function(e){if(e.target===modal)close();});
@@ -2428,22 +2470,21 @@ runDefaultSim();
     var text=$("fbText").value.trim();
     if(!text){msg.className="fb-msg ng";msg.textContent="内容を入力してください。";return;}
     if(!GAS_URL){msg.className="fb-msg ng";msg.textContent="送信先が未設定です（管理者に連絡）。";return;}
-    var btn=$("fbSend");btn.disabled=true;msg.textContent="送信中…";
+    var btn=$("fbSend");btn.disabled=true;
     var payload={category:$("fbCat").value,priority:$("fbPri").value,text:text,shot:shot||"",
       url:location.href,ua:navigator.userAgent,hp:$("fbHp").value};
+    // GAS(Google Apps Script)はコールドスタートで応答に数秒かかることがあり、
+    // 応答を待ってから完了表示すると「送信に時間がかかる」と感じられる（実機報告）。
+    // 送信リクエスト自体はバックグラウンドで継続させ、UIは即座に完了表示へ切り替える。
     fetch(GAS_URL,{method:"POST",body:JSON.stringify(payload)})
       .then(function(r){return r.json().catch(function(){return {ok:true};});})
       .then(function(j){
-        if(j&&j.ok===false){msg.className="fb-msg ng";msg.textContent="送信エラー: "+(j.error||"不明");btn.disabled=false;return;}
-        msg.className="fb-msg ok";msg.textContent="送信しました。ありがとうございます！";
-        $("fbText").value="";setPrev(null);
-        setTimeout(close,1400);setTimeout(function(){btn.disabled=false;msg.textContent="";msg.className="fb-msg";},1600);
+        if(j&&j.ok===false){msg.className="fb-msg ng";msg.textContent="送信エラー: "+(j.error||"不明");btn.disabled=false;}
       })
-      .catch(function(){
-        // CORSで応答が読めなくても送信自体は届いていることが多い（楽観的に成功表示）
-        msg.className="fb-msg ok";msg.textContent="送信しました（受付済み）。";
-        $("fbText").value="";setPrev(null);setTimeout(close,1400);setTimeout(function(){btn.disabled=false;},1600);
-      });
+      .catch(function(){/* CORSで応答が読めないだけのことが多く、送信自体は届いている想定のため無視 */});
+    msg.className="fb-msg ok";msg.textContent="送信しました。ありがとうございます！";
+    $("fbText").value="";setPrev(null);
+    setTimeout(close,700);setTimeout(function(){btn.disabled=false;msg.textContent="";msg.className="fb-msg";},900);
   });
 })();
 </script>
