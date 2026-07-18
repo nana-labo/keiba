@@ -272,6 +272,19 @@
   #myPickStrip .pickHd{color:#5b3fa8;}
   .pickHideBtn{cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:999px;padding:2px 10px;font-size:.72rem;font-family:inherit;flex:none;}
   .pickHideBtn:hover{background:#f5f5f5;}
+  /* 自分用メモ：印ボタンの隣に置く小さな✎ボタン。メモがある馬は色を付ける */
+  .memoBtn{cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:999px;width:28px;height:28px;font-size:.9rem;line-height:26px;text-align:center;padding:0;margin-left:6px;align-self:center;flex:none;font-family:inherit;}
+  .memoBtn:hover{background:#f5f5f5;}
+  .memoBtn.has{background:#efe9ff;border-color:#7c5cff;color:#5b3fa8;}
+  .memoBtn.sm{width:22px;height:22px;font-size:.76rem;line-height:20px;margin-left:4px;}
+  .memoModalOverlay{position:fixed;inset:0;background:rgba(8,20,36,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px;}
+  .memoModalOverlay.open{display:flex;}
+  .memoModal{background:var(--card);width:100%;max-width:480px;border-radius:16px;overflow:hidden;box-shadow:0 10px 44px rgba(0,0,0,.34);}
+  .memoModalHd{padding:13px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:700;color:var(--accent-deep);font-size:.92rem;border-bottom:1px solid var(--line);}
+  .memoModalHd button{flex:0 0 auto;border:none;background:var(--accent-soft);color:var(--accent-deep);width:30px;height:30px;border-radius:50%;font-size:1.2rem;line-height:1;cursor:pointer;}
+  .memoModalBody{padding:14px 16px 16px;}
+  .memoModalBody textarea{width:100%;min-height:110px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.88rem;font-family:inherit;line-height:1.6;resize:vertical;box-sizing:border-box;}
+  .memoModalNote{margin-top:10px;font-size:.72rem;color:var(--sub);line-height:1.7;background:rgba(124,92,255,.06);border-left:3px solid #7c5cff;border-radius:0 8px 8px 0;padding:9px 11px;}
   /* 追い切りコメントの語単位センチメント着色（緑=好材料 / 赤=懸念） */
   .oik-good{color:#0a7d3a;font-weight:700;}
   .oik-bad{color:#c0392b;font-weight:700;}
@@ -1451,6 +1464,65 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
     + '<div class="cp-grid">'+grid+'</div>' + bias + '</div>';
 })();
 
+// ========== 自分用メモ ==========
+// 印(◎○▲△☆)と同じ仕組みで、馬ごとの自由記述メモをlocalStorageに保存する。
+// サーバー送信なし・URL共有しても他人には見えない（印と同じくこの端末のブラウザだけに閉じたデータ）。
+var MEMO_KEY = 'keibaMemo_' + ((DATA.race && (DATA.race.race_id || DATA.race.slug)) || 'race');
+var MEMOS = (function(){
+  try{
+    var raw = JSON.parse(localStorage.getItem(MEMO_KEY) || '{}');
+    return (raw && typeof raw === 'object') ? raw : {};
+  }catch(e){ return {}; }
+}());
+function getMemo(name){ return MEMOS[name] || ''; }
+function memoBtnHtml(name, size){
+  var has = !!getMemo(name);
+  var esc = String(name).replace(/'/g,"\\'");
+  return '<button type="button" class="memoBtn'+(size==='sm'?' sm':'')+(has?' has':'')+'" data-memo-btn="'+escHtml(name)+'" title="自分用メモ" onclick="event.stopPropagation();openMemoModal(\''+esc+'\')">✎</button>';
+}
+function memoModalEl(){
+  var el = document.getElementById('memoModal');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'memoModal';
+    el.className = 'memoModalOverlay';
+    el.innerHTML = '<div class="memoModal"><div class="memoModalHd"><span class="mmTitle"></span>'
+      + '<button type="button" aria-label="閉じる" onclick="closeMemoModal()">×</button></div>'
+      + '<div class="memoModalBody">'
+      +   '<textarea placeholder="この馬についてのメモ（狙い・気になる点など）" oninput="onMemoInput(this)"></textarea>'
+      +   '<div class="memoModalNote">このメモはこの端末のブラウザにだけ保存されます。ページのHTMLやURLには含まれず、サーバーにも送信されないので、このページのリンクを他の人に送っても相手には表示されません（自分の印と同じ仕組みです）。ブラウザを変えたり閲覧データを消したりすると、このメモも一緒に消えます。</div>'
+      + '</div></div>';
+    document.body.appendChild(el);
+    el.addEventListener('click', function(e){ if(e.target===el) closeMemoModal(); });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && el.classList.contains('open')) closeMemoModal(); });
+  }
+  return el;
+}
+function openMemoModal(name){
+  var el = memoModalEl();
+  el.setAttribute('data-for', name);
+  el.querySelector('.mmTitle').textContent = name + ' のメモ';
+  el.querySelector('textarea').value = getMemo(name);
+  el.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(function(){ el.querySelector('textarea').focus(); }, 50);
+}
+function closeMemoModal(){
+  var el = document.getElementById('memoModal');
+  if(el){ el.classList.remove('open'); document.body.style.overflow = ''; }
+}
+function onMemoInput(ta){
+  var el = document.getElementById('memoModal');
+  var name = el.getAttribute('data-for');
+  var text = ta.value;
+  if(text) MEMOS[name] = text; else delete MEMOS[name];
+  try{ localStorage.setItem(MEMO_KEY, JSON.stringify(MEMOS)); }catch(e){}
+  var sel = name.replace(/["\\]/g, '\\$&');
+  document.querySelectorAll('[data-memo-btn="'+sel+'"]').forEach(function(b){
+    b.classList.toggle('has', !!text);
+  });
+}
+
 // 本命ピックの表示/非表示（この端末のみ・レース単位でlocalStorageに保存）
 // ※ HIDE_PICK_KEY は下の本命ピック帯IIFEが即時実行時に参照するため、そのIIFEより前で
 //   代入まで済ませておく必要がある（var宣言は巻き上げられるが代入は巻き上げられないため）。
@@ -1552,6 +1624,7 @@ function applyPickStripVisibility(){
       + '<span class="num" title="'+noTitle+'">'+noDisp+'</span><span class="name">'+h.name+'</span>'
       + '<span class="pop">'+(h.pop?((h.pop_provisional===false?'':'想定')+h.pop+'番人気'+(h.odds!=null?'（'+h.odds+'倍）':'')):'人気想定')+'</span>'
       + favBtnHtml(h.name)
+      + memoBtnHtml(h.name)
       + '</div>'
       + (h.photo?'<div class="horsephoto"><img src="'+h.photo+'" alt="'+h.name+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"><span class="photocred">写真: netkeiba</span></div>':'')
       + (function(){
@@ -1763,6 +1836,7 @@ function applyPickStripVisibility(){
       + (m.blinker_first?' <span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">🔰初ブリンカー</span>':'')
       + ' <span style="color:var(--sub);font-size:.74rem;">/ '+m.jockey+'</span>'
       + favBtnHtml(m.name,'sm')
+      + memoBtnHtml(m.name,'sm')
       + ' <span class="legBadge leg-'+(m.leg||'未確認')+'" style="margin-left:auto;">'+(m.leg||'-')+'</span></div>'
       + photoHtml
       + profHtml
