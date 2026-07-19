@@ -532,6 +532,25 @@
   .qrNm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .qrV{font-feature-settings:"tnum" 1;color:var(--ink);font-weight:700;white-space:nowrap;}
   .qrNote{margin:8px 0 0;font-size:.68rem;color:var(--sub);line-height:1.55;}
+  /* 出走馬 並び替えビュー（詳細ページ独立の並び替えメニュー。斤量/上がり/勝率/体重などを
+     フィルターチップ(要望フォームのカテゴリチップ=.fb-catChipと同じ見た目)で一括切替）。
+     値は1ページ目と同じDATAから毎回その場で計算するため、データ更新のたびに自動で反映される。 */
+  .hsChips{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 12px;}
+  .hsChip{font-size:.78rem;font-weight:700;padding:7px 14px;border-radius:999px;border:1px solid var(--line);
+    background:var(--bg-tint);color:var(--sub);cursor:pointer;font-family:inherit;transition:background .12s,color .12s,border-color .12s;}
+  .hsChip:hover{border-color:var(--accent);color:var(--accent-deep);}
+  .hsChip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .hsTableWrap{overflow-x:auto;}
+  .hsTable{min-width:560px;}
+  .hsRow{display:grid;grid-template-columns:34px 44px minmax(96px,1fr) 66px 66px 70px 100px 60px;gap:4px;
+    align-items:center;padding:6px 8px;font-size:.8rem;border-bottom:1px solid var(--line);}
+  .hsRow:last-child{border-bottom:none;}
+  .hsHead{font-weight:700;color:var(--sub);font-size:.68rem;border-bottom:2px solid var(--line);position:sticky;top:0;background:var(--card);}
+  .hsMk{font-weight:800;text-align:center;}
+  .hsNo{text-align:center;color:var(--sub);font-weight:700;white-space:nowrap;}
+  .hsNm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;}
+  .hsV{text-align:right;font-feature-settings:"tnum" 1;white-space:nowrap;}
+  .hsMy{display:flex;justify-content:center;gap:2px;}
   .note{font-size:.78rem;color:var(--sub);margin-top:18px;border-top:1px solid var(--line);padding-top:12px;}
   /* === スマホ最適化（<=600px）。PC デザインは不変、狭幅での可読性のみ調整 === */
   @media(max-width:600px){
@@ -720,11 +739,27 @@
   <a class="pageJump toMain" data-page="detail" href="index.html" style="order:0;">◀ 結論ページに戻る<small>（買い目・全馬リスト）</small></a>
 
   <div class="dpage" data-page="detail" style="order:1;">
+  <h2 class="sec" id="sortview">🔀 出走馬 並び替えビュー</h2>
+  <p class="lead">斤量・上がり・勝率・体重などをボタン1つで一気に並び替え。結論ページ(1ページ目)と同じデータをその場で計算しているので、データが更新されればここも自動で反映されます。MY印もここから付けられます。</p>
+  <div class="panel">
+    <div class="hsChips" id="hsChips">
+      <button type="button" class="hsChip on" data-mode="no" onclick="hsSetSort('no')">馬番順</button>
+      <button type="button" class="hsChip" data-mode="impost" onclick="hsSetSort('impost')">斤量順（軽い→重い）</button>
+      <button type="button" class="hsChip" data-mode="agari" onclick="hsSetSort('agari')">上がり順（速い→遅い）</button>
+      <button type="button" class="hsChip" data-mode="win" onclick="hsSetSort('win')">勝率順（高い→低い）</button>
+      <button type="button" class="hsChip" data-mode="weight" onclick="hsSetSort('weight')">体重順（軽い→重い）</button>
+    </div>
+    <div class="hsTableWrap"><div id="hsTableBox"></div></div>
+    <p class="qrNote" style="margin-top:8px;">斤量・体重は確定前は「-」表示（確定次第この表にも反映）。上がりは過去走上位3走の自己ベスト平均、勝率は全過去走からの通算成績です。</p>
+  </div>
+  </div>
+
+  <div class="dpage" data-page="detail" style="order:2;">
   <h2 class="sec" id="trend">過去10年の傾向（シミュにも組み込み済み）</h2>
   <div class="panel"><div class="trendBox" id="trendBox"></div></div>
   </div>
 
-  <div class="dpage" data-page="detail" style="order:5;">
+  <div class="dpage" data-page="detail" style="order:6;">
   <h2 class="sec" id="abil">能力比較（上位馬のみ・5項目並列）</h2>
   <p class="lead">中位以下はデータ不足のため対象外。誰が何で勝っているかを項目別に確認できます。</p>
   <div class="panel"><div class="axisBars" id="abilBox"></div></div>
@@ -736,9 +771,9 @@
     <div class="panel" id="quantRankBox"></div>
     </div>
   </details>
-  </div><!-- /dpage 能力比較+定量ランキング (order5・最下部) -->
+  </div><!-- /dpage 能力比較+定量ランキング (order6・最下部) -->
 
-  <div class="dpage" data-page="detail" style="order:3;">
+  <div class="dpage" data-page="detail" style="order:4;">
 
   <h2 class="sec" id="sim">展開シミュレーション</h2>
   <p class="lead">下の「今回の予測シナリオ」が初期値。条件を変えて再実行すれば「もし◯◯だったら」が試せます。</p>
@@ -791,7 +826,7 @@
   <!-- 買い目（馬名付き）はファーストビュー直下へ移動（結論を先に出す） -->
 
   <!-- 🎯 狙い目の参考（人気馬の危なさ＋逆転候補）。未適用/空のレースではセクションごと非表示にする -->
-  <section id="refpickSection" data-page="detail" style="order:4;">
+  <section id="refpickSection" data-page="detail" style="order:5;">
   <h2 class="sec" id="refpick">🎯 狙い目の参考（人気馬の危なさ・逆転候補）</h2>
   <p class="lead">過去のレース成績データから「人気ほど信用できない馬」と「人気馬が崩れた時に浮上しそうな馬」を整理した参考情報です。<b>買えば得する、という話ではありません</b>。堅い決着も多いレースでは、本命サイド中心が無難です。</p>
   <div id="referencePickBox"></div>
@@ -810,7 +845,7 @@
     <div class="pendingGrid" id="pendingBox"></div>
   </div>
 
-  <div class="dpage" data-page="detail" style="order:2;">
+  <div class="dpage" data-page="detail" style="order:3;">
   <h2 class="sec" id="bet">💰 配分シミュレーター（買い目を組む）</h2>
   <p class="lead">①（任意）総予算を決める → ② 買い方と馬を選んで金額を入れ「買い目に追加」→ ③ 下の<b>展開シミュレーション</b>を実行すると、この買い目の<b>収支・的中率・破産（元割れ）率</b>が出ます。オッズは想定（sim由来）です。</p>
   <details class="panel" style="margin-bottom:14px;background:var(--card);">
@@ -2226,6 +2261,79 @@ function renderQuantRankings(){
   box.innerHTML = html;
 }
 renderQuantRankings();
+
+// ========== 出走馬 並び替えビュー（詳細ページ独立の並び替えメニュー） ==========
+// 「斤量低い順・上がり速い順・勝率高い順・体重順を一気にまとめて、要望フォームのカテゴリ
+// チップ(.fb-catChip)のようなボタンで切り替えたい」という要望への対応。
+// 値は結論ページ(1ページ目)と同じ DATA.top_horses/mini_horses からその場で計算するため、
+// data.json が更新されればハードコードなしで自動的に反映される。
+// MY印(favBtnHtml)もここから直接付けられる（印機能はこのページ限定ではなく全ページ共通）。
+var HS_SORT_MODE = 'no';
+function hsNoNum(h){ return (h.no_provisional || !h.no || h.no===0) ? 999 : h.no; }
+function hsImpost(h){ return typeof h.impost==='number' ? h.impost : (h.impost!=null ? parseFloat(h.impost) : null); }
+function hsWeight(h){ return typeof h.weight==='number' ? h.weight : (h.weight!=null ? parseFloat(h.weight) : null); }
+// 通算勝率: 着順が数値化できる過去走のみを母数にし、1着の割合を出す（見せかけの確信度を避けるため0走なら null）
+function hsWinRate(h){
+  var races = (h.past_races||[]).filter(function(r){ return !isNaN(parseInt(r.finish,10)); });
+  if(!races.length) return null;
+  var wins = races.filter(function(r){ return parseInt(r.finish,10)===1; }).length;
+  return { rate: wins/races.length, wins: wins, n: races.length };
+}
+function hsAllHorses(){ return (DATA.top_horses||[]).concat(DATA.mini_horses||[]); }
+function hsSortedRows(mode){
+  var rows = hsAllHorses().map(function(h){
+    return { h:h, impost:hsImpost(h), weight:hsWeight(h), agari:prAgariBest(h), win:hsWinRate(h) };
+  });
+  function byNo(a,b){ return hsNoNum(a.h)-hsNoNum(b.h); }
+  function byNumAsc(getVal){
+    return function(a,b){
+      var va=getVal(a), vb=getVal(b);
+      if(va==null && vb==null) return byNo(a,b);
+      if(va==null) return 1;
+      if(vb==null) return -1;
+      return va!==vb ? va-vb : byNo(a,b);
+    };
+  }
+  if(mode==='impost') rows.sort(byNumAsc(function(r){ return r.impost; }));
+  else if(mode==='agari') rows.sort(byNumAsc(function(r){ return r.agari; }));
+  else if(mode==='weight') rows.sort(byNumAsc(function(r){ return r.weight; }));
+  else if(mode==='win') rows.sort(byNumAsc(function(r){ return r.win ? -r.win.rate : null; }));
+  else rows.sort(byNo);
+  return rows;
+}
+function hsFmtNum(v, digits, unit){ return (v==null || isNaN(v)) ? '-' : v.toFixed(digits)+unit; }
+function hsSetSort(mode){
+  HS_SORT_MODE = mode;
+  document.querySelectorAll('#hsChips .hsChip').forEach(function(b){
+    b.classList.toggle('on', b.getAttribute('data-mode')===mode);
+  });
+  renderHorseSortTable();
+}
+function renderHorseSortTable(){
+  var box = document.getElementById('hsTableBox'); if(!box) return;
+  var rows = hsSortedRows(HS_SORT_MODE);
+  if(!rows.length){ box.innerHTML = ''; return; }
+  var html = '<div class="hsTable">'
+    + '<div class="hsRow hsHead"><span>印</span><span>馬番</span><span>馬名</span><span>斤量</span><span>体重</span><span>上がり</span><span>勝率</span><span>MY</span></div>'
+    + rows.map(function(it){
+        var h = it.h;
+        var no = (h.no_provisional || !h.no || h.no===0) ? '想定' : h.no;
+        var winTxt = it.win ? (Math.round(it.win.rate*100)+'%('+it.win.wins+'/'+it.win.n+')') : '-';
+        return '<div class="hsRow" data-fav-card="'+escHtml(h.name)+'">'
+          + '<span class="hsMk" style="color:'+(h.color||'#666')+'">'+(h.mark||'-')+'</span>'
+          + '<span class="hsNo">'+no+'</span>'
+          + '<span class="hsNm">'+escHtml(h.name)+'</span>'
+          + '<span class="hsV">'+hsFmtNum(it.impost,1,'kg')+'</span>'
+          + '<span class="hsV">'+hsFmtNum(it.weight,0,'kg')+'</span>'
+          + '<span class="hsV">'+hsFmtNum(it.agari,1,'秒')+'</span>'
+          + '<span class="hsV">'+winTxt+'</span>'
+          + '<span class="hsMy">'+favBtnHtml(h.name,'sm')+'</span>'
+          + '</div>';
+      }).join('')
+    + '</div>';
+  box.innerHTML = html;
+}
+renderHorseSortTable();
 
 // ========== シミュ計算（全レース共通の固定ロジック） ==========
 function tNoise(){
