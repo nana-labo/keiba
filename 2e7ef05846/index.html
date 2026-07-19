@@ -2323,6 +2323,11 @@ var LAST_SIM = {records:[], field:[]};
 
 function runSim(trials, scen, field){
   var n=field.length;
+  if(n<3){
+    // 出走馬3頭未満(未確定/データ空のドラフトレース)は3着以内シミュ自体が組めないため空実行に留める
+    return {win:new Array(n).fill(0), top2:new Array(n).fill(0), top3:new Array(n).fill(0),
+      sd:new Array(n).fill(0), trials:0, scen:scen};
+  }
   var win=new Array(n).fill(0), top2=new Array(n).fill(0), top3=new Array(n).fill(0);
   var samples=field.map(function(){return [];});
   var records = [];
