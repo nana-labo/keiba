@@ -549,14 +549,19 @@
   /* 出走馬 並び替えビュー（詳細ページ独立の並び替えメニュー。斤量/上がり/勝率/体重などを
      フィルターチップ(要望フォームのカテゴリチップ=.fb-catChipと同じ見た目)で一括切替）。
      値は1ページ目と同じDATAから毎回その場で計算するため、データ更新のたびに自動で反映される。 */
-  .hsChips{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 12px;}
+  .hsChips{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 10px;}
   .hsChip{font-size:.78rem;font-weight:700;padding:7px 14px;border-radius:999px;border:1px solid var(--line);
     background:var(--bg-tint);color:var(--sub);cursor:pointer;font-family:inherit;transition:background .12s,color .12s,border-color .12s;}
   .hsChip:hover{border-color:var(--accent);color:var(--accent-deep);}
   .hsChip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+  /* 昇順/降順トグル（並び替え基準チップとは別の行。切り替えられる方向は基準ごとに1つ持つだけで、
+     基準ごとに独立記憶はしない＝基準を変えると既定方向に戻る） */
+  .hsDirChips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 12px;}
+  .hsDirLbl{font-size:.74rem;font-weight:700;color:var(--sub);}
+  .hsDirChip{padding:5px 12px;font-size:.74rem;}
   .hsTableWrap{overflow-x:auto;}
-  .hsTable{min-width:600px;}
-  .hsRow{display:grid;grid-template-columns:34px 44px minmax(96px,1fr) 66px 66px 70px 100px 86px;gap:4px;
+  .hsTable{min-width:840px;}
+  .hsRow{display:grid;grid-template-columns:34px 44px minmax(96px,1fr) 66px 66px 70px 92px 92px 160px 86px;gap:4px;
     align-items:center;padding:6px 8px;font-size:.8rem;border-bottom:1px solid var(--line);}
   .hsRow:last-child{border-bottom:none;}
   .hsHead{font-weight:700;color:var(--sub);font-size:.68rem;border-bottom:2px solid var(--line);position:sticky;top:0;background:var(--card);}
@@ -655,6 +660,11 @@
   .sec, section[id], .dpage[data-page="detail"] > h2{scroll-margin-top:100px;}
   /* === 本命ピック帯：モバイル先頭で馬を写真付きで見せる横スワイプ === */
   .pickStrip{margin:18px 0 6px;}
+  /* 詳細ページ(シミュレーション/データ両タブ共通)のMY注目：スクロールしても常に見えるよう上部固定表示。
+     印の追加/解除でrenderMyPicks()が即再描画するので中身は常に最新（動的に切り替わる）。 */
+  .pickStrip.sticky{position:sticky;top:6px;z-index:6;margin:10px 0 14px;padding:8px 8px 4px;
+    background:var(--bg);border-radius:14px;box-shadow:0 8px 14px -8px rgba(15,26,38,.22);}
+  .pickStrip.sticky .pickRow{padding-bottom:6px;}
   .pickStrip .pickHd{font-size:.82rem;font-weight:700;color:var(--accent-deep);letter-spacing:.06em;margin:0 0 9px;display:flex;align-items:center;gap:8px;}
   .pickStrip .pickHd .ln{flex:1;height:1px;background:var(--line);}
   .pickRow{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 2px 12px;scrollbar-width:none;}
@@ -758,6 +768,10 @@
     <button type="button" class="dTabBtn active" data-dtab="sim" onclick="setDTab('sim')">🎮 シミュレーション</button>
     <button type="button" class="dTabBtn" data-dtab="data" onclick="setDTab('data')">📊 データ</button>
   </nav>
+
+  <!-- MY注目のピン留め写真帯。シミュレーション/データ両タブで共通（タブの外に置いて両方から見える）。
+       印を付けた馬がいる間だけ表示し、スクロールしても上部に固定表示される（renderMyPicks()が再利用） -->
+  <section class="pickStrip sticky" id="myPickStripDetail" data-page="detail" style="display:none;"></section>
 
   <div class="dTabPane active" data-page="detail" data-dtab="sim">
 
@@ -953,17 +967,24 @@
 
   <div class="dpage">
   <h2 class="sec" id="sortview">🔀 出走馬 並び替えビュー</h2>
-  <p class="lead">斤量・上がり・勝率・体重などをボタン1つで一気に並び替え。結論ページ(1ページ目)と同じデータをその場で計算しているので、データが更新されればここも自動で反映されます。「MY印・コメント」列の＋で自分の印を、✎でコメント（自由記述メモ）をこの表からも付けられます。</p>
+  <p class="lead">斤量・上がり・勝率・体重などをボタン1つで一気に並び替え。昇順/降順も切り替え可能です。結論ページ(1ページ目)と同じデータをその場で計算しているので、データが更新されればここも自動で反映されます。「MY印・コメント」列の＋で自分の印を、✎でコメント（自由記述メモ）をこの表からも付けられます。</p>
   <div class="panel">
     <div class="hsChips" id="hsChips">
       <button type="button" class="hsChip on" data-mode="no" onclick="hsSetSort('no')">馬番順</button>
-      <button type="button" class="hsChip" data-mode="impost" onclick="hsSetSort('impost')">斤量順（軽い→重い）</button>
-      <button type="button" class="hsChip" data-mode="agari" onclick="hsSetSort('agari')">上がり順（速い→遅い）</button>
-      <button type="button" class="hsChip" data-mode="win" onclick="hsSetSort('win')">勝率順（高い→低い）</button>
-      <button type="button" class="hsChip" data-mode="weight" onclick="hsSetSort('weight')">体重順（軽い→重い）</button>
+      <button type="button" class="hsChip" data-mode="impost" onclick="hsSetSort('impost')">斤量順</button>
+      <button type="button" class="hsChip" data-mode="agari" onclick="hsSetSort('agari')">上がり順</button>
+      <button type="button" class="hsChip" data-mode="win" onclick="hsSetSort('win')">勝率順</button>
+      <button type="button" class="hsChip" data-mode="place" onclick="hsSetSort('place')">複勝率順</button>
+      <button type="button" class="hsChip" data-mode="dist" onclick="hsSetSort('dist')">得意距離順</button>
+      <button type="button" class="hsChip" data-mode="weight" onclick="hsSetSort('weight')">体重順</button>
+    </div>
+    <div class="hsDirChips" id="hsDirChips">
+      <span class="hsDirLbl">並び順：</span>
+      <button type="button" class="hsChip hsDirChip" data-dir="asc" onclick="hsSetDir('asc')">▲ 昇順（軽い/速い/低い が先）</button>
+      <button type="button" class="hsChip hsDirChip" data-dir="desc" onclick="hsSetDir('desc')">▼ 降順（重い/遅い/高い が先）</button>
     </div>
     <div class="hsTableWrap"><div id="hsTableBox"></div></div>
-    <p class="qrNote" style="margin-top:8px;">斤量・体重は確定前は「-」表示（確定次第この表にも反映）。上がりは過去走上位3走の自己ベスト平均、勝率は全過去走からの通算成績です。</p>
+    <p class="qrNote" style="margin-top:8px;">斤量は確定前は「-」表示（確定次第この表にも反映）。体重は当日馬体重が発表前のため過去走の平均。上がりは過去走上位3走の自己ベスト平均。勝率・複勝率は全過去走からの通算成績。得意距離は距離別成績(2走以上のデータがある距離のみ)から複勝率最良の距離を選出、n=経験走数です。並び順（昇順/降順）は基準ごとに独立して覚えているわけではなく、基準を切り替えるとその基準の既定の並び順に戻ります。</p>
   </div>
   </div>
 
@@ -1289,8 +1310,13 @@ function savePrNoteModal(){
   kbUnlockScroll();
 }
 
-function renderMyPicks(){
-  var box = document.getElementById('myPickStrip');
+// 印(myMark)が付いた馬をカード化して指定boxへ描画する共通処理。
+// 結論ページ(#myPickStrip)は同一ページ内アンカーへジャンプできるが、詳細ページ側
+// (#myPickStripDetail、シミュレーション/データ両タブ共通で固定表示)の馬カードは
+// 結論ページにしか存在しないため、crossPage=trueのときはindex.htmlを前置して
+// 結論ページへ戻ってからジャンプするリンクにする。
+function renderMyPicksInto(boxId, crossPage){
+  var box = document.getElementById(boxId);
   if(!box) return;
   var pool = (DATA.top_horses||[]).map(function(h){ return {h:h, anchor:'horse-'}; })
     .concat((DATA.mini_horses||[]).map(function(h){ return {h:h, anchor:'mini-horse-'}; }));
@@ -1305,6 +1331,7 @@ function renderMyPicks(){
       + (h.photo ? '<img class="pc-photo" src="'+h.photo+'" alt="'+h.name+'の馬体" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '')
       + '</div>';
     var memo = getMemo(h.name);
+    var jumpHref = (crossPage ? 'index.html' : '') + '#'+p.anchor+h.name.replace(/\s+/g,'-');
     html += '<div class="pickCard isFav" data-fav-card="'+escHtml(h.name)+'" style="--pc:#7c5cff">'
       + photo
       + '<span class="pc-mark">'+myMark(h.name)+'</span>'
@@ -1312,12 +1339,16 @@ function renderMyPicks(){
       +   '<div class="pc-name">'+no+' '+h.name+'</div>'
       +   '<div class="pc-meta"><span class="pc-pop">公式印 '+(h.mark||'-')+'</span>'+favBtnHtml(h.name,'sm')+memoBtnHtml(h.name,'sm')+'</div>'
       +   (memo ? '<div class="pc-memo">📝 '+escHtml(memo)+'</div>' : '')
-      +   '<a class="pc-jump" href="#'+p.anchor+h.name.replace(/\s+/g,'-')+'">カード詳細 →</a>'
+      +   '<a class="pc-jump" href="'+jumpHref+'">'+(crossPage ? '結論ページのカードへ →' : 'カード詳細 →')+'</a>'
       + '</div></div>';
   });
   html += '</div>';
   box.innerHTML = html;
   box.style.display = '';
+}
+function renderMyPicks(){
+  renderMyPicksInto('myPickStrip', false);
+  renderMyPicksInto('myPickStripDetail', true);
 }
 renderMyPicks();
 
@@ -2303,70 +2334,122 @@ renderQuantRankings();
 // data.json が更新されればハードコードなしで自動的に反映される。
 // MY印(favBtnHtml)もここから直接付けられる（印機能はこのページ限定ではなく全ページ共通）。
 var HS_SORT_MODE = 'no';
+// 基準ごとの既定の並び順。基準を切り替えるとその基準の既定方向に戻る（「降順/昇順を切り替えられるように」に対応）。
+var HS_SORT_DIR_DEFAULT = { no:'asc', impost:'asc', agari:'asc', win:'desc', place:'desc', dist:'desc', weight:'asc' };
+var HS_SORT_DIR = HS_SORT_DIR_DEFAULT.no;
 function hsNoNum(h){ return (h.no_provisional || !h.no || h.no===0) ? 999 : h.no; }
 function hsImpost(h){ return typeof h.impost==='number' ? h.impost : (h.impost!=null ? parseFloat(h.impost) : null); }
-function hsWeight(h){ return typeof h.weight==='number' ? h.weight : (h.weight!=null ? parseFloat(h.weight) : null); }
-// 通算勝率: 着順が数値化できる過去走のみを母数にし、1着の割合を出す（見せかけの確信度を避けるため0走なら null）
-function hsWinRate(h){
+// 体重は当日確定まで分からない(h.weightがnullのことが多い)ため、過去走の馬体重(past_races[].bw)の平均を使う。
+// prBwNum は "492(-2)" のような表記から数値部分だけ取り出す既存ヘルパー（適性プロフィールと共通）。
+function hsWeightAvg(h){
+  var vals = (h.past_races||[]).map(function(r){ return prBwNum(r.bw); }).filter(function(v){ return v!=null; });
+  return vals.length ? vals.reduce(function(a,b){ return a+b; }, 0)/vals.length : null;
+}
+// 通算成績: 着順が数値化できる過去走のみを母数にする（見せかけの確信度を避けるため0走ならnull）。
+// 勝率=1着率だけだと「僅差の2-3着」が評価に出ないため、複勝率(3着内率)も同じ枠組みで別途出す。
+function hsRecord(h){
   var races = (h.past_races||[]).filter(function(r){ return !isNaN(parseInt(r.finish,10)); });
   if(!races.length) return null;
   var wins = races.filter(function(r){ return parseInt(r.finish,10)===1; }).length;
-  return { rate: wins/races.length, wins: wins, n: races.length };
+  var placed = races.filter(function(r){ return parseInt(r.finish,10)<=3; }).length;
+  return { n:races.length, wins:wins, winRate:wins/races.length, placed:placed, placeRate:placed/races.length };
+}
+// 得意距離: h.aptitude.dist_summary（距離別のn/win/place/avg着順、既に全戦績から集計済み）から、
+// 経験値(n)が一定数あるものに絞って複勝率が最も高い距離を選ぶ（1走だけの好走を「得意」と誤認しないため）。
+// 経験値(n)そのものも一緒に出すことで、「得意距離だが経験値は浅い」等の判断ができるようにする。
+function hsBestDistance(h){
+  var ds = h.aptitude && h.aptitude.dist_summary;
+  if(!ds) return null;
+  var entries = Object.keys(ds).map(function(dist){
+    var d = ds[dist] || {};
+    var n = d.n||0, win = d.win||0, place = d.place||0;
+    return { dist:dist, n:n, win:win, place:place, placeRate: n?place/n:0, winRate: n?win/n:0, avg:d.avg };
+  }).filter(function(e){ return e.n>=2; });
+  if(!entries.length) return null;
+  entries.sort(function(a,b){
+    if(b.placeRate!==a.placeRate) return b.placeRate-a.placeRate;
+    if(b.winRate!==a.winRate) return b.winRate-a.winRate;
+    return b.n-a.n;
+  });
+  return entries[0];
 }
 function hsAllHorses(){ return (DATA.top_horses||[]).concat(DATA.mini_horses||[]); }
-function hsSortedRows(mode){
+function hsSortedRows(mode, dir){
   var rows = hsAllHorses().map(function(h){
-    return { h:h, impost:hsImpost(h), weight:hsWeight(h), agari:prAgariBest(h), win:hsWinRate(h) };
+    return { h:h, impost:hsImpost(h), weight:hsWeightAvg(h), agari:prAgariBest(h), rec:hsRecord(h), dist:hsBestDistance(h) };
   });
   function byNo(a,b){ return hsNoNum(a.h)-hsNoNum(b.h); }
-  function byNumAsc(getVal){
+  // getValは常に「値が大きいほど後ろ」になる素直な数値を返す。方向(asc/desc)はここで一括反転するので
+  // 基準ごとに符号を仕込む必要はない（勝率・複勝率・得意距離も生のrateをそのまま使う）。
+  function byNum(getVal){
+    var mul = dir==='desc' ? -1 : 1;
     return function(a,b){
       var va=getVal(a), vb=getVal(b);
       if(va==null && vb==null) return byNo(a,b);
       if(va==null) return 1;
       if(vb==null) return -1;
-      return va!==vb ? va-vb : byNo(a,b);
+      return va!==vb ? mul*(va-vb) : byNo(a,b);
     };
   }
-  if(mode==='impost') rows.sort(byNumAsc(function(r){ return r.impost; }));
-  else if(mode==='agari') rows.sort(byNumAsc(function(r){ return r.agari; }));
-  else if(mode==='weight') rows.sort(byNumAsc(function(r){ return r.weight; }));
-  else if(mode==='win') rows.sort(byNumAsc(function(r){ return r.win ? -r.win.rate : null; }));
-  else rows.sort(byNo);
+  if(mode==='impost') rows.sort(byNum(function(r){ return r.impost; }));
+  else if(mode==='agari') rows.sort(byNum(function(r){ return r.agari; }));
+  else if(mode==='weight') rows.sort(byNum(function(r){ return r.weight; }));
+  else if(mode==='win') rows.sort(byNum(function(r){ return r.rec ? r.rec.winRate : null; }));
+  else if(mode==='place') rows.sort(byNum(function(r){ return r.rec ? r.rec.placeRate : null; }));
+  else if(mode==='dist') rows.sort(byNum(function(r){ return r.dist ? r.dist.placeRate : null; }));
+  else rows.sort(byNum(function(r){ return hsNoNum(r.h); }));
   return rows;
 }
 function hsFmtNum(v, digits, unit){ return (v==null || isNaN(v)) ? '-' : v.toFixed(digits)+unit; }
+function hsFmtRate(n, d){ return (n==null || d==null) ? '-' : (Math.round(n/d*100)+'%('+n+'/'+d+')'); }
+function hsFmtDist(e){ return e ? (e.dist+'m 複勝'+Math.round(e.placeRate*100)+'%('+e.place+'/'+e.n+')') : '-'; }
+function hsSyncChips(){
+  document.querySelectorAll('#hsChips .hsChip').forEach(function(b){
+    b.classList.toggle('on', b.getAttribute('data-mode')===HS_SORT_MODE);
+  });
+  document.querySelectorAll('#hsDirChips .hsChip').forEach(function(b){
+    b.classList.toggle('on', b.getAttribute('data-dir')===HS_SORT_DIR);
+  });
+}
 function hsSetSort(mode){
   HS_SORT_MODE = mode;
-  document.querySelectorAll('#hsChips .hsChip').forEach(function(b){
-    b.classList.toggle('on', b.getAttribute('data-mode')===mode);
-  });
+  HS_SORT_DIR = HS_SORT_DIR_DEFAULT[mode] || 'asc';
+  hsSyncChips();
+  renderHorseSortTable();
+}
+function hsSetDir(dir){
+  HS_SORT_DIR = dir;
+  hsSyncChips();
   renderHorseSortTable();
 }
 function renderHorseSortTable(){
   var box = document.getElementById('hsTableBox'); if(!box) return;
-  var rows = hsSortedRows(HS_SORT_MODE);
+  var rows = hsSortedRows(HS_SORT_MODE, HS_SORT_DIR);
   if(!rows.length){ box.innerHTML = ''; return; }
   var html = '<div class="hsTable">'
-    + '<div class="hsRow hsHead"><span>印</span><span>馬番</span><span>馬名</span><span>斤量</span><span>体重</span><span>上がり</span><span>勝率</span><span>MY印・コメント</span></div>'
+    + '<div class="hsRow hsHead"><span>印</span><span>馬番</span><span>馬名</span><span>斤量</span><span>体重(平均)</span><span>上がり</span><span>勝率</span><span>複勝率</span><span>得意距離</span><span>MY印・コメント</span></div>'
     + rows.map(function(it){
         var h = it.h;
         var no = (h.no_provisional || !h.no || h.no===0) ? '想定' : h.no;
-        var winTxt = it.win ? (Math.round(it.win.rate*100)+'%('+it.win.wins+'/'+it.win.n+')') : '-';
+        var winTxt = it.rec ? hsFmtRate(it.rec.wins, it.rec.n) : '-';
+        var placeTxt = it.rec ? hsFmtRate(it.rec.placed, it.rec.n) : '-';
         return '<div class="hsRow" data-fav-card="'+escHtml(h.name)+'">'
           + '<span class="hsMk" style="color:'+(h.color||'#666')+'">'+(h.mark||'-')+'</span>'
           + '<span class="hsNo">'+no+'</span>'
           + '<span class="hsNm">'+escHtml(h.name)+'</span>'
           + '<span class="hsV">'+hsFmtNum(it.impost,1,'kg')+'</span>'
-          + '<span class="hsV">'+hsFmtNum(it.weight,0,'kg')+'</span>'
+          + '<span class="hsV">'+hsFmtNum(it.weight,1,'kg')+'</span>'
           + '<span class="hsV">'+hsFmtNum(it.agari,1,'秒')+'</span>'
           + '<span class="hsV">'+winTxt+'</span>'
+          + '<span class="hsV">'+placeTxt+'</span>'
+          + '<span class="hsV">'+hsFmtDist(it.dist)+'</span>'
           + '<span class="hsMy">'+favBtnHtml(h.name,'sm')+memoBtnHtml(h.name,'sm')+'</span>'
           + '</div>';
       }).join('')
     + '</div>';
   box.innerHTML = html;
 }
+hsSyncChips();
 renderHorseSortTable();
 
 // ========== 詳細ページ内タブ（シミュレーション / データ） ==========
