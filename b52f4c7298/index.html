@@ -703,6 +703,19 @@
     .scAnchorTbl tr td:last-child{border-bottom:none !important;}
     .scAnchorTbl td:first-child{background:#dbeafe;font-size:.8rem !important;}
     .scAnchorTbl td[data-sc]::before{content:attr(data-sc) "点";flex:0 0 2.4em;font-weight:700;color:#3b5fc7;}
+    /* MY注目(detail固定帯)がスマホ画面の3割超を常時占領する問題への対処(2026-07-20)。
+       固定表示は維持したまま、写真高・余白・二次情報(メモ/リンク)を削って専有面積を縮小する。
+       非表示ボタン(toggleMyPickStrip)で完全に畳むこともできる。 */
+    .pickStrip.sticky .pickCard{flex-basis:58%;max-width:190px;}
+    .pickStrip.sticky .pickCard .pc-photoWrap,
+    .pickStrip.sticky .pickCard .pc-ph0,
+    .pickStrip.sticky .pickCard .pc-photo{height:78px;}
+    .pickStrip.sticky .pickCard::after{top:50px;height:28px;}
+    .pickStrip.sticky .pickCard .pc-body{padding:7px 10px 9px;}
+    .pickStrip.sticky .pc-name{font-size:.92rem;}
+    .pickStrip.sticky .pc-meta{margin:4px 0;}
+    .pickStrip.sticky .pc-memo,.pickStrip.sticky .pc-jump{display:none;}
+    .pickStrip.sticky .pc-mark{min-width:30px;height:30px;font-size:1.02rem;top:8px;left:8px;}
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
@@ -1375,7 +1388,8 @@ function renderMyPicksInto(boxId, crossPage){
   var picks = pool.filter(function(p){ return p.h && p.h.name && myMark(p.h.name); });
   picks.sort(function(a,b){ return MY_MARKS.indexOf(myMark(a.h.name)) - MY_MARKS.indexOf(myMark(b.h.name)); });
   if(!picks.length){ box.style.display='none'; box.innerHTML=''; return; }
-  var html = '<div class="pickHd">★ MY注目<span style="font-weight:600;opacity:.7;">（自分の印・この端末のみ保存）</span><span class="ln"></span></div><div class="pickRow">';
+  var html = '<div class="pickHd">★ MY注目<span style="font-weight:600;opacity:.7;">（自分の印・この端末のみ保存）</span><span class="ln"></span>'
+    + '<button type="button" class="pickHideBtn" onclick="toggleMyPickStrip()">非表示</button></div><div class="pickRow">';
   picks.forEach(function(p){
     var h = p.h;
     var no = (h.no_provisional || !h.no || h.no===0) ? '想定' : h.no;
@@ -1398,9 +1412,33 @@ function renderMyPicksInto(boxId, crossPage){
   box.innerHTML = html;
   box.style.display = '';
 }
+// MY注目帯の表示/非表示(端末のみ保存)。#pickStrip の HIDE_PICK_KEY と同じ仕組みを
+// #myPickStrip / #myPickStripDetail 側にも用意する(2026-07-20: detail固定帯が
+// スマホ画面を占領する問題への対処。固定表示自体は維持し、畳めるようにする)。
+var HIDE_MYPICK_KEY = 'keibaHideMyPick_' + ((DATA.race && (DATA.race.race_id || DATA.race.slug)) || 'race');
+function isMyPickHidden(){
+  try{ return localStorage.getItem(HIDE_MYPICK_KEY) === '1'; }catch(e){ return false; }
+}
+function toggleMyPickStrip(){
+  var hidden = !isMyPickHidden();
+  try{ localStorage.setItem(HIDE_MYPICK_KEY, hidden ? '1' : '0'); }catch(e){}
+  applyMyPickStripVisibility();
+}
+function applyMyPickStripVisibility(){
+  var hidden = isMyPickHidden();
+  ['myPickStrip','myPickStripDetail'].forEach(function(id){
+    var box = document.getElementById(id);
+    if(!box) return;
+    var row = box.querySelector('.pickRow');
+    var btn = box.querySelector('.pickHideBtn');
+    if(row) row.style.display = hidden ? 'none' : '';
+    if(btn) btn.textContent = hidden ? '表示' : '非表示';
+  });
+}
 function renderMyPicks(){
   renderMyPicksInto('myPickStrip', false);
   renderMyPicksInto('myPickStripDetail', true);
+  applyMyPickStripVisibility();
 }
 renderMyPicks();
 
@@ -2607,8 +2645,33 @@ function renderCmp(){
 renderCmp();
 
 // ========== シミュ計算（全レース共通の固定ロジック） ==========
+// モデルオッズ(モンテカルロの勝率から逆算した想定オッズ)が同一条件の再実行・再読込のたびに
+// 微妙に変動し、実オッズのように見えて信頼を損ねる問題への対処(2026-07-20)。
+// race_id + predict_version からシードした擬似乱数(mulberry32)を、ノイズ生成(gauss)と
+// 不利要因判定(trouble)にのみ用いる。同一予想版なら常に同じ結果になり、predict_versionが
+// 上がった(=予想が更新された)時だけ結果も変わる。「ランダム10種」ボタンは異なる条件を
+// あえて探索する機能なので、そちらのシナリオ抽選(天候/馬場/展開等)は真の乱数のままにする。
+function _seedFromString(str){
+  var h = 2166136261; // FNV-1a
+  for(var i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function _mulberry32(seed){
+  var s = seed >>> 0;
+  return function(){
+    s = (s + 0x6D2B79F5) >>> 0;
+    var t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+var simRandom = _mulberry32(_seedFromString(
+  String((DATA.race && (DATA.race.race_id || DATA.race.slug)) || 'race')
+  + '|' + String((DATA.race && (DATA.race.predict_version || DATA.race.predict_asof)) || 'v')
+));
 function tNoise(){
-  function gauss(){var u=Math.random()||1e-9,v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+  function gauss(){var u=simRandom()||1e-9,v=simRandom(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
   var df=4, z=gauss(), c=0;
   for(var k=0;k<df;k++){var g=gauss(); c+=g*g;}
   return z/Math.sqrt(c/df);
@@ -2688,7 +2751,7 @@ function runSim(trials, scen, field){
       s += (h.ability[4]-86)*0.08*baseShrink;
       s += tNoise()*noiseScale*h.vol;
       var trouble=0.05 + h.vol*0.05;
-      if(Math.random()<trouble){ s -= 6 + Math.random()*16; }
+      if(simRandom()<trouble){ s -= 6 + simRandom()*16; }
       return s;
     });
     var order=scores.map(function(v,i){return [v,i];}).sort(function(a,b){return b[0]-a[0];});
@@ -3643,7 +3706,7 @@ function doApplyBetPlan(planIdx){
 
   <h2>印馬の振り返り</h2>
   <div class="rv-card"><div class="hd"><span class="mk">◎</span>11 シグレ（武豊）<span class="res">5着</span></div>
-    <p>単勝1.3倍の圧勝歴・武豊継続・当該コース実績と、条件は揃っていた本命。4角2番手の理想的な位置取りから直線に入るも、ノリヤンモーニンと接触気味に並ばれて折り合いを欠き、伸びを欠いて力を出し切れず。武豊「最初の300mはうまくいったが外から並ばれ引っかかった」「きれいな馬場の方がいい」（重馬場が不向きだった趣旨）とコメント。展開の綾に加え、想定外の重馬場が敗因の核心。</p></div>
+    <p>単勝1.3倍の圧勝歴・武豊継続・当該コース実績と、条件は揃っていた本命。4角2番手の理想的な位置取りから直線に入るも、ノリヤンモーニンに外から並ばれて反応し引っかかって折り合いを欠き、伸びを欠いて力を出し切れず。武豊「最初の300mはうまくいったが外から並ばれ引っかかった」「きれいな馬場の方がいい」（重馬場が不向きだった趣旨）とコメント。展開の綾に加え、想定外の重馬場が敗因の核心。</p></div>
   <div class="rv-card"><div class="hd"><span class="mk">◯</span>9 イモージェン（佐々木大輔）<span class="res hit">2着</span></div>
     <p>3番手追走から直線でシグレとノリヤンモーニンの間を割って進出、フェリチタとクビ差の接戦を演じて2着。評価通りの好走で、○の印は的中級の内容。</p></div>
   <div class="rv-card"><div class="hd"><span class="mk">▲</span>12 ダイメイビッグボス（横山武史）<span class="res">10着</span></div>
@@ -3658,7 +3721,7 @@ function doApplyBetPlan(planIdx){
   <h2>3ソース回顧</h2>
   <div class="rv-grid">
     <div class="rv-view"><p class="src">tospo競馬（Web）<span class="tag">事後</span></p><p>武豊騎手談：「最初の300mはうまくいったが、外から並ばれて引っかかってしまった」と◎シグレ5着の敗因を説明。</p><p><a href="https://tospo-keiba.jp/breaking_news/73805">tospo-keiba.jp/breaking_news/73805</a></p></div>
-    <div class="rv-view"><p class="src">スポーツ報知（Web）<span class="tag">事後</span></p><p>武豊「外から並ばれたら反応して…」と接触気味の展開に加え、重馬場にも泣いた1人気シグレの5着を報道。</p><p><a href="https://topics.smt.docomo.ne.jp/article/hochi/sports/hochi-20260719-OHT1T51223">topics.smt.docomo.ne.jp/.../hochi-20260719-OHT1T51223</a></p></div>
+    <div class="rv-view"><p class="src">スポーツ報知（Web）<span class="tag">事後</span></p><p>武豊「外から並ばれたら反応して…」と外から並ばれて引っかかった展開に加え、重馬場にも泣いた1人気シグレの5着を報道。</p><p><a href="https://topics.smt.docomo.ne.jp/article/hochi/sports/hochi-20260719-OHT1T51223">topics.smt.docomo.ne.jp/.../hochi-20260719-OHT1T51223</a></p></div>
     <div class="rv-view"><p class="src">FNNプライムオンライン／livedoor（Web）<span class="tag">事後</span></p><p>横山和生騎手「この子の根性、頑張る気持ちには素晴らしいものがある」。9人気フェリチタとの初コンビで世代重賞初制覇。</p><p><a href="https://news.livedoor.com/article/detail/31864477/">news.livedoor.com/article/detail/31864477</a></p></div>
     <div class="rv-view"><p class="src">netkeiba公式ニュース（Web）<span class="tag">事後</span></p><p>9番人気フェリチタが中団追走から鮮やかに差し切り、世代重賞一番星に。</p><p><a href="https://news.sp.netkeiba.com/?no=337406&amp;pid=news_view">news.sp.netkeiba.com/?no=337406</a></p></div>
     <div class="rv-view"><p class="src">最終追い切り評（umanity・Web）<span class="tag">事前</span></p><p>武英智師「離せばなんぼでも伸びそう。折り合いもつき、トモもひと回り大きくなって上積みは大きそう」とシグレを高評価。実際はレース中の折り合いに課題が出た。</p><p><a href="https://umanity.jp/racedata/race_newsdet.php?nid=11874153">umanity.jp/racedata/race_newsdet.php?nid=11874153</a></p></div>
@@ -3670,7 +3733,7 @@ function doApplyBetPlan(planIdx){
     <tbody>
       <tr><th>馬場想定</th><td>天気予報ソースが403で取得できず「良想定を維持」と記録した箇所が、そのまま本番の「重」馬場との致命的な乖離になった。取得失敗時に前提を機械的に据え置くのではなく、「取得失敗＝不確実性が高い」ことを明示し、馬場変化に弱い脚質（逃げ・先行で瞬発力型）の評価を一段慎重にする運用が要る。R10（発走60分前の馬場再確認）は候補ルールとして存在するが、今回は前日〜当日朝の時点で天気ソース自体が取れておらず、R10発火以前の入力段階で詰まっていた。天気ソース403時のフォールバック手段（気象庁アメダス等の代替取得）を検討する必要がある。</td></tr>
       <tr><th>1戦データの限界</th><td>函館2歳Sは全馬が新馬・未勝利勝ち上がりの1〜2戦のみという構造上、スコアカードの経験値（confidence）が総じて低い（◎シグレでもconfidence_avg 3.14）。無印だったフェリチタは「函館芝1200での逃げ切り実績」「最終追い切りで好調教馬の筆頭評価」という事前情報が存在したにもかかわらず、経験1戦のみという理由でsim_base=55と低く見積もられ、mini_horsesに埋没した。1戦のみの新馬勝ち上がり組が主体のレースでは、「戦績の少なさ」を理由にオイキリ高評価馬を機械的に無印へ落とさない補正が必要（次回はダート/新馬戦主体のレースで同様の高評価コメントがある馬を☆候補に上げる運用を検討）。</td></tr>
-      <tr><th>展開・接触の綾</th><td>◎シグレは4角2番手の理想的な位置取りだったが、直線でノリヤンモーニンと接触気味に並ばれて折り合いを欠いた。単走的な逃げ・先行馬は、直線で他馬と接触する形になると折り合いを乱すリスクがあることを、frame_pace評価に加味する余地がある。</td></tr>
+      <tr><th>展開の綾</th><td>◎シグレは4角2番手の理想的な位置取りだったが、直線でノリヤンモーニンに外から並ばれて反応し引っかかり、折り合いを欠いた。単走的な逃げ・先行馬は、直線で他馬に並ばれると折り合いを乱すリスクがあることを、frame_pace評価に加味する余地がある。</td></tr>
     </tbody>
   </table>
   <p class="rv-note">取得未完: 3着ダイシンドラゴン・4着ノリヤンモーニンの陣営コメント。X個人アカウントによる事後回顧は速報直後のため見つからず（Web記事のみで代替）。</p>

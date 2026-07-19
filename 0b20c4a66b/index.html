@@ -703,6 +703,19 @@
     .scAnchorTbl tr td:last-child{border-bottom:none !important;}
     .scAnchorTbl td:first-child{background:#dbeafe;font-size:.8rem !important;}
     .scAnchorTbl td[data-sc]::before{content:attr(data-sc) "点";flex:0 0 2.4em;font-weight:700;color:#3b5fc7;}
+    /* MY注目(detail固定帯)がスマホ画面の3割超を常時占領する問題への対処(2026-07-20)。
+       固定表示は維持したまま、写真高・余白・二次情報(メモ/リンク)を削って専有面積を縮小する。
+       非表示ボタン(toggleMyPickStrip)で完全に畳むこともできる。 */
+    .pickStrip.sticky .pickCard{flex-basis:58%;max-width:190px;}
+    .pickStrip.sticky .pickCard .pc-photoWrap,
+    .pickStrip.sticky .pickCard .pc-ph0,
+    .pickStrip.sticky .pickCard .pc-photo{height:78px;}
+    .pickStrip.sticky .pickCard::after{top:50px;height:28px;}
+    .pickStrip.sticky .pickCard .pc-body{padding:7px 10px 9px;}
+    .pickStrip.sticky .pc-name{font-size:.92rem;}
+    .pickStrip.sticky .pc-meta{margin:4px 0;}
+    .pickStrip.sticky .pc-memo,.pickStrip.sticky .pc-jump{display:none;}
+    .pickStrip.sticky .pc-mark{min-width:30px;height:30px;font-size:1.02rem;top:8px;left:8px;}
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
@@ -1323,7 +1336,8 @@ function renderMyPicksInto(boxId, crossPage){
   var picks = pool.filter(function(p){ return p.h && p.h.name && myMark(p.h.name); });
   picks.sort(function(a,b){ return MY_MARKS.indexOf(myMark(a.h.name)) - MY_MARKS.indexOf(myMark(b.h.name)); });
   if(!picks.length){ box.style.display='none'; box.innerHTML=''; return; }
-  var html = '<div class="pickHd">★ MY注目<span style="font-weight:600;opacity:.7;">（自分の印・この端末のみ保存）</span><span class="ln"></span></div><div class="pickRow">';
+  var html = '<div class="pickHd">★ MY注目<span style="font-weight:600;opacity:.7;">（自分の印・この端末のみ保存）</span><span class="ln"></span>'
+    + '<button type="button" class="pickHideBtn" onclick="toggleMyPickStrip()">非表示</button></div><div class="pickRow">';
   picks.forEach(function(p){
     var h = p.h;
     var no = (h.no_provisional || !h.no || h.no===0) ? '想定' : h.no;
@@ -1346,9 +1360,33 @@ function renderMyPicksInto(boxId, crossPage){
   box.innerHTML = html;
   box.style.display = '';
 }
+// MY注目帯の表示/非表示(端末のみ保存)。#pickStrip の HIDE_PICK_KEY と同じ仕組みを
+// #myPickStrip / #myPickStripDetail 側にも用意する(2026-07-20: detail固定帯が
+// スマホ画面を占領する問題への対処。固定表示自体は維持し、畳めるようにする)。
+var HIDE_MYPICK_KEY = 'keibaHideMyPick_' + ((DATA.race && (DATA.race.race_id || DATA.race.slug)) || 'race');
+function isMyPickHidden(){
+  try{ return localStorage.getItem(HIDE_MYPICK_KEY) === '1'; }catch(e){ return false; }
+}
+function toggleMyPickStrip(){
+  var hidden = !isMyPickHidden();
+  try{ localStorage.setItem(HIDE_MYPICK_KEY, hidden ? '1' : '0'); }catch(e){}
+  applyMyPickStripVisibility();
+}
+function applyMyPickStripVisibility(){
+  var hidden = isMyPickHidden();
+  ['myPickStrip','myPickStripDetail'].forEach(function(id){
+    var box = document.getElementById(id);
+    if(!box) return;
+    var row = box.querySelector('.pickRow');
+    var btn = box.querySelector('.pickHideBtn');
+    if(row) row.style.display = hidden ? 'none' : '';
+    if(btn) btn.textContent = hidden ? '表示' : '非表示';
+  });
+}
 function renderMyPicks(){
   renderMyPicksInto('myPickStrip', false);
   renderMyPicksInto('myPickStripDetail', true);
+  applyMyPickStripVisibility();
 }
 renderMyPicks();
 
@@ -2555,8 +2593,33 @@ function renderCmp(){
 renderCmp();
 
 // ========== シミュ計算（全レース共通の固定ロジック） ==========
+// モデルオッズ(モンテカルロの勝率から逆算した想定オッズ)が同一条件の再実行・再読込のたびに
+// 微妙に変動し、実オッズのように見えて信頼を損ねる問題への対処(2026-07-20)。
+// race_id + predict_version からシードした擬似乱数(mulberry32)を、ノイズ生成(gauss)と
+// 不利要因判定(trouble)にのみ用いる。同一予想版なら常に同じ結果になり、predict_versionが
+// 上がった(=予想が更新された)時だけ結果も変わる。「ランダム10種」ボタンは異なる条件を
+// あえて探索する機能なので、そちらのシナリオ抽選(天候/馬場/展開等)は真の乱数のままにする。
+function _seedFromString(str){
+  var h = 2166136261; // FNV-1a
+  for(var i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function _mulberry32(seed){
+  var s = seed >>> 0;
+  return function(){
+    s = (s + 0x6D2B79F5) >>> 0;
+    var t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+var simRandom = _mulberry32(_seedFromString(
+  String((DATA.race && (DATA.race.race_id || DATA.race.slug)) || 'race')
+  + '|' + String((DATA.race && (DATA.race.predict_version || DATA.race.predict_asof)) || 'v')
+));
 function tNoise(){
-  function gauss(){var u=Math.random()||1e-9,v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+  function gauss(){var u=simRandom()||1e-9,v=simRandom(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
   var df=4, z=gauss(), c=0;
   for(var k=0;k<df;k++){var g=gauss(); c+=g*g;}
   return z/Math.sqrt(c/df);
@@ -2636,7 +2699,7 @@ function runSim(trials, scen, field){
       s += (h.ability[4]-86)*0.08*baseShrink;
       s += tNoise()*noiseScale*h.vol;
       var trouble=0.05 + h.vol*0.05;
-      if(Math.random()<trouble){ s -= 6 + Math.random()*16; }
+      if(simRandom()<trouble){ s -= 6 + simRandom()*16; }
       return s;
     });
     var order=scores.map(function(v,i){return [v,i];}).sort(function(a,b){return b[0]-a[0];});
