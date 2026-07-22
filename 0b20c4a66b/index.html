@@ -719,8 +719,60 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist">
+  <button type="button" data-tab="tab-predict" class="active">予想</button>
+  <button type="button" data-tab="tab-review">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane active">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -3601,6 +3653,93 @@ function doApplyBetPlan(planIdx){
       bodyEl.scrollTop=0;  // 前に開いた別の馬のスクロール位置が残らないよう、開くたびに先頭へ戻す
       ov.classList.add('open');
       kbLockScroll();
+    });
+  });
+})();
+</script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane">
+<div class="rv-wrap">
+  <p class="rv-lead">2番人気リコースパロー(矢野貴之)が好スタートから終始先頭を譲らず、そのまま逃げ切って重賞初制覇。勝ちタイム1:38.5。1番人気ソニックスター(笹川翼)は2番手を追走したが直線で突き放され0.4秒差の2着まで。3着には14番人気ハデスキーパー(達城龍次)が中団から追い込んで飛び込み、複勝1,550円・3連単21,790円の波乱を演出した。当レースは印・買い目を導出する前日夜ワンショット(枠順+TCK AI+確定オッズ後)が未実行のまま開催を迎え、印は未確定で終わっている。</p>
+
+  <h2>レース結果</h2>
+  <div class="rv-tbl-scroll">
+  <table class="rv-tbl">
+    <thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>人気</th><th>単オッズ</th><th>上3F</th><th>馬体重</th><th>印</th></tr></thead>
+    <tbody>
+      <tr class="win"><td>1</td><td>4</td><td>7</td><td class="nm">リコースパロー</td><td>牡4</td><td>57.5</td><td>矢野貴之</td><td>2</td><td>2.9</td><td>36.6</td><td>520(-9)</td><td></td></tr>
+      <tr><td>2</td><td>2</td><td>2</td><td class="nm">ソニックスター</td><td>セ5</td><td>56.5</td><td>笹川翼</td><td>1</td><td>2.5</td><td>36.6</td><td>538(0)</td><td></td></tr>
+      <tr><td>3</td><td>4</td><td>6</td><td class="nm">ハデスキーパー</td><td>牡8</td><td>55.0</td><td>達城龍次</td><td>14</td><td>187.9</td><td>37.1</td><td>506(-5)</td><td></td></tr>
+      <tr><td>4</td><td>7</td><td>13</td><td class="nm">サヨノネイチヤ</td><td>牡7</td><td>58.0</td><td>西啓太</td><td>3</td><td>6.1</td><td>37.5</td><td>502(0)</td><td></td></tr>
+      <tr><td>5</td><td>1</td><td>1</td><td class="nm">イーグルノワール</td><td>牡5</td><td>55.0</td><td>篠谷葵</td><td>15</td><td>227.6</td><td>37.4</td><td>558(+32)</td><td></td></tr>
+      <tr><td>6</td><td>2</td><td>3</td><td class="nm">フジユージーン</td><td>牡5</td><td>56.0</td><td>杉山海波</td><td>10</td><td>49.0</td><td>37.8</td><td>578(-8)</td><td></td></tr>
+      <tr><td>7</td><td>5</td><td>9</td><td class="nm">ランリョウオー</td><td>牡8</td><td>57.0</td><td>本橋孝太</td><td>5</td><td>17.9</td><td>37.5</td><td>460(0)</td><td></td></tr>
+      <tr><td>8</td><td>8</td><td>14</td><td class="nm">バハルダール</td><td>セ7</td><td>56.0</td><td>鷹見陸</td><td>11</td><td>99.6</td><td>37.8</td><td>520(0)</td><td></td></tr>
+      <tr><td>9</td><td>6</td><td>11</td><td class="nm">ゴールドレガシー</td><td>牡8</td><td>58.0</td><td>吉原寛人</td><td>6</td><td>19.0</td><td>37.7</td><td>494(-7)</td><td></td></tr>
+      <tr><td>10</td><td>3</td><td>5</td><td class="nm">ヨシノダイセン</td><td>牡4</td><td>52.0</td><td>和田譲治</td><td>4</td><td>16.2</td><td>38.7</td><td>471(-2)</td><td></td></tr>
+      <tr><td>11</td><td>5</td><td>8</td><td class="nm">サトノテンペスト</td><td>牡8</td><td>56.5</td><td>渡辺竜也</td><td>9</td><td>26.2</td><td>37.9</td><td>511(0)</td><td></td></tr>
+      <tr><td>12</td><td>8</td><td>15</td><td class="nm">ミックファイア</td><td>牡6</td><td>55.0</td><td>野畑凌</td><td>8</td><td>25.3</td><td>39.0</td><td>494(+5)</td><td></td></tr>
+      <tr><td>13</td><td>7</td><td>12</td><td class="nm">ヒーローコール</td><td>牡6</td><td>57.5</td><td>安藤洋一</td><td>7</td><td>22.1</td><td>39.7</td><td>507(-3)</td><td></td></tr>
+      <tr><td>14</td><td>6</td><td>10</td><td class="nm">ベルダーイメル</td><td>牡9</td><td>56.0</td><td>本田正重</td><td>12</td><td>122.8</td><td>39.1</td><td>474(-11)</td><td></td></tr>
+      <tr><td>15</td><td>3</td><td>4</td><td class="nm">キエティスム</td><td>牡4</td><td>53.0</td><td>藤本現暉</td><td>13</td><td>159.9</td><td>40.4</td><td>472(+5)</td><td></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="rv-note">勝ちタイム1:38.5(良)。天候:晴、馬場:良。ペース:M(ミドル)。前半1000m通過1:01.9。1着リコースパロー=牡4・大井 荒山勝徳厩舎。ラップは12.4-11.8-12.7-12.6-12.4-12.5-12.0-12.1と淀みなく流れ、逃げたリコースパローがラスト2F12.0-12.1と落とさず後続を離した。1コーナーからハナを主張したリコースパローが4コーナーまで先頭、内2番手のソニックスターが直線入口まで詰め寄ったが突き放された。</p>
+
+  <h2>払戻</h2>
+  <div class="rv-pay">
+    <span class="chip">単勝 ⑦ <b>290円</b></span>
+    <span class="chip">複勝 ⑦170 / ②130 / ⑥1,550</span>
+    <span class="chip">枠連 2-4 330円</span>
+    <span class="chip">馬連 ②-⑦ 380円</span>
+    <span class="chip">ワイド ②-⑦280 / ⑥-⑦4,170 / ②-⑥4,150</span>
+    <span class="chip">枠単 4→2 640円</span>
+    <span class="chip">馬単 ⑦→② 680円</span>
+    <span class="chip">3連複 ②-⑥-⑦ <b>9,600円</b></span>
+    <span class="chip">3連単 ⑦→②→⑥ <b>21,790円</b></span>
+  </div>
+
+  <h2>予想 vs 結果</h2>
+  <table class="rv-diff">
+    <tbody>
+      <tr><th>馬場</th><td><b>予想:</b> DRAFT段階で大井ダ1600の基本バイアス(内枠先行有利)のみ仮反映。天候・馬場は未確定として仮置き。<br><b>結果:</b> 晴・良馬場。想定した「内枠先行有利」の方向性は的中し、内2番手のソニックスターと先手のリコースパローがそのまま1-2着を占めた。</td></tr>
+      <tr><th>展開</th><td><b>予想:</b> トライアル勝ちのソニックスター(笹川翼)を有力軸候補として先行争いの中心に想定。ペースは極端にならないと見ていた。<br><b>結果:</b> 想定通りミドルペース(前半1000m 1:01.9)。ただし主導権はソニックスターではなくリコースパローが握り、ソニックスターは2番手からの競馬に。リコースパローが逃げ切ったことで、軸候補としてより上位に置くべきだったのはリコースパロー側だった。</td></tr>
+      <tr><th>印判定</th><td><b>予想:</b> 印は「TCK AI予想と確定オッズが揃う7/21夜のワンショットで導出」する運用としており、枠順確定(v4・7/19)の段階で凍結。<b>前日夜ワンショットが未実行のまま開催を迎えたため、印(◎◯▲△☆)は最後まで導出されなかった。</b><br><b>結果:</b> 印なしのため印的中の評価は不能。上位人気で堅く収まった1-2着(リコースパロー2人気・ソニックスター1人気)に対し、3着に14番人気ハデスキーパーが飛び込む「人気サイド2頭+人気薄1頭」の決着で、3連単は21,790円と中波乱になった。</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3ソース回顧</h2>
+  <div class="rv-grid">
+    <div class="rv-view"><p class="src">netkeiba(NAR)結果・払戻<span class="tag">事後</span></p><p>1着リコースパロー(2人気・矢野貴之)が逃げ切り、勝ちタイム1:38.5(良)。2着ソニックスター、3着に14人気ハデスキーパーで3連単21,790円。</p><p><a href="https://nar.netkeiba.com/race/result.html?race_id=202644072211">nar.netkeiba.com/race/result.html</a></p></div>
+    <div class="rv-view"><p class="src">netkeiba(Yahoo!ニュース転載)枠順<span class="tag">事前</span></p><p>「真夏のハンデキャップ重賞 トライアルVのソニックスターは2枠2番」。トライアル勝ち馬ソニックスターに最内枠が回った点を事前に注目材料として報じた。</p><p><a href="https://news.yahoo.co.jp/articles/b90f1c711bb2f2714706cc5433ea40fdb8f0e02b">news.yahoo.co.jp/articles/b90f1c711b...</a></p></div>
+    <div class="rv-view"><p class="src">ウーエー競馬(Web)<span class="tag">事前</span></p><p>「サヨノネイチヤの地力◎ ソニックスター不安多し」として1番人気ソニックスターに不安を指摘。結果はソニックスター2着・サヨノネイチヤ4着で、人気馬への懸念は部分的に的中した形。</p><p><a href="https://u-a-keiba.net/2026/07/20/post-56611/">u-a-keiba.net/2026/07/20/post-56611</a></p></div>
+    <div class="rv-view"><p class="src">勝ち馬・関係者コメント<span class="tag">取得未完</span></p><p>NAR重賞のため矢野貴之騎手(リコースパロー)の勝利ジョッキーコメント等は公開ソースを確認できず。次サイクルで再取得を試みる。</p></div>
+  </div>
+
+  <h2>今回の学び</h2>
+  <table class="rv-learn">
+    <tbody>
+      <tr><th>前日夜ワンショット未実行</th><td>本レースは印・買い目を前日夜(7/21)のワンショット(枠順+TCK AI+確定オッズ)で導出する運用だったが、その工程が実行されないまま開催を迎え、印が最後まで付かなかった。スカウトノートで「前日夜ワンショットTODO」を明記していたにもかかわらず、日次自動更新がNARの印導出工程(nar_engine + fetch_tck_ai)を実行しない設計のため抜け落ちた。NARレースは自動更新任せにせず、前日夜に印導出を確実に走らせる運用チェックが必要。</td></tr>
+      <tr><th>先行バイアスは的中</th><td>DRAFTで仮反映した「大井ダ1600・内枠先行有利」の方向性は結果と一致(先手のリコースパロー→内2番手ソニックスターで1-2着)。ミドルペースを淀みなく刻んで逃げ切る大井1600の典型的な決着で、脚質・枠のバイアス評価そのものは機能した。印導出さえ間に合っていれば軸選定に活かせた材料だった。</td></tr>
+      <tr><th>トライアル勝ち≠本番主導権</th><td>トライアル勝ちのソニックスター(1人気)を軸候補の中心に据えたが、本番でハナを主張したのは別馬(リコースパロー)で、ソニックスターは2番手経由の2着。トライアルの勝ち方(先行・完勝)が本番でそのまま主導権に直結するとは限らず、同型の枠・斤量・出脚を機械指標で比較して主導権の所在を見積もる必要がある。</td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=document.querySelectorAll('.tabHd button[data-tab]');
+  var panes=document.querySelectorAll('.tab-pane');
+  if(!btns.length) return;
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var id=b.getAttribute('data-tab');
+      btns.forEach(function(x){x.classList.toggle("active",x===b);});
+      panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+      window.scrollTo({top:0,behavior:'smooth'});
     });
   });
 })();
