@@ -33,10 +33,12 @@
   header.hero h1{margin:0 0 10px;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-.02em;font-weight:700;line-height:1.15;text-wrap:balance;position:relative;}
   header.hero .meta{font-size:.93rem;opacity:.80;letter-spacing:.008em;line-height:1.6;position:relative;}
   .heroVisual{position:relative;display:grid;grid-template-columns:170px 1fr;gap:12px;margin-top:18px;}
-  .weatherOrb{min-height:148px;border-radius:18px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);display:flex;flex-direction:column;justify-content:space-between;padding:14px;box-shadow:0 1px 0 rgba(255,255,255,.10) inset;}
-  .weatherOrb .big{font-size:3.2rem;line-height:1;text-shadow:0 8px 20px rgba(0,0,0,.24);}
-  .weatherOrb b{font-size:1.12rem;line-height:1.25;}
-  .weatherOrb small{display:block;color:rgba(255,255,255,.72);font-size:.72rem;line-height:1.35;margin-top:3px;}
+  /* min-heightは撤去してsignalCard側の高さにGridで揃える（4項目グリッドで天気だけ縦長になる不整合の解消）。
+     絵文字/paddingも他カードに近い中間値へ（モバイル版min-height:0の実績値を参考に90-100px前後を狙う）。 */
+  .weatherOrb{border-radius:18px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);display:flex;flex-direction:column;justify-content:space-between;padding:11px;box-shadow:0 1px 0 rgba(255,255,255,.10) inset;}
+  .weatherOrb .big{font-size:2.3rem;line-height:1;text-shadow:0 8px 20px rgba(0,0,0,.24);}
+  .weatherOrb b{font-size:1rem;line-height:1.2;}
+  .weatherOrb small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:rgba(255,255,255,.72);font-size:.7rem;line-height:1.3;margin-top:2px;}
   .signalArea{min-width:0;display:flex;flex-direction:column;gap:9px;}
   .signalHead{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.04em;display:flex;align-items:center;gap:6px;}
   .signalGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(116px,1fr));gap:10px;}
@@ -159,12 +161,19 @@
   .viewCard.stance-data .src{color:#13344f;}
   .wx{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
   .wx span{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);padding:5px 12px;border-radius:999px;font-size:.8rem;backdrop-filter:blur(4px);font-feature-settings:"tnum" 1;}
-  .tocnav{position:sticky;top:8px;background:rgba(248,251,255,.88);backdrop-filter:saturate(200%) blur(16px);-webkit-backdrop-filter:saturate(200%) blur(16px);border:1px solid rgba(200,214,228,.70);border-radius:999px;padding:7px 16px;margin:16px 0;display:flex;gap:4px;font-size:.84rem;flex-wrap:wrap;box-shadow:0 1px 0 rgba(255,255,255,.9) inset, var(--shadow-1);z-index:10;}
+  /* 「能力比較・シミュ」はページ内アンカーの他タブと性質が違う(別ページ遷移)ため、
+     スクロール領域(.tocnav-scroll)から構造的に分離し、常に見える固定チップ(.toc-detail)にする。
+     縦の高さは1pxも増やさず、モバイルで横スクロールしても右端に埋もれない（2026-07-19の
+     「2段折り返しは縦を占有しすぎる」という却下理由には抵触しない）。 */
+  .tocnav{position:sticky;top:8px;background:rgba(248,251,255,.88);backdrop-filter:saturate(200%) blur(16px);-webkit-backdrop-filter:saturate(200%) blur(16px);border:1px solid rgba(200,214,228,.70);border-radius:999px;padding:7px 7px 7px 16px;margin:16px 0;display:flex;align-items:center;gap:6px;font-size:.84rem;box-shadow:0 1px 0 rgba(255,255,255,.9) inset, var(--shadow-1);z-index:10;}
+  .tocnav-scroll{display:flex;flex-wrap:wrap;gap:4px;flex:1 1 auto;min-width:0;}
   .tocnav a{color:var(--sub);text-decoration:none;font-weight:600;padding:5px 12px;border-radius:999px;transition:background var(--dur) var(--ease), color var(--dur) var(--ease);}
   .tocnav a:hover{background:var(--accent-soft);color:var(--accent-deep);}
   .tocnav a:active{transform:translateY(1px);}
   .tocnav a.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(26,90,138,.30);}
   .toc-div{flex:0 0 auto;align-self:center;width:1px;height:15px;background:var(--line);margin:0 2px;}
+  .toc-detail{flex:0 0 auto;background:var(--accent);color:#fff !important;font-weight:700;box-shadow:0 2px 8px rgba(26,90,138,.28);white-space:nowrap;}
+  .toc-detail:hover{background:var(--accent-deep);color:#fff;}
   .digest{margin:16px 0 18px;}
   .digestHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px;}
   .digestHead h2{margin:0;font-size:1rem;line-height:1.2;letter-spacing:.02em;color:var(--accent-deep);}
@@ -259,6 +268,10 @@
   .favClearBtn.show{display:inline-block;}
   .favClearBtn:hover{opacity:1;background:#f5f5f5;}
   .favClearBtn.sm{width:16px;height:16px;font-size:.56rem;line-height:14px;margin-left:2px;}
+  /* お気に入り(+)/メモ(✎)ボタンの置き場所。以前はヘッダー行内・馬体写真の近くにあり視覚的に重なっていたため、
+     カード最下部(常に存在する要素の後)へ独立させた。DOM順で配置するのでfloat写真やdetailsの開閉状態に関わらず衝突しない。 */
+  .cardActions{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);clear:both;}
+  .cardActions .favBtn, .cardActions .memoBtn{margin-left:0;}
   /* 印の選択メニュー(◎○▲△☆を縦積み。body直下にfixed配置し、overflow:hiddenのカード内に置くと見切れる問題を回避) */
   .markPicker{display:none;position:fixed;z-index:9999;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(15,26,38,.22);padding:6px;gap:3px;}
   .markOpt{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;width:28px;height:28px;font-size:.95rem;line-height:26px;text-align:center;padding:0;font-family:inherit;color:var(--ink);transition:transform .1s ease, background .1s ease;}
@@ -411,11 +424,14 @@
   /* 適性プロフィール（好走時の実測平均 vs 今回。コース適性(.apt)と対にした馬体重/斤量/距離版） */
   .fitProfile{margin:6px 0;padding:8px 11px;background:var(--accent-soft);border:1px solid rgba(26,90,138,.14);border-left:3px solid #7c5cff;border-radius:8px;}
   .fitProfile-h{font-size:.76rem;font-weight:700;color:var(--accent-deep);margin-bottom:4px;}
-  .fitRow{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px;font-size:.78rem;color:#2e4260;line-height:1.6;}
-  .fitLbl{font-weight:700;min-width:4.6em;}
-  .fitVal{color:var(--sub);}
-  .fitArrow{color:var(--sub);}
-  .fitDiff{font-weight:700;color:#5b3fa8;}
+  .fitProfile-n{font-weight:600;color:var(--sub);font-size:.9em;margin-left:2px;}
+  .fitRow{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px;font-size:.78rem;color:#2e4260;line-height:1.6;}
+  .fitLbl{font-weight:700;min-width:2.4em;color:var(--sub);}
+  .fitNow{font-weight:700;}
+  .fitDiff{color:var(--sub);font-size:.92em;}
+  .fitTag{font-size:.7rem;font-weight:700;padding:1px 7px;border-radius:5px;}
+  .fit-ok .fitTag{background:rgba(15,132,86,.14);color:#0f8456;}
+  .fit-up .fitTag, .fit-down .fitTag{background:rgba(181,100,10,.14);color:#b5640a;}
   /* 全戦績テーブル */
   details.pastfull{margin-top:6px;}
   details.pastfull>summary{cursor:pointer;font-size:.76rem;font-weight:700;color:#3b5fc7;padding:4px 0;}
@@ -431,7 +447,10 @@
   .prTrendHd{font-size:.7rem;font-weight:700;color:var(--accent-deep);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 8px;margin-bottom:2px;}
   .prTrendLegend{font-size:.6rem;font-weight:600;color:var(--sub);white-space:nowrap;}
   .prTrendLegend span{margin-left:5px;}
-  .prTrendChart{max-width:100%;display:block;}
+  .prTrendChart{width:100%;display:block;}
+  .prTrendBox{position:relative;}
+  .prTrendRankLbl{position:absolute;font-size:.52rem;color:#a7b1bd;line-height:1;white-space:nowrap;pointer-events:none;transform:translate(calc(-100% - 3px),-50%);}
+  .prTrendDateLbl{position:absolute;bottom:2px;font-size:.58rem;color:#8a97a6;line-height:1;white-space:nowrap;pointer-events:none;}
   .prTrendInfo{margin-top:3px;font-size:.72rem;color:var(--ink);background:var(--accent-soft);border-radius:7px;padding:5px 8px;}
   /* 全10走モーダル上部の対象馬ヘッダ（どの馬の記録か明示） */
   .rlHorseHd{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0 0 10px;padding:8px 11px;background:var(--accent-soft);border-radius:9px;}
@@ -634,14 +653,17 @@
     .horsephoto img{width:100%;height:128px;}
     .horsephoto .photocred{text-align:right;}
     .cards{gap:12px;}
-    /* TOCナビは2段折り返しだと画面をかなり占有するとの指摘（2026-07-19）を受け、横スクロール1行に戻す。
-       スクロール可能なことが分かるよう右端を軽くフェードし、リンクは折り返さず横に流す。 */
-    .tocnav{gap:4px;padding:7px 10px;font-size:.8rem;top:6px;flex-wrap:nowrap;justify-content:flex-start;
+    /* TOCナビは2段折り返しだと画面をかなり占有するとの指摘（2026-07-19）を受け、横スクロール1行にした。
+       スクロールは.tocnav-scroll(ページ内アンカー7個)だけに限定し、別ページ遷移の「能力比較・シミュ」
+       (.toc-detail)は右端に固定して常に見えるようにする（埋もれて気づきにくい問題への対応）。 */
+    .tocnav{gap:6px;padding:7px 7px 7px 10px;font-size:.8rem;top:6px;}
+    .tocnav-scroll{flex-wrap:nowrap;justify-content:flex-start;
       overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
       mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);}
-    .tocnav::-webkit-scrollbar{display:none;}
-    .tocnav a{padding:4px 9px;white-space:nowrap;flex:0 0 auto;}
+    .tocnav-scroll::-webkit-scrollbar{display:none;}
+    .tocnav-scroll a{padding:4px 9px;white-space:nowrap;flex:0 0 auto;}
     .toc-div{flex:0 0 auto;}
+    .toc-detail{padding:4px 10px;font-size:.78rem;}
     details.fold>summary{min-height:42px;font-size:.78rem;}
     .foldBody{font-size:.8rem;}
     .past{overflow-x:auto;padding-bottom:4px;scroll-snap-type:x proximity;}
@@ -786,16 +808,17 @@
   <section class="pickStrip" id="pickStrip"></section>
 
   <nav class="tocnav" id="tocnav" aria-label="ページ内ナビゲーション">
-    <a href="#verdict">最終判断</a>
-    <a href="#picks">買い目</a>
-    <a href="#cards">本命〜上位</a>
-    <a href="#minisec">人気薄</a>
-    <span class="toc-div" aria-hidden="true"></span>
-    <a href="#trend">過去傾向</a>
-    <a href="#views">他者の見方</a>
-    <a href="#pending">⏳ 更新予定</a>
-    <span class="toc-div" aria-hidden="true"></span>
-    <a class="toc-detail" href="detail.html">📊 能力比較・シミュ →</a>
+    <div class="tocnav-scroll">
+      <a href="#verdict">最終判断</a>
+      <a href="#picks">買い目</a>
+      <a href="#cards">本命〜上位</a>
+      <a href="#minisec">人気薄</a>
+      <span class="toc-div" aria-hidden="true"></span>
+      <a href="#trend">過去傾向</a>
+      <a href="#views">他者の見方</a>
+      <a href="#pending">⏳ 更新予定</a>
+    </div>
+    <a class="toc-detail" href="detail.html">📊 シミュ →</a>
   </nav>
 
   <!-- 最終判断: 印・評価・適性・シミュ結果を1頭1枚に統合。下の詳細指標を読む前に結論だけ分かるようにする -->
@@ -2002,23 +2025,7 @@ function applyPickStripVisibility(){
   sortedTop.forEach(function(h){
     var tags = (h.tags_strong||[]).map(function(t){return '<span class="tag s">'+t+'</span>';}).join("")
              + (h.tags_weak||[]).map(function(t){return '<span class="tag w">'+t+'</span>';}).join("");
-    var past = '<div class="past">';
-    (h.last3||[]).forEach(function(r){
-      var cls = r.order===1?'p win':(r.order===2?'p snd':(r.order===3?'p trd':'p out'));
-      var ord = (!r.order||r.order==='-')?'-':r.order;
-      // date / jockey を明示（安田記念2026 振り返りで導入：レース名だけでは鮮度・継続騎乗を判定できない）
-      var meta = [];
-      if(r.date) meta.push(r.date);
-      if(r.jockey && r.jockey !== '-') meta.push(r.jockey);
-      var metaStr = meta.length ? '<span class="meta">'+meta.join(' / ')+'</span>' : '';
-      var distStr = r.dist ? '<span class="r">'+r.dist+'</span>' : '';
-      past += '<div class="'+cls+'"><span class="ord">'+ord+'</span><span class="r">'+r.race+'</span>'
-        + metaStr
-        + distStr
-        + '<span class="r">上がり '+(r.agari||'-')+'</span>'
-        + '<span class="legBadge leg-'+(r.leg||'未確認')+'" style="font-size:.62rem;margin-top:2px;">'+(r.leg||'-')+'</span></div>';
-    });
-    past += '</div>';
+    var past = pastBlockHtml(h.last3);
     var oik = '';
     (h.oikiri||[]).forEach(function(o){
       var src = o.url ? '<a href="'+o.url+'" target="_blank">'+o.src+'</a>' : o.src;
@@ -2044,8 +2051,6 @@ function applyPickStripVisibility(){
       + '<div class="top"><span class="mark">'+h.mark+'</span>'
       + '<span class="num" title="'+noTitle+'">'+noDisp+'</span><span class="name">'+h.name+'</span>'
       + '<span class="pop">'+(h.pop?((h.pop_provisional===false?'':'想定')+h.pop+'番人気'+(h.odds!=null?'（'+h.odds+'倍）':'')):'人気想定')+'</span>'
-      + favBtnHtml(h.name)
-      + memoBtnHtml(h.name)
       + '</div>'
       + (h.photo?'<div class="horsephoto"><img src="'+h.photo+'" alt="'+h.name+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"><span class="photocred">写真: netkeiba</span></div>':'')
       + (function(){
@@ -2181,6 +2186,7 @@ function applyPickStripVisibility(){
           var v = bonus[h.name]; if(!v) return '';
           return '<div style="margin-top:6px;padding:4px 10px;background:rgba(217,156,71,.16);border-left:3px solid #d99c47;border-radius:6px;font-size:.78rem;color:#7a5a1d;"><b>🏆 連覇プレミアム R12</b> course_dist 軸に +'+v+' 加点（trend_config.same_race_repeat_bonus）</div>';
         })()
+      + '<div class="cardActions">'+favBtnHtml(h.name)+memoBtnHtml(h.name)+'</div>'
       + '</div>';
   });
   document.getElementById("cardsBox").innerHTML = html;
@@ -2219,15 +2225,22 @@ function applyPickStripVisibility(){
       + (m.weight && m.impost ? '　/　' : '')
       + (m.impost ? '斤量：'+m.impost+'kg' : '')
       + '</div>' : '';
-    // 直近2走（last2優先、なければ旧last）。上がりが取れている場合のみ併記
+    // 直近3走：past_races先頭3件を6頭カードと同じ区切りブロックで表示（過去走の手書き禁止方針に沿い、
+    // 生文字列の正規表現分割はしない。past_races未接地の馬のみ旧last2/last文字列にフォールバック）。
+    var miniLast3 = (m.past_races||[]).slice(0,3).map(function(r){
+      return {race:r.race, date:r.date, order:r.finish, jockey:r.jockey, dist:r.dist, agari:r.agari, leg:r.style};
+    });
+    var pastBlockM = pastBlockHtml(miniLast3);
     var recHtml = '';
-    if(m.last2 && m.last2.length){
-      recHtml = '<div class="row">直近：'+ m.last2.map(function(r){
-        var ag = (r.agari && r.agari!=='不明' && r.agari!=='-') ? '<span style="color:var(--sub);">(上り'+r.agari+')</span>' : '';
-        return r.race+' <b>'+r.order+'着</b>'+ag;
-      }).join(' ← ') +'</div>';
-    } else if(m.last){
-      recHtml = '<div class="row">直近：'+m.last+'</div>';
+    if(!pastBlockM){
+      if(m.last2 && m.last2.length){
+        recHtml = '<div class="row">直近：'+ m.last2.map(function(r){
+          var ag = (r.agari && r.agari!=='不明' && r.agari!=='-') ? '<span style="color:var(--sub);">(上り'+r.agari+')</span>' : '';
+          return r.race+' <b>'+r.order+'着</b>'+ag;
+        }).join(' ← ') +'</div>';
+      } else if(m.last){
+        recHtml = '<div class="row">直近：'+m.last+'</div>';
+      }
     }
     // 写真（base64・netkeiba）
     var photoHtml = m.photo ? '<div class="horsephoto" style="width:80px;margin:0 0 4px 8px;"><img src="'+m.photo+'" alt="'+m.name+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'" style="width:80px;height:60px;object-fit:cover;border-radius:7px;border:1px solid #d7e0ea;"><span class="photocred">写真: netkeiba</span></div>' : '';
@@ -2259,19 +2272,19 @@ function applyPickStripVisibility(){
       + '<div class="hd"><span class="nm">'+mnoDisp+'</span>'+sexAge+m.name
       + (m.blinker_first?' <span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">🔰初ブリンカー</span>':'')
       + ' <span style="color:var(--sub);font-size:.74rem;">/ '+m.jockey+'</span>'
-      + favBtnHtml(m.name,'sm')
-      + memoBtnHtml(m.name,'sm')
       + ' <span class="legBadge leg-'+(m.leg||'未確認')+'" style="margin-left:auto;">'+(m.leg||'-')+'</span></div>'
       + photoHtml
+      + pastBlockM
+      + recHtml
       + profHtml
       + oddsHtml
       + weightHtml
-      + recHtml
       + miniOik
       + aptHtml
       + pastFullHtml
       + (hasMarks && m.pop && m.pop<=6 ? '<div class="factChip warn" style="margin:4px 0 0;">⚠️ 人気'+m.pop+'番なのに軽視した理由</div>' : '')
       + '<div class="why">'+m.why+'</div>'
+      + '<div class="cardActions">'+favBtnHtml(m.name)+memoBtnHtml(m.name)+'</div>'
       + '</div>';
   });
   document.getElementById("mini").innerHTML = mhtml;
@@ -2341,14 +2354,18 @@ function prFitProfile(h){
     isGoodOnly: good.length>0
   };
 }
-function prFitRowHtml(label, ideal, current, unit, digits){
+// 「今回」の値を主役にし、好走平均との差を許容誤差(tolerance)内かどうかで色分け＋一言のラベルに翻訳する。
+// 生の差分数値だけだと良し悪しの判断を読者に丸投げすることになるため（ユーザー指摘）。
+function prFitRowHtml(label, ideal, current, unit, digits, tolerance, upWord, downWord){
   if(ideal==null || current==null || isNaN(current)) return '';
   var diff = current - ideal, sign = diff>0 ? '+' : '';
-  return '<div class="fitRow"><span class="fitLbl">'+label+'</span>'
-    + '<span class="fitVal">'+ideal.toFixed(digits)+unit+'前後</span>'
-    + '<span class="fitArrow">→</span>'
+  var absDiff = Math.abs(diff);
+  var tone = absDiff <= tolerance ? 'ok' : (diff>0 ? 'up' : 'down');
+  var word = absDiff <= tolerance ? '標準的' : (diff>0 ? upWord : downWord);
+  return '<div class="fitRow fit-'+tone+'"><span class="fitLbl">'+label+'</span>'
     + '<span class="fitNow">今回'+current.toFixed(digits)+unit+'</span>'
-    + '<span class="fitDiff">('+sign+diff.toFixed(digits)+unit+')</span></div>';
+    + '<span class="fitTag">'+word+'</span>'
+    + '<span class="fitDiff">好走平均'+ideal.toFixed(digits)+unit+'（'+sign+diff.toFixed(digits)+unit+'）</span></div>';
 }
 function prFitProfileHtml(h){
   var fp = prFitProfile(h);
@@ -2356,12 +2373,13 @@ function prFitProfileHtml(h){
   var curWeight = prBwNum(h.weight);
   var curImpost = typeof h.impost==='number' ? h.impost : parseFloat(h.impost);
   var curDist = raceDistNum();
-  var rows = prFitRowHtml('適性体重', fp.idealWeight, curWeight, 'kg', 0)
-    + prFitRowHtml('適性斤量', fp.idealImpost, curImpost, 'kg', 1)
-    + prFitRowHtml('適性距離', fp.idealDist, curDist, 'm', 0);
+  var rows = prFitRowHtml('体重', fp.idealWeight, curWeight, 'kg', 0, 10, '重め', '軽め')
+    + prFitRowHtml('斤量', fp.idealImpost, curImpost, 'kg', 1, 1.0, '斤量増', '斤量減')
+    + prFitRowHtml('距離', fp.idealDist, curDist, 'm', 0, 200, '距離延長', '距離短縮');
   if(!rows) return '';
+  var n = fp.isGoodOnly ? '好走['+fp.n+'走]' : '過去'+fp.n+'走';
   return '<div class="fitProfile">'
-    + '<div class="fitProfile-h">📐 適性プロフィール（'+(fp.isGoodOnly?'好走[3着以内]'+fp.n+'走':'過去'+fp.n+'走')+'の平均 → 今回）</div>'
+    + '<div class="fitProfile-h">📐 好走時との条件差<span class="fitProfile-n" title="'+n+'の平均を基準に算出">（'+n+'平均比）</span></div>'
     + rows
     + '</div>';
 }
@@ -2903,13 +2921,40 @@ function prGradeColor(g){
   if(/未勝利|新馬/.test(g)) return '#9aa5b1';
   return '#7c5cff';
 }
+// 直近走を区切られたブロックで表示する共有関数（元は上位6頭カード専用だったものを、
+// 人気薄カードでも同じ見え方にできるよう切り出した。r.order は数値/数値文字列/'-' いずれも許容。
+// r.agari は「上がり」接頭辞の有無が呼び出し元によって異なる（sync_last3済みは接頭辞あり・
+// past_races直参照は接頭辞なし）ため、二重表記(「上がり 上がり34.2」)にならないよう吸収する）。
+function pastBlockHtml(races){
+  if(!races || !races.length) return '';
+  var html = '<div class="past">';
+  races.forEach(function(r){
+    var ordNum = parseInt(r.order, 10);
+    var cls = ordNum===1?'p win':(ordNum===2?'p snd':(ordNum===3?'p trd':'p out'));
+    var ord = (r.order===undefined || r.order===null || r.order==='' || r.order==='-') ? '-' : r.order;
+    var meta = [];
+    if(r.date) meta.push(r.date);
+    if(r.jockey && r.jockey !== '-') meta.push(r.jockey);
+    var metaStr = meta.length ? '<span class="meta">'+meta.join(' / ')+'</span>' : '';
+    var distStr = r.dist ? '<span class="r">'+r.dist+'</span>' : '';
+    var agariTxt = (r.agari && r.agari!=='-' && r.agari!=='不明') ? r.agari : '-';
+    var agariLabel = /^上が/.test(agariTxt) ? agariTxt : ('上がり '+agariTxt);
+    html += '<div class="'+cls+'"><span class="ord">'+ord+'</span><span class="r">'+(r.race||'')+'</span>'
+      + metaStr
+      + distStr
+      + '<span class="r">'+agariLabel+'</span>'
+      + '<span class="legBadge leg-'+(r.leg||'未確認')+'" style="font-size:.62rem;margin-top:2px;">'+(r.leg||'-')+'</span></div>';
+  });
+  html += '</div>';
+  return html;
+}
 /* 過去走の着順推移を折れ線グラフで（「ランキングの上下動を折れ線グラフで、タップしたら見れるやつでいい」への対応）。
    points の位置決めだけで完結させ、日付ラベル等の詳細はタップ時に下へ表示する(prTrendTap)。
    モーダル複製(outerHTML)でも安全に動くよう、要素IDではなく最寄りの.prTrendWrapをclosestで辿る。 */
 function prTrendSvg(rows){
   if(!rows || rows.length<2) return ''; // 1走以下では推移が描けない
   var asc = rows.slice().reverse(); // past_racesは新→旧順なので古→新に並べ替えて左から右へ読めるようにする
-  var W=Math.max(220, Math.min(360, asc.length*24)), H=92, padL=20, padR=10, padT=10, padB=18;
+  var W=Math.max(220, Math.min(360, asc.length*24)), H=92, padL=22, padR=10, padT=10, padB=18;
   var maxFinish = 8;
   asc.forEach(function(r){ var n=parseInt(r.finish,10); if(!isNaN(n) && n>maxFinish) maxFinish=n; });
   function fy(finish){
@@ -2927,19 +2972,35 @@ function prTrendSvg(rows){
       +'data-date="'+escHtml(r.date||'')+'" data-race="'+escHtml(r.race||'')+'" data-grade="'+escHtml(g)+'" data-finish="'+escHtml(String(isNaN(n)?(r.finish||'-'):n))+'" '
       +'onclick="event.stopPropagation();prTrendTap(this);" style="cursor:pointer;"><title>'+escHtml((r.date||'')+' '+(r.race||'')+' '+(isNaN(n)?(r.finish||'-'):n)+'着')+'</title></circle>';
   }).join('');
-  var winY = fy(1).toFixed(1);
-  var winLine = '<line x1="'+padL+'" y1="'+winY+'" x2="'+(W-padR)+'" y2="'+winY+'" stroke="#e2e8f0" stroke-dasharray="2,2"/>';
-  var svg = '<svg class="prTrendChart" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'">'
-    + winLine
+  // 順位の目盛り線（読み取りやすさのため複数本。1着ラインだけ点線で強調）
+  var gridStep = maxFinish<=5 ? 1 : maxFinish<=9 ? 2 : maxFinish<=16 ? 4 : 6;
+  var gridRanks = [];
+  for(var gn=1; gn<=maxFinish; gn+=gridStep){ gridRanks.push(gn); }
+  if(gridRanks[gridRanks.length-1]!==maxFinish) gridRanks.push(maxFinish);
+  var gridLines = gridRanks.map(function(gn){
+    var gy=fy(gn), isWin=(gn===1);
+    return '<line x1="'+padL+'" y1="'+gy.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+gy.toFixed(1)+'" stroke="'+(isWin?'#dfe3ea':'#eef2f6')+'" stroke-width="1"'+(isWin?' stroke-dasharray="2,2"':'')+'/>';
+  }).join('');
+  // ラベル(順位・日付)はSVG内のtextにせず絶対配置のHTMLにする。
+  // width:100%＋preserveAspectRatio="none"でグラフを横幅いっぱいに広げる(非等倍スケール)ため、
+  // SVG内蔵のtextだと文字が横方向だけ歪むのを避ける。位置は%指定でpadL/Wと連動させ目盛り線とズレないようにする。
+  var rankLeftPct = (padL/W*100).toFixed(2);
+  var rankLabels = gridRanks.map(function(gn){
+    var gy=fy(gn);
+    return '<span class="prTrendRankLbl" style="left:'+rankLeftPct+'%;top:'+gy.toFixed(1)+'px;">'+gn+'</span>';
+  }).join('');
+  var dateLeftPct = (padL/W*100).toFixed(2), dateRightPct = (padR/W*100).toFixed(2);
+  var dateLabels = '<span class="prTrendDateLbl" style="left:'+dateLeftPct+'%;">'+escHtml(asc[0].date||'')+'</span>'
+    + '<span class="prTrendDateLbl" style="right:'+dateRightPct+'%;">'+escHtml(asc[asc.length-1].date||'')+'</span>';
+  var svg = '<svg class="prTrendChart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:100%;height:'+H+'px;">'
+    + gridLines
     + '<polyline points="'+poly+'" fill="none" stroke="#7c5cff" stroke-width="1.6" opacity="0.75"/>'
     + dots
-    + '<text x="'+padL+'" y="'+(H-4)+'" font-size="8" fill="#8a97a6">'+escHtml(asc[0].date||'')+'</text>'
-    + '<text x="'+(W-padR)+'" y="'+(H-4)+'" font-size="8" fill="#8a97a6" text-anchor="end">'+escHtml(asc[asc.length-1].date||'')+'</text>'
     + '</svg>';
   return '<div class="prTrendWrap">'
     + '<div class="prTrendHd"><span>📈 着順の推移（タップで詳細）</span>'
     +   '<span class="prTrendLegend"><span style="color:#d4af37;">●G1</span><span style="color:#8a8a8a;">●G2</span><span style="color:#b87333;">●G3</span><span style="color:#6b6ecf;">●L/OP</span></span></div>'
-    + svg
+    + '<div class="prTrendBox">' + svg + rankLabels + dateLabels + '</div>'
     + '<div class="prTrendInfo" style="display:none;"></div>'
     + '</div>';
 }
@@ -3567,15 +3628,18 @@ function doApplyBetPlan(planIdx){
 /* ページ内ナビの現在地ハイライト（scroll-spy）＋ アクティブchipをナビ内に自動センタリング */
 (function(){
   var nav=document.querySelector('.tocnav'); if(!nav) return;
-  var links=[].slice.call(nav.querySelectorAll('a'));
+  // 横スクロールするのは.tocnav-scroll(ページ内アンカー分)のみ。「能力比較・シミュ」は
+  // 別ページ遷移の固定チップのため対象外（そちらのhrefは#で始まらずidも一致しないので自然に除外される）。
+  var scrollBox=nav.querySelector('.tocnav-scroll')||nav;
+  var links=[].slice.call(scrollBox.querySelectorAll('a'));
   var map={}; links.forEach(function(a){ map[a.getAttribute('href').slice(1)]=a; });
   var secs=Object.keys(map).map(function(id){return document.getElementById(id);}).filter(Boolean);
   if(!secs.length) return;
   function setActive(id){
     links.forEach(function(a){a.classList.remove('active');});
     var a=map[id]; if(!a) return; a.classList.add('active');
-    if(nav.scrollWidth>nav.clientWidth+4){
-      nav.scrollTo({left:a.offsetLeft-nav.clientWidth/2+a.offsetWidth/2,behavior:'smooth'});
+    if(scrollBox.scrollWidth>scrollBox.clientWidth+4){
+      scrollBox.scrollTo({left:a.offsetLeft-scrollBox.clientWidth/2+a.offsetWidth/2,behavior:'smooth'});
     }
   }
   var io=new IntersectionObserver(function(ents){
