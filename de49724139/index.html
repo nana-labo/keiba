@@ -3797,10 +3797,10 @@ body.kbModalOpen .portalBack{display:none;}
 @media print{.portalBack{display:none;}}
 </style>
 
-<button id="fbOpen" class="fb-fab" type="button" aria-label="改善要望を送る">💬 要望</button>
+<button id="fbOpen" class="fb-fab" type="button" aria-label="改善要望を送る">要望</button>
 <div id="fbModal" class="fb-modal" aria-hidden="true">
   <div class="fb-card" role="dialog" aria-modal="true" aria-label="改善要望フォーム">
-    <div class="fb-hd"><span>💬 改善要望・バグ報告</span><button id="fbClose" class="fb-x" type="button" aria-label="閉じる">×</button></div>
+    <div class="fb-hd"><span>改善要望・バグ報告</span><button id="fbClose" class="fb-x" type="button" aria-label="閉じる">×</button></div>
     <div class="fb-l">カテゴリ
       <div class="fb-catChips" id="fbCatChips"></div>
       <select id="fbCat" hidden><option>予想の中身</option><option>UI・使い勝手</option><option>バグ</option><option>データの誤り</option><option>新機能</option><option>その他</option></select></div>
@@ -3809,8 +3809,8 @@ body.kbModalOpen .portalBack{display:none;}
     <label class="fb-l">内容
       <textarea id="fbText" rows="5" placeholder="気づいた点・欲しい機能・不具合など。どのレース/画面かも書くと助かります。"></textarea></label>
     <div class="fb-shot">
-      <button id="fbCap" type="button">📷 今の画面を撮る</button>
-      <label class="fb-file">🖼 画像を選ぶ<input id="fbFile" type="file" accept="image/*"></label>
+      <button id="fbCap" type="button">今の画面を撮る</button>
+      <label class="fb-file">画像を選ぶ<input id="fbFile" type="file" accept="image/*"></label>
       <button id="fbShotClear" type="button" hidden>取消</button>
       <img id="fbPrev" alt="添付プレビュー" hidden>
     </div>
@@ -3865,8 +3865,9 @@ body.kbModalOpen .fb-fab{display:none;}
    bottom は .toTop（bottom:74px・高さ44px）の上に来るよう 126px を確保。 */
 @media(max-width:600px){
   .fb-fab{top:auto;right:15px;bottom:126px;bottom:calc(126px + env(safe-area-inset-bottom));
-    width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;font-size:0;}
-  .fb-fab::before{content:"💬";font-size:1.05rem;}
+    width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;
+    font-size:.66rem;line-height:1.15;text-align:center;}
+  
 }
 </style>
 <script>
