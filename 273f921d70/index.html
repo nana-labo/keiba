@@ -3843,7 +3843,15 @@ body.kbModalOpen .fb-fab{display:none;}
 .fb-send{background:#1a5a8a;color:#fff;border:none;border-radius:9px;padding:10px 20px;font-weight:800;font-size:.92rem;cursor:pointer;}
 .fb-send[disabled]{opacity:.55;cursor:default;}
 .fb-note{font-size:.7rem;color:#8a97a6;margin-top:10px;line-height:1.5;}
-@media(max-width:520px){.fb-fab{padding:7px 12px;font-size:.8rem;right:10px;top:8px;}}
+/* スマホでは右上固定の要望ボタンが sticky な目次ナビ(.tocnav)に重なり、右端の
+   「能力比較・シミュ」導線を約65×34pxぶん覆っていた（390px実測・2026-07-25指摘）。
+   ナビの帯を避けて右下（トップへ戻るボタンの上）へ移し、アイコンのみの小型FABにする。
+   bottom は .toTop（bottom:74px・高さ44px）の上に来るよう 126px を確保。 */
+@media(max-width:600px){
+  .fb-fab{top:auto;right:15px;bottom:126px;bottom:calc(126px + env(safe-area-inset-bottom));
+    width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;font-size:0;}
+  .fb-fab::before{content:"💬";font-size:1.05rem;}
+}
 </style>
 <script>
 (function(){

@@ -47,6 +47,26 @@
   .kpi b{display:block;font-size:1.5rem;font-weight:800;letter-spacing:-.02em;font-feature-settings:"tnum" 1;}
   .kpi span{display:block;color:var(--sub);font-size:.74rem;margin-top:2px;}
   .kpi small{display:block;color:#8494a6;font-size:.67rem;margin-top:3px;}
+  /* 今週のレース：カード全体がレースページへのリンク。1件でも大きく出して最初の目的に直結させる */
+  .weekCards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:12px;margin-top:12px;}
+  .wk{display:grid;grid-template-columns:auto 1fr;grid-template-areas:"g t" "g d" "go go";gap:4px 10px;
+    text-decoration:none;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:14px;padding:15px 17px;box-shadow:var(--shadow-1);transition:transform .15s,box-shadow .15s,border-color .15s;}
+  .wk:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(13,40,70,.16);border-color:var(--accent);}
+  .wk:active{transform:translateY(0);}
+  .wk .grade{grid-area:g;align-self:center;}
+  .wk .wkt{grid-area:t;font-size:1.06rem;font-weight:700;color:var(--ink);line-height:1.28;letter-spacing:-.01em;}
+  .wk .wkd{grid-area:d;font-size:.78rem;color:var(--sub);font-feature-settings:"tnum" 1;}
+  .wk .wkgo{grid-area:go;margin-top:8px;font-size:.82rem;font-weight:700;color:var(--accent);}
+  .wkNone{margin:12px 0 0;font-size:.84rem;color:var(--sub);}
+  /* 過去レースは既定で畳む。14レース全展開だと成績表まで約2,300pxかかっていた */
+  .histFold{margin-top:16px;border:1px solid var(--line);border-radius:12px;background:var(--card);box-shadow:var(--shadow-1);}
+  .histFold>summary{cursor:pointer;list-style:none;padding:12px 15px;font-weight:700;font-size:.88rem;color:var(--accent-deep);display:flex;align-items:center;gap:4px;}
+  .histFold>summary::-webkit-details-marker{display:none;}
+  .histFold>summary::after{content:"⌄";margin-left:auto;color:var(--sub);font-weight:700;transition:transform .2s;}
+  .histFold[open]>summary{border-bottom:1px solid var(--line);}
+  .histFold[open]>summary::after{transform:rotate(180deg);}
+  .histFold .explorer{margin:0;padding:13px 15px 15px;}
   .bnote{background:#fbf4e2;border:1px solid #e7d9b3;color:#7a6326;font-size:.73rem;line-height:1.5;border-radius:10px;padding:9px 12px;margin:12px 0;}
   .glossary{background:#f2f7fc;border:1px solid #dce8f2;border-radius:10px;padding:9px 12px;margin:0 0 12px;}
   .glossary summary{cursor:pointer;font-size:.78rem;font-weight:700;color:var(--accent-deep);list-style:none;}
@@ -64,7 +84,6 @@
   .dhd{display:flex;align-items:center;gap:9px;}
   .dhd h4{margin:0;font-size:1.02rem;font-weight:800;letter-spacing:-.01em;color:var(--ink);}
   .dmeta{color:#8494a6;font-size:.72rem;margin:3px 0 12px;}
-  .dwait{color:var(--sub);font-size:.82rem;margin:10px 0 14px;}
   .drow{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;margin-bottom:12px;}
   .dbig{font-size:2rem;font-weight:800;letter-spacing:-.02em;font-feature-settings:"tnum" 1;line-height:1;}
   .dsub{font-size:.74rem;color:var(--sub);line-height:1.45;}
@@ -119,14 +138,18 @@
       <span class="count">14 レース収録</span>
     </header>
     <section class="board today">
-      <div class="bhd"><h2>🏇 レースを選ぶ</h2><span class="asof">2026-07-25時点</span></div>
-      <div class="explorer">
-        <div class="detail" id="rcDetail"></div>
-        <aside class="picker">
-          <h3>レースを選ぶ<span id="rcCount"></span></h3>
-          <div class="picklist" id="rcList"></div>
-        </aside>
-      </div>
+      <div class="bhd"><h2>🏇 今週のレース</h2><span class="asof">2026-07-25時点</span></div>
+      <div class="weekCards" id="rcWeek"></div>
+      <details class="histFold" id="rcHist">
+        <summary>🗂 履歴を見る<span id="rcCount"></span></summary>
+        <div class="explorer">
+          <div class="detail" id="rcDetail"></div>
+          <aside class="picker">
+            <h3>過去のレース</h3>
+            <div class="picklist" id="rcList"></div>
+          </aside>
+        </div>
+      </details>
     </section>
     <section class="board">
       <div class="bhd"><h2>📊 実戦成績表</h2><span class="asof">スナップショット 2026-07-25 ・ 結果あり 12レース（検証済 2）</span></div>
@@ -161,22 +184,28 @@
       const roiTxt = r => r==null ? '—' : r.toFixed(2);
       const list=document.getElementById('rcList');
       const detail=document.getElementById('rcDetail');
-      document.getElementById('rcCount').textContent=' '+RACES.length;
+      // 「今週（結果待ち）」と「過去（結果あり）」を分ける。
+      // 以前は14レースを同じ chip で一列に並べていたため、(a) 成績表まで約2,300px スクロールが必要で、
+      // (b) 未確定レースはタップで即遷移・過去レースは詳細欄を書き換えるだけ、と同じ見た目で
+      // 挙動が違っていた（2026-07-25指摘）。今週は「カード自体がリンク＝遷移」、
+      // 過去は「履歴を畳んだ中で詳細欄を切り替え」に役割を分け、見た目と挙動を一致させる。
+      const upcoming = RACES.map((r,i)=>({r,i})).filter(x=>!x.r.hasResult);
+      const past = RACES.map((r,i)=>({r,i})).filter(x=>x.r.hasResult);
+      document.getElementById('rcWeek').innerHTML = upcoming.length
+        ? upcoming.map(({r})=>`<a class="wk" href="${r.slug}/"><span class="grade ${r.gcls}">${r.grade}</span><b class="wkt">${r.title}</b><span class="wkd">${r.date||''}</span><span class="wkgo">予想を見る →</span></a>`).join('')
+        : '<p class="wkNone">結果待ちのレースはありません。下の履歴からご覧ください。</p>';
+      document.getElementById('rcCount').textContent=' （'+past.length+'レース）';
       function chip(r,i){
-        const roi = r.hasResult ? `<span class="rchip" style="color:${roiCol(r.roi)};border-color:${roiCol(r.roi)}44">ROI ${roiTxt(r.roi)}</span>` : '<span class="rchip wait">結果待ち</span>';
+        const roi = `<span class="rchip" style="color:${roiCol(r.roi)};border-color:${roiCol(r.roi)}44">ROI ${roiTxt(r.roi)}</span>`;
         return `<button class="pk" data-i="${i}"><span class="grade ${r.gcls}">${r.grade}</span><span class="pkt">${r.title}</span>${roi}</button>`;
       }
-      list.innerHTML = RACES.map(chip).join('');
+      list.innerHTML = past.map(x=>chip(x.r,x.i)).join('');
       function select(i){
         const r=RACES[i];
-        [...list.children].forEach((c,j)=>c.classList.toggle('on', j===i));
+        // list の並びは past だけなので、RACES の添字ではなく data-i で突き合わせる
+        [...list.children].forEach(c=>c.classList.toggle('on', +c.dataset.i===i));
         let h=`<div class="dhd"><span class="grade ${r.gcls}">${r.grade}</span><h4>${r.title}</h4></div>`;
         h+=`<div class="dmeta">${r.date||''}</div>`;
-        if(!r.hasResult){
-          h+=`<div class="dwait">まだ結果未確定（予想は公開済み）。</div>`;
-          h+=`<a class="dopen" href="${r.slug}/">レースページを開く →</a>`;
-          detail.innerHTML=h; return;
-        }
         const vp = r.verify==='verified' ? '<span class="pill pv">検証済</span>' : '<span class="pill pr">参考</span>';
         h+=`<div class="drow"><div class="dbig" style="color:${roiCol(r.roi)}">${roiTxt(r.roi)}</div><div class="dsub">実戦ROI ${vp}<br><span class="mut">${r.cost.toLocaleString()}円 → ${r.ret.toLocaleString()}円</span></div>`;
         h+=`<div class="dsub">◎結果<br><b style="color:${r.o.col}">${r.o.label}</b></div></div>`;
@@ -189,31 +218,13 @@
         h+=`<a class="dopen" href="${r.slug}/">レースページ・振り返りを開く →</a>`;
         detail.innerHTML=h;
       }
+      // 履歴内は「タップで詳細欄を切り替える」だけ。遷移は詳細欄のリンクから行う（挙動を統一）
       list.addEventListener('click',e=>{
         const b=e.target.closest('.pk'); if(!b) return;
-        const i=+b.dataset.i, r=RACES[i];
-        if(!r.hasResult){ location.href=`${r.slug}/`; return; }
-        select(i);
+        select(+b.dataset.i);
       });
-      // 既定選択レース：RACESは既に「今日に近い順」で並んでいるが、念のため独立に算出する。
-      // 結果待ちレースの中から「今日に最も近い」ものを選ぶ（今日以降が無ければ直近の過去にフォールバック）。
-      function parseJDate(s){
-        const m = s && s.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
-        return m ? new Date(+m[1], +m[2]-1, +m[3]) : null;
-      }
-      function daysFromToday(d){
-        if(!d) return Infinity;
-        const t=new Date(); t.setHours(0,0,0,0);
-        const dd=new Date(d); dd.setHours(0,0,0,0);
-        return Math.round((dd-t)/86400000);
-      }
-      let def=0;
-      const pending = RACES.map((r,i)=>({i, diff:daysFromToday(parseJDate(r.date))})).filter(c=>!RACES[c.i].hasResult);
-      if(pending.length){
-        const upcoming = pending.filter(c=>c.diff>=0).sort((a,b)=>a.diff-b.diff);
-        def = (upcoming.length ? upcoming : pending.slice().sort((a,b)=>Math.abs(a.diff)-Math.abs(b.diff)))[0].i;
-      }
-      select(def);
+      // RACES は「今日に近い順」に並んでいるので、履歴の既定選択は past の先頭（＝直近の過去レース）
+      if(past.length) select(past[0].i);
     })();
     </script>
 
