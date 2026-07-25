@@ -3826,6 +3826,10 @@ function doApplyBetPlan(planIdx){
   font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;transition:transform .15s,box-shadow .15s,background .15s;}
 .portalBack:hover{background:#fff;border-color:#22618f;box-shadow:0 5px 16px rgba(13,40,70,.26);}
 .portalBack:active{transform:scale(.96);}
+/* 全戦績/メモモーダル(z-index:1000)より手前(9999)に居るため、暗いオーバーレイの上に
+   「←」だけが残り、誤タップでページごと離脱してしまっていた（2026-07-26指摘）。
+   要望ボタン(.fb-fab)と同じく body.kbModalOpen で退避する。 */
+body.kbModalOpen .portalBack{display:none;}
 /* モバイルは本文と重なりやすいとの指摘（2026-07-19）。アイコンのみのコンパクト表示に切り替える */
 @media(max-width:560px){
   .portalBack{padding:0;width:40px;height:40px;justify-content:center;font-size:0;}
