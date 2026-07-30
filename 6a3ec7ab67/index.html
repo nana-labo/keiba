@@ -1139,7 +1139,9 @@
   <!-- 他者の見方（事前評価）：X / note / Web 記事の引用カードでバランスをとる -->
 
   <h2 class="sec" id="views">他者の見方（事前評価）</h2>
-  <p class="lead">主要プロ予想家・メディア・関係者コメントの一次引用。情報源の重みを可視化して、自分の印付けを多角的に裏付ける／反証する。</p>
+  <!-- 実データには note 等の二次情報(T2)も並ぶため、全部を「一次引用」と説明しない
+       （2026-07-30 指摘: 情報階層の表示と説明が矛盾していた） -->
+  <p class="lead">主要プロ予想家・メディア・関係者コメントの引用。一次情報と二次情報が混在するため、各カードの情報源表示（集計／一次／二次）で重みを確かめたうえで、自分の印付けを裏付ける／反証する材料に使う。</p>
   <div class="viewsGrid" id="viewsBox"></div>
 
   <h2 class="sec" id="pending">⏳ 今後の更新予定（チェックリスト）</h2>
@@ -1833,12 +1835,20 @@ function pvRelTime(asof){
   var TIER_LABEL = {T0:'集計情報', T1:'一次情報', T2:'二次情報'};
   function friendlySrc(src){
     var m = String(src||'').match(/^(T[0-2]):(.*)$/);
-    return m ? (TIER_LABEL[m[1]]||m[1])+'：'+m[2] : src;
+    return escHtml(m ? (TIER_LABEL[m[1]]||m[1])+'：'+m[2] : src);
+  }
+  // 外部記事から機械取得した値をそのまま innerHTML に入れると、取得元にHTMLが混ざった時点で
+  // 公開サイト上で任意スクリプトが動く（2026-07-30 指摘）。文字列は escHtml、URLは
+  // http/https のみ許可して javascript: 等のスキームを落とす。
+  function safeUrl(u){
+    var s = String(u||'').trim();
+    return /^https?:\/\//i.test(s) ? escHtml(s) : '';
   }
   box.innerHTML = list.map(function(v){
-    var stance = v.stance ? ' stance-'+v.stance : '';  // bull / bear / data
-    var target = v.target ? '<span class="target">対象：'+v.target+'</span>' : '';
-    var link = v.url ? '<span class="vcLink"><a href="'+v.url+'" target="_blank" rel="noopener">原文を見る →</a></span>' : '';
+    var stance = /^[a-z]+$/.test(String(v.stance||'')) ? ' stance-'+v.stance : '';  // bull / bear / data
+    var target = v.target ? '<span class="target">対象：'+escHtml(v.target)+'</span>' : '';
+    var href = safeUrl(v.url);
+    var link = href ? '<span class="vcLink"><a href="'+href+'" target="_blank" rel="noopener">原文を見る →</a></span>' : '';
     return '<div class="viewCard'+stance+'">'
          + '<div class="vcTop"><span class="src">'+friendlySrc(v.src)+'</span>'+target+'</div>'
          + '<p class="vcText">「'+emphText(v.text || v.title)+'」</p>'
@@ -3634,11 +3644,17 @@ runDefaultSim();
 initBetSlip();
 
 // ========== 最終判断（印・評価・適性・シミュ結果を1頭1枚に統合） ==========
-function verdictBetLean(winPct, tier, score){
+// hasOdds: この馬の単勝オッズが実値で取れているか / fullField: 全頭がシミュ対象か。
+// 「単勝が面白い」は確率とオッズを突き合わせた妙味の主張なので、オッズ未取得や
+// 部分集合シミュの段階では言えない（2026-07-30 指摘）。条件を満たさない場合は
+// 勝率が高いという事実だけを述べ、価値判断には踏み込まない。
+function verdictBetLean(winPct, tier, score, hasOdds, fullField){
   // winPct が null = シミュ対象外(能力データ未整備)。勝率0%として扱うと「押さえ程度」等の
   // 断定が出てしまうため、判定に入れず未算出であることを明示する。
   if(winPct==null) return 'シミュ未算出（能力データ未整備）。印と採点で判断';
-  if(winPct>=20) return '軸候補。単勝も面白い';
+  if(winPct>=20) return (hasOdds && fullField)
+      ? '軸候補。単勝も面白い'
+      : '軸候補。単勝の妙味はオッズ確定後に判断';
   // 低勝率の判定を score より先に置く。以前は score<3.2 の分岐が先にあったため、
   // シミュ勝率1%の馬にも「複勝圏重視」と表示されていた（2026-07-25 指摘）。
   if(winPct<3) return '人気になれば厳しい。押さえ程度';
@@ -3696,7 +3712,9 @@ function verdictBetLean(winPct, tier, score){
     var conf = sc.confidence_avg!=null ? confWord(sc.confidence_avg) : '';
     var winPct = (excluded[h.no] || !N) ? null : pct(h.no);
     var reasonBits = [(h.tags_strong||[])[0], (h.tags_weak||[])[0]].filter(Boolean);
-    var lean = verdictBetLean(winPct, tier, score);
+    var hasOdds = (h.odds!=null && h.pop_provisional===false);
+    var fullField = (SIM_EXCLUDED.length===0);
+    var lean = verdictBetLean(winPct, tier, score, hasOdds, fullField);
     var bits = [];
     if(score!=null) bits.push('総合評価'+score.toFixed(1)+'/5');
     if(tier) bits.push('コース適性'+tier);
@@ -4253,18 +4271,32 @@ body.kbModalOpen .fb-fab{display:none;}
     var btn=$("fbSend");btn.disabled=true;
     var payload={category:$("fbCat").value,priority:$("fbPri").value,text:text,shot:shot||"",
       url:location.href,ua:navigator.userAgent,hp:$("fbHp").value};
-    // GAS(Google Apps Script)はコールドスタートで応答に数秒かかることがあり、
-    // 応答を待ってから完了表示すると「送信に時間がかかる」と感じられる（実機報告）。
-    // 送信リクエスト自体はバックグラウンドで継続させ、UIは即座に完了表示へ切り替える。
+    // GAS(Google Apps Script)はコールドスタートで応答に数秒かかることがあるため、待っている間は
+    // 「送信中…」を出す。以前は待ち時間を嫌って即座に「送信しました」と表示し、通信失敗時も
+    // そのまま成功に見せていた（オフラインでも成功と誤認させ、入力内容も消していた。2026-07-30 指摘）。
+    // 完了表示はリクエストが実際に成立してからに限る。
+    msg.className="fb-msg";msg.textContent="送信中…";
+    function ok(){
+      msg.className="fb-msg ok";msg.textContent="送信しました。ありがとうございます！";
+      $("fbText").value="";setPrev(null);
+      setTimeout(close,700);setTimeout(function(){btn.disabled=false;msg.textContent="";msg.className="fb-msg";},900);
+    }
+    function ng(t){
+      // 入力内容は消さない。書き直しをさせないため。
+      msg.className="fb-msg ng";msg.textContent=t;btn.disabled=false;
+    }
     fetch(GAS_URL,{method:"POST",body:JSON.stringify(payload)})
       .then(function(r){return r.json().catch(function(){return {ok:true};});})
       .then(function(j){
-        if(j&&j.ok===false){msg.className="fb-msg ng";msg.textContent="送信エラー: "+(j.error||"不明");btn.disabled=false;}
+        if(j&&j.ok===false) ng("送信エラー: "+(j.error||"不明")+"。もう一度お試しください。");
+        else ok();
       })
-      .catch(function(){/* CORSで応答が読めないだけのことが多く、送信自体は届いている想定のため無視 */});
-    msg.className="fb-msg ok";msg.textContent="送信しました。ありがとうございます！";
-    $("fbText").value="";setPrev(null);
-    setTimeout(close,700);setTimeout(function(){btn.disabled=false;msg.textContent="";msg.className="fb-msg";},900);
+      .catch(function(){
+        // fetch の失敗は「本当に届かなかった」場合と「CORSで応答を読めないだけ」の場合がある。
+        // オフラインは前者と断定できるので、成功に見せない。
+        if(!navigator.onLine) ng("送信できませんでした（オフラインのようです）。接続後に再送してください。");
+        else ok();   // 応答不透明だがリクエスト自体は送出済み
+      });
   });
 })();
 </script>
