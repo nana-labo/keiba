@@ -32,14 +32,17 @@
   header.hero::after{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg, transparent, rgba(255,255,255,.18) 40%, rgba(255,255,255,.08) 70%, transparent);}
   header.hero h1{margin:0 0 10px;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-.02em;font-weight:700;line-height:1.15;text-wrap:balance;position:relative;}
   header.hero .meta{font-size:.93rem;opacity:.80;letter-spacing:.008em;line-height:1.6;position:relative;}
-  .heroVisual{position:relative;display:grid;grid-template-columns:170px 1fr;gap:12px;margin-top:18px;}
-  .weatherOrb{min-height:148px;border-radius:18px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);display:flex;flex-direction:column;justify-content:space-between;padding:14px;box-shadow:0 1px 0 rgba(255,255,255,.10) inset;}
-  .weatherOrb .big{font-size:3.2rem;line-height:1;text-shadow:0 8px 20px rgba(0,0,0,.24);}
-  .weatherOrb b{font-size:1.12rem;line-height:1.25;}
-  .weatherOrb small{display:block;color:rgba(255,255,255,.72);font-size:.72rem;line-height:1.35;margin-top:3px;}
-  .signalArea{min-width:0;display:flex;flex-direction:column;gap:9px;}
-  .signalHead{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.04em;display:flex;align-items:center;gap:6px;}
-  .signalGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(116px,1fr));gap:10px;}
+  .heroVisual{position:relative;display:grid;grid-template-columns:170px 1fr;gap:8px 12px;margin-top:18px;}
+  /* signalHeadをheroVisualの1行目にフルスパンで置き、weatherOrb/signalGridを2行目の同じ行の
+     2カラムにする（heroVisual直下の子2つがそのままGrid行になり、高さが揃う）。
+     以前はsignalHeadがweatherOrbと同じ列のsignalArea内にネストされており、weatherOrbだけ
+     ヘッダー分(~30px)上に飛び出て縦長に見えるズレが残っていた（2026-07-24 恒久修正）。 */
+  .weatherOrb{min-width:0;border-radius:18px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);display:flex;flex-direction:column;justify-content:space-between;padding:11px;box-shadow:0 1px 0 rgba(255,255,255,.10) inset;}
+  .weatherOrb .big{font-size:2.3rem;line-height:1;text-shadow:0 8px 20px rgba(0,0,0,.24);}
+  .weatherOrb b{font-size:1rem;line-height:1.2;}
+  .weatherOrb small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:rgba(255,255,255,.72);font-size:.7rem;line-height:1.3;margin-top:2px;}
+  .signalHead{grid-column:1/-1;font-size:.82rem;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.04em;display:flex;align-items:center;gap:6px;}
+  .signalGrid{min-width:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(116px,1fr));gap:10px;}
   .signalCard{min-height:86px;border-radius:14px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);padding:10px 11px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 1px 0 rgba(255,255,255,.08) inset;}
   .signalCard .icon{font-size:1.5rem;line-height:1;}
   .signalCard b{display:block;font-size:.68rem;color:rgba(255,255,255,.68);letter-spacing:.07em;margin-bottom:2px;}
@@ -140,7 +143,7 @@
   .pendingCard.done{background:#eef7f2;border-color:#bce0cc;border-left-color:#0f8456;}
   .pendingCard.done h4{color:#0f6447;}
   .pendingCard.done h4 .when{color:#0f8456;}
-  /* 💬 他者の見方 */
+  /* 他者の見方 */
   .viewsGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:10px;}
   .viewCard{background:#faf7ec;border-left:4px solid var(--gold);padding:11px 14px;border-radius:0 8px 8px 0;font-size:.84rem;line-height:1.6;}
   .viewCard .vcTop{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0 0 6px;font-size:.74rem;}
@@ -159,12 +162,19 @@
   .viewCard.stance-data .src{color:#13344f;}
   .wx{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
   .wx span{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);padding:5px 12px;border-radius:999px;font-size:.8rem;backdrop-filter:blur(4px);font-feature-settings:"tnum" 1;}
-  .tocnav{position:sticky;top:8px;background:rgba(248,251,255,.88);backdrop-filter:saturate(200%) blur(16px);-webkit-backdrop-filter:saturate(200%) blur(16px);border:1px solid rgba(200,214,228,.70);border-radius:999px;padding:7px 16px;margin:16px 0;display:flex;gap:4px;font-size:.84rem;flex-wrap:wrap;box-shadow:0 1px 0 rgba(255,255,255,.9) inset, var(--shadow-1);z-index:10;}
+  /* 「能力比較・シミュ」はページ内アンカーの他タブと性質が違う(別ページ遷移)ため、
+     スクロール領域(.tocnav-scroll)から構造的に分離し、常に見える固定チップ(.toc-detail)にする。
+     縦の高さは1pxも増やさず、モバイルで横スクロールしても右端に埋もれない（2026-07-19の
+     「2段折り返しは縦を占有しすぎる」という却下理由には抵触しない）。 */
+  .tocnav{position:sticky;top:8px;background:rgba(248,251,255,.88);backdrop-filter:saturate(200%) blur(16px);-webkit-backdrop-filter:saturate(200%) blur(16px);border:1px solid rgba(200,214,228,.70);border-radius:999px;padding:7px 7px 7px 16px;margin:16px 0;display:flex;align-items:center;gap:6px;font-size:.84rem;box-shadow:0 1px 0 rgba(255,255,255,.9) inset, var(--shadow-1);z-index:10;}
+  .tocnav-scroll{display:flex;flex-wrap:wrap;gap:4px;flex:1 1 auto;min-width:0;}
   .tocnav a{color:var(--sub);text-decoration:none;font-weight:600;padding:5px 12px;border-radius:999px;transition:background var(--dur) var(--ease), color var(--dur) var(--ease);}
   .tocnav a:hover{background:var(--accent-soft);color:var(--accent-deep);}
   .tocnav a:active{transform:translateY(1px);}
   .tocnav a.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(26,90,138,.30);}
   .toc-div{flex:0 0 auto;align-self:center;width:1px;height:15px;background:var(--line);margin:0 2px;}
+  .toc-detail{flex:0 0 auto;background:var(--accent);color:#fff !important;font-weight:700;box-shadow:0 2px 8px rgba(26,90,138,.28);white-space:nowrap;}
+  .toc-detail:hover{background:var(--accent-deep);color:#fff;}
   .digest{margin:16px 0 18px;}
   .digestHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px;}
   .digestHead h2{margin:0;font-size:1rem;line-height:1.2;letter-spacing:.02em;color:var(--accent-deep);}
@@ -245,7 +255,7 @@
   .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-2);border-color:color-mix(in srgb, var(--c, #888) 25%, var(--line));}
   .card .top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:4px 0 10px;}
   .card .mark{font-weight:700;font-size:1.3rem;color:var(--c,#333);letter-spacing:-.02em;}
-  .card .num{font-size:.78rem;color:#fff;background:var(--c,#888);border-radius:6px;padding:2px 9px;font-weight:700;font-feature-settings:"tnum" 1;}
+  .card .num{font-size:.78rem;color:var(--onc,#fff);background:var(--c,#888);border-radius:6px;padding:2px 9px;font-weight:700;font-feature-settings:"tnum" 1;}
   .card .name{font-size:1.15rem;font-weight:700;letter-spacing:-.01em;}
   .card .pop{margin-left:auto;font-size:.76rem;color:var(--sub);font-feature-settings:"tnum" 1;}
   .oshi{font-size:.84rem;color:#5c4a10;background:rgba(138,112,32,.07);border-radius:var(--radius-md);padding:8px 12px;margin:8px 0;border-left:3px solid var(--gold);font-weight:600;}
@@ -259,6 +269,14 @@
   .favClearBtn.show{display:inline-block;}
   .favClearBtn:hover{opacity:1;background:#f5f5f5;}
   .favClearBtn.sm{width:16px;height:16px;font-size:.56rem;line-height:14px;margin-left:2px;}
+  /* お気に入り(+)/メモ(✎)ボタンの置き場所。カード最下部だと押すたびに下までスクロールが要るため、
+     カード先頭(.top/.hd の前)の独立した1行として右上に置く(2026-07-29 指摘)。
+     absolute ではなく通常フローの行なので、float の馬体写真や details の開閉状態と衝突しない。 */
+  /* 見出し行（.top / .hd）の中に入れて右端へ寄せる。専用行を作ると馬名の上に1行まるごと
+     余白ができて場所を食うため（2026-07-30 指摘）。モバイルは pop が flex-basis:100% で
+     次行に落ちるので、DOM上 pop より前に置くことで馬名と同じ行の右端に収まる */
+  .cardActions{display:flex;align-items:center;gap:6px;margin-left:auto;}
+  .cardActions .favBtn, .cardActions .memoBtn{margin-left:0;}
   /* 印の選択メニュー(◎○▲△☆を縦積み。body直下にfixed配置し、overflow:hiddenのカード内に置くと見切れる問題を回避) */
   .markPicker{display:none;position:fixed;z-index:9999;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(15,26,38,.22);padding:6px;gap:3px;}
   .markOpt{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;width:28px;height:28px;font-size:.95rem;line-height:26px;text-align:center;padding:0;font-family:inherit;color:var(--ink);transition:transform .1s ease, background .1s ease;}
@@ -308,7 +326,6 @@
   .bsBudget label{font-weight:700;font-size:.86rem;}
   .bsBudget input{width:150px;padding:7px 9px;border:1px solid var(--line);border-radius:7px;font-size:.95rem;}
   .bsBudget .bsNote{font-size:.72rem;color:var(--sub);}
-  .bsRefTitle{font-size:.74rem;color:var(--sub);font-weight:700;margin:6px 0 4px;}
   /* 馬一覧は2段組で一画面に収める。各行は馬紹介カードへのリンク */
   .bsRef{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;margin-bottom:14px;}
   .bsRefRow{display:grid;grid-template-columns:1.5em auto 1fr auto;gap:6px;align-items:center;padding:4px 9px;font-size:.78rem;border:1px solid var(--line);border-radius:7px;text-decoration:none;color:var(--ink);background:#fff;transition:background .12s;}
@@ -411,11 +428,14 @@
   /* 適性プロフィール（好走時の実測平均 vs 今回。コース適性(.apt)と対にした馬体重/斤量/距離版） */
   .fitProfile{margin:6px 0;padding:8px 11px;background:var(--accent-soft);border:1px solid rgba(26,90,138,.14);border-left:3px solid #7c5cff;border-radius:8px;}
   .fitProfile-h{font-size:.76rem;font-weight:700;color:var(--accent-deep);margin-bottom:4px;}
-  .fitRow{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px;font-size:.78rem;color:#2e4260;line-height:1.6;}
-  .fitLbl{font-weight:700;min-width:4.6em;}
-  .fitVal{color:var(--sub);}
-  .fitArrow{color:var(--sub);}
-  .fitDiff{font-weight:700;color:#5b3fa8;}
+  .fitProfile-n{font-weight:600;color:var(--sub);font-size:.9em;margin-left:2px;}
+  .fitRow{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px;font-size:.78rem;color:#2e4260;line-height:1.6;}
+  .fitLbl{font-weight:700;min-width:2.4em;color:var(--sub);}
+  .fitNow{font-weight:700;}
+  .fitDiff{color:var(--sub);font-size:.92em;}
+  .fitTag{font-size:.7rem;font-weight:700;padding:1px 7px;border-radius:5px;}
+  .fit-ok .fitTag{background:rgba(15,132,86,.14);color:#0f8456;}
+  .fit-up .fitTag, .fit-down .fitTag{background:rgba(181,100,10,.14);color:#b5640a;}
   /* 全戦績テーブル */
   details.pastfull{margin-top:6px;}
   details.pastfull>summary{cursor:pointer;font-size:.76rem;font-weight:700;color:#3b5fc7;padding:4px 0;}
@@ -431,7 +451,10 @@
   .prTrendHd{font-size:.7rem;font-weight:700;color:var(--accent-deep);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 8px;margin-bottom:2px;}
   .prTrendLegend{font-size:.6rem;font-weight:600;color:var(--sub);white-space:nowrap;}
   .prTrendLegend span{margin-left:5px;}
-  .prTrendChart{max-width:100%;display:block;}
+  .prTrendChart{width:100%;display:block;}
+  .prTrendBox{position:relative;}
+  .prTrendRankLbl{position:absolute;font-size:.52rem;color:#a7b1bd;line-height:1;white-space:nowrap;pointer-events:none;transform:translate(calc(-100% - 3px),-50%);}
+  .prTrendDateLbl{position:absolute;bottom:2px;font-size:.58rem;color:#8a97a6;line-height:1;white-space:nowrap;pointer-events:none;}
   .prTrendInfo{margin-top:3px;font-size:.72rem;color:var(--ink);background:var(--accent-soft);border-radius:7px;padding:5px 8px;}
   /* 全10走モーダル上部の対象馬ヘッダ（どの馬の記録か明示） */
   .rlHorseHd{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0 0 10px;padding:8px 11px;background:var(--accent-soft);border-radius:9px;}
@@ -474,7 +497,7 @@
   .mini .m{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;font-size:.85rem;border-left:3px solid var(--c,#888);transition:transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);}
   .mini .m:hover{transform:translateY(-1px);box-shadow:var(--shadow-1);}
   .mini .m .hd{font-weight:700;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;margin-bottom:4px;}
-  .mini .m .hd .nm{background:var(--c,#888);color:#fff;padding:1px 6px;border-radius:5px;font-size:.72rem;}
+  .mini .m .hd .nm{background:var(--c,#888);color:var(--onc,#fff);padding:1px 6px;border-radius:5px;font-size:.72rem;}
   .mini .m .row{font-size:.78rem;color:var(--sub);margin-top:3px;}
   .mini .m .why{color:#4a5560;margin-top:5px;font-size:.82rem;}
   .scenarioBox{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:14px;margin-bottom:14px;}
@@ -518,6 +541,12 @@
   .verdictCard .vBits{font-size:.74rem;color:var(--sub);margin-top:3px;}
   .verdictCard .vReason{font-size:.76rem;color:var(--ink);margin-top:3px;}
   .verdictCard .vConcl{font-size:.82rem;font-weight:700;margin-top:6px;color:var(--accent-deep);}
+  /* 印・市場人気・シミュが割れたときの警告。結論を1つに丸めず差異のまま提示する */
+  .verdictWarn{background:#fff8e6;border:1px solid #e0c265;border-left:4px solid #c8901a;border-radius:var(--radius-md);padding:11px 14px;box-shadow:var(--shadow-1);}
+  .verdictWarn b{display:block;font-size:.9rem;color:#8a5c05;margin-bottom:6px;}
+  .verdictWarn ul{margin:0;padding-left:1.2em;}
+  .verdictWarn li{font-size:.82rem;color:var(--ink);line-height:1.55;margin-bottom:3px;}
+  .verdictWarn small{display:block;margin-top:6px;font-size:.75rem;color:#6b5a2e;line-height:1.5;}
   .pickList{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:14px;margin-top:14px;}
   .pickCard{background:var(--card);border:1px solid rgba(138,112,32,.22);border-radius:var(--radius-md);padding:14px 16px;border-left:3px solid var(--gold);transition:transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);box-shadow:var(--shadow-1);}
   .pickCard:hover{transform:translateY(-1px);box-shadow:var(--shadow-2);}
@@ -573,22 +602,35 @@
   .note{font-size:.78rem;color:var(--sub);margin-top:18px;border-top:1px solid var(--line);padding-top:12px;}
   /* === スマホ最適化（<=600px）。PC デザインは不変、狭幅での可読性のみ調整 === */
   @media(max-width:600px){
-    .wrap{padding:16px 12px 56px;}
+    /* 下余白は固定ボタン3つ（左下=アーカイブ / 右下=トップへ戻る / その上=要望）の
+       占有分を確保する。56pxでは最下部までスクロールしたときに本文（最終判断カードの
+       文章）が実際に隠れていた（2026-07-25指摘）。128pxでも一番高い要望ボタン
+       （bottom:126px・高さ40px＝下端から166px）に免責文が被っていたため、
+       166px＋余白14pxの180pxまで広げる（390px実測・2026-07-26指摘）。 */
+    .wrap{padding:16px 12px 180px;padding-bottom:calc(180px + env(safe-area-inset-bottom));}
     header.hero{padding:18px 16px 17px;border-radius:14px;}
     header.hero h1{font-size:1.24rem;line-height:1.22;margin-bottom:5px;}
     header.hero .meta{font-size:.78rem;line-height:1.45;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
-    .heroVisual{grid-template-columns:112px 1fr;gap:8px;margin-top:12px;}
-    /* 天候カードは重要度の割に縦に大きすぎるとの指摘（2026-07-19）。アイコンを縮小し高さを詰める */
-    .weatherOrb{min-height:0;border-radius:14px;padding:10px 12px;}
-    .weatherOrb .big{font-size:2rem;}
-    .weatherOrb b{font-size:.94rem;}
-    .weatherOrb small{font-size:.64rem;}
+    /* 要点は「天候・馬場・コース適性・中心馬」の4項目。1カラムの縦積みだと4行ぶん
+       縦を食うため、2×2 に組み替える（2026-07-26指摘）。
+       signalGrid は display:contents で子カードを heroVisual のグリッドへ直接参加させ、
+       見出し(signalHead)だけ全幅に伸ばす。カード内は「アイコン＋見出し＋値」を1行、
+       補足を2行目に置く。 */
+    .heroVisual{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:12px;align-items:stretch;}
+    .signalHead{grid-column:1/-1;}
+    .signalGrid{display:contents;}
+    .weatherOrb,.signalCard{min-height:0;border-radius:10px;padding:6px 9px;
+      display:flex;flex-direction:row;align-items:baseline;gap:7px;}
+    /* 見出しと値を同じ行に流し、補足(small)だけを flex-basis:100% で次の行へ落とす */
+    .weatherOrb>*:last-child,.signalCard>*:last-child{display:flex;flex-direction:row;
+      align-items:baseline;flex-wrap:wrap;gap:2px 7px;min-width:0;flex:1 1 auto;}
+    .signalCard .icon,.weatherOrb .big{font-size:1.05rem;flex:none;line-height:1.3;}
+    .signalCard b,.weatherOrb b{flex:none;margin:0;}
+    .signalCard b{font-size:.6rem;}
+    .weatherOrb b{font-size:.82rem;line-height:1.2;}
+    .signalCard strong{font-size:.82rem;line-height:1.2;flex:1 1 auto;min-width:0;}
+    .signalCard small,.weatherOrb small{flex:0 0 100%;margin-top:0;font-size:.6rem;line-height:1.25;}
     .weatherOrb .wxMini{display:none;}
-    .signalGrid{grid-template-columns:1fr 1fr;gap:7px;}
-    .signalCard{min-height:57px;border-radius:12px;padding:7px 8px;}
-    .signalCard .icon{font-size:1.25rem;}
-    .signalCard b{font-size:.58rem;}
-    .signalCard strong{font-size:.84rem;line-height:1.12;}
     .signalCard small{display:block;font-size:.6rem;line-height:1.25;margin-top:2px;}
     .signalCard .chaosWhy{font-size:.58rem;}
     .riskDots{margin-top:3px;}
@@ -625,23 +667,30 @@
     .card .top{display:flex;flex-wrap:wrap;align-items:center;gap:5px 7px;}
     .card .pop{flex-basis:100%;margin-left:0;}
     .card .top .favBtn{margin-left:auto;}
-    /* タップ領域が28pxしかなく押しにくいとの指摘（WCAG推奨の44px目安に合わせる）。
-       2026-07-19: .smバリアント（ピック帯・人気薄リスト）も対象外にしていたが引き続き押しにくいとの
-       指摘のため、密なレイアウトでも収まる40px（ほぼ44px相当）まで一律で拡大する。 */
-    .favBtn{width:40px;height:40px;font-size:1.1rem;line-height:38px;}
-    .memoBtn{width:40px;height:40px;font-size:1rem;line-height:38px;}
+    /* タップ領域が28pxしかなく押しにくいとの指摘（WCAG 2.5.5 の44px目安に合わせる）。
+       2026-07-19: .smバリアント（ピック帯・人気薄リスト）も一律拡大する意図で書いたが、
+       2026-07-25 実測では .sm のまま22pxだった。`.favBtn.sm`（詳細度0,2,0）が
+       このモバイル指定（0,1,0）に勝っていたため。セレクタ側に .sm を明示して揃える。 */
+    .favBtn,.favBtn.sm{width:44px;height:44px;font-size:1.1rem;line-height:42px;}
+    .memoBtn,.memoBtn.sm{width:44px;height:44px;font-size:1rem;line-height:42px;}
+    /* 解除✕は隣に並ぶ副操作。44pxでは密になりすぎるため、WCAG 2.5.8 の最小24pxを上回る32pxとする */
+    .favClearBtn,.favClearBtn.sm{width:32px;height:32px;font-size:.72rem;line-height:30px;}
     .horsephoto{float:none;width:100%;margin:2px 0 8px;}
     .horsephoto img{width:100%;height:128px;}
     .horsephoto .photocred{text-align:right;}
     .cards{gap:12px;}
-    /* TOCナビは2段折り返しだと画面をかなり占有するとの指摘（2026-07-19）を受け、横スクロール1行に戻す。
-       スクロール可能なことが分かるよう右端を軽くフェードし、リンクは折り返さず横に流す。 */
-    .tocnav{gap:4px;padding:7px 10px;font-size:.8rem;top:6px;flex-wrap:nowrap;justify-content:flex-start;
+    /* TOCナビは2段折り返しだと画面をかなり占有するとの指摘（2026-07-19）を受け、横スクロール1行にした。
+       スクロールは.tocnav-scroll(ページ内アンカー7個)だけに限定し、別ページ遷移の「能力比較・シミュ」
+       (.toc-detail)は右端に固定して常に見えるようにする（埋もれて気づきにくい問題への対応）。 */
+    .tocnav{gap:6px;padding:7px 7px 7px 10px;font-size:.8rem;top:6px;}
+    .tocnav-scroll{flex-wrap:nowrap;justify-content:flex-start;
       overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
       mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);}
-    .tocnav::-webkit-scrollbar{display:none;}
-    .tocnav a{padding:4px 9px;white-space:nowrap;flex:0 0 auto;}
+    .tocnav-scroll::-webkit-scrollbar{display:none;}
+    .tocnav-scroll a{padding:4px 9px;white-space:nowrap;flex:0 0 auto;}
     .toc-div{flex:0 0 auto;}
+    /* ラベルを「シミュ」から省略なしに戻した分、スクロール領域を削らないよう詰める */
+    .toc-detail{padding:4px 8px;font-size:.72rem;}
     details.fold>summary{min-height:42px;font-size:.78rem;}
     .foldBody{font-size:.8rem;}
     .past{overflow-x:auto;padding-bottom:4px;scroll-snap-type:x proximity;}
@@ -674,12 +723,12 @@
   .pickStrip .pickCard .pc-ph0{display:flex;align-items:center;justify-content:center;height:150px;font-size:2.7rem;color:#b7c2cf;background:linear-gradient(135deg,#e7edf4,#dbe3ec);}
   .pickStrip .pickCard .pc-photo{position:absolute;inset:0;width:100%;height:150px;object-fit:cover;display:block;}
   .pickStrip .pickCard::after{content:"";position:absolute;left:0;right:0;top:96px;height:54px;background:linear-gradient(180deg,transparent,rgba(15,26,38,.30));pointer-events:none;}
-  .pickStrip .pickCard .pc-mark{position:absolute;z-index:2;top:11px;left:11px;min-width:40px;height:40px;padding:0 7px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:800;color:#fff;background:var(--pc,#555);box-shadow:0 3px 10px rgba(13,40,70,.4);}
+  .pickStrip .pickCard .pc-mark{position:absolute;z-index:2;top:11px;left:11px;min-width:40px;height:40px;padding:0 7px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:800;color:var(--onc,#fff);background:var(--pc,#555);box-shadow:0 3px 10px rgba(13,40,70,.4);}
   .pickStrip .pickCard .pc-leg{position:absolute;z-index:2;top:15px;right:12px;box-shadow:0 2px 6px rgba(13,40,70,.3);}
   .pickStrip .pickCard .pc-body{position:relative;z-index:2;padding:11px 14px 14px;}
   .pickStrip .pickCard .pc-name{font-size:1.16rem;font-weight:700;letter-spacing:-.01em;line-height:1.2;}
   .pickStrip .pickCard .pc-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:7px 0;font-size:.74rem;color:var(--sub);font-feature-settings:"tnum" 1;}
-  .pickStrip .pickCard .pc-pop{background:var(--pc,#555);color:#fff;border-radius:6px;padding:1px 8px;font-weight:700;}
+  .pickStrip .pickCard .pc-pop{background:var(--pc,#555);color:var(--onc,#fff);border-radius:6px;padding:1px 8px;font-weight:700;}
   .pickStrip .pickCard .pc-catch{font-size:.8rem;color:var(--ink);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .pickStrip .pickCard .pc-jump{display:inline-block;margin-top:9px;font-size:.74rem;font-weight:700;color:var(--accent);text-decoration:none;}
   .pickStrip .pickCard .pc-jump:active{opacity:.6;}
@@ -730,24 +779,27 @@
     <details class="predictVer" id="predictVer"></details>
   </header>
 
+  <!-- MY注目（自分で印を付けた馬）はヘッダー直下に置く。印が無いときは display:none の
+       ままなので通常のファーストビューは変わらない。写真カルーセル(#pickStrip)だけを
+       結論の後ろに残す（2026-07-26指摘） -->
   <section class="pickStrip" id="myPickStrip" style="display:none;"></section>
-  <section class="pickStrip" id="pickStrip"></section>
 
   <nav class="tocnav" id="tocnav" aria-label="ページ内ナビゲーション">
-    <a href="#verdict">最終判断</a>
-    <a href="#picks">買い目</a>
-    <a href="#cards">本命〜上位</a>
-    <a href="#minisec">人気薄</a>
-    <span class="toc-div" aria-hidden="true"></span>
-    <a href="#trend">過去傾向</a>
-    <a href="#views">他者の見方</a>
-    <a href="#pending">⏳ 更新予定</a>
-    <span class="toc-div" aria-hidden="true"></span>
-    <a class="toc-detail" href="detail.html">📊 能力比較・シミュ →</a>
+    <div class="tocnav-scroll">
+      <a href="#verdict">最終判断</a>
+      <a href="#picks">買い目</a>
+      <a href="#cards">印あり</a>
+      <a href="#minisec">印なし</a>
+      <span class="toc-div" aria-hidden="true"></span>
+      <a href="#trend">過去傾向</a>
+      <a href="#views">他者の見方</a>
+      <a href="#pending">⏳ 更新予定</a>
+    </div>
+    <a class="toc-detail" href="detail.html">シミュレーション →</a>
   </nav>
 
   <!-- 最終判断: 印・評価・適性・シミュ結果を1頭1枚に統合。下の詳細指標を読む前に結論だけ分かるようにする -->
-  <h2 class="sec" id="verdict">🎯 最終判断</h2>
+  <h2 class="sec" id="verdict">最終判断</h2>
   <p class="lead">印・総合評価・コース適性・展開シミュを1頭1行に要約。詳しい内訳は下の各セクションを参照。</p>
   <div id="verdictBox" class="verdictList"></div>
 
@@ -755,12 +807,15 @@
   <h2 class="sec" id="picks">買い目（馬名付き）</h2>
   <div class="pickList" id="picksBox"></div>
 
-  <a class="pageJump toDetail" href="detail.html#bet">▶ 能力比較・展開／配分シミュレーションを見る<small>（詳細分析ページ・配分シミュレーターへ直接移動）</small></a>
+
+  <!-- 印付き注目馬の写真カルーセルは結論より後ろに置く。ヘッダー直下にあった頃は
+       390px実機で「最終判断」が上端から962px下（PCでも900px画面の最下端）になり、
+       結論より先に写真を見せてしまっていた（2026-07-26指摘）。 -->
+  <section class="pickStrip" id="pickStrip"></section>
 
   <!-- 過去10年傾向は全馬リストの下へ、今後更新チェックリストは結論ページ最下部へ移設（下部参照） -->
 
-  <h2 class="sec" id="cards">本命〜上位</h2>
-  <p class="lead">推し（金）と追い切り（青、複数X引用＋リンク）をカード上部に。脚質は色付きバッジ、直近3走は着順を色分け（金=1着 銀=2着 銅=3着）。</p>
+  <h2 class="sec" id="cards">印をつけた馬（詳しい根拠）</h2>
 
   <div id="courseProfileBox"></div>
 
@@ -769,30 +824,30 @@
   <!-- Anchored Scorecard 説明パネルの移設先（結論ページ・各馬スコアカード直後）。JS で #scExplain をここへ移動する -->
   <div id="scExplainMount"></div>
 
-  <h2 class="sec" id="minisec">中位〜人気薄（全頭・なぜ印に入らないか）</h2>
+  <h2 class="sec" id="minisec">印をつけなかった馬（全頭・その理由）</h2>
   <p class="lead">能力評価のデータが薄い馬は数値推定を出していません（信頼度の偽装を避けるため）。</p>
   <div class="mini" id="mini"></div>
 
-  <a class="pageJump toMain" data-page="detail" href="index.html">◀ 結論ページに戻る<small>（買い目・全馬リスト）</small></a>
+  <a class="pageJump toMain" data-page="detail" href="index.html">◀ 予想ページに戻る<small>（印・買い目・全頭の評価）</small></a>
 
   <!-- 詳細ページ内タブ：シミュレーション(配分・展開・狙い目・能力比較) / データ(並び替え・過去傾向・定量ランキング)。
        1画面に全部並べると縦に長すぎるという指摘への対応でタブ分割。中身のIDや計算ロジックは従来のまま。 -->
   <nav class="dTabHd" data-page="detail" role="tablist">
-    <button type="button" class="dTabBtn active" data-dtab="sim" onclick="setDTab('sim')">🎮 シミュレーション</button>
-    <button type="button" class="dTabBtn" data-dtab="data" onclick="setDTab('data')">📊 データ</button>
+    <button type="button" role="tab" id="dTabBtn-sim" aria-selected="true" aria-controls="dTabPane-sim" class="dTabBtn active" data-dtab="sim" onclick="setDTab('sim')">シミュレーション</button>
+    <button type="button" role="tab" id="dTabBtn-data" aria-selected="false" aria-controls="dTabPane-data" class="dTabBtn" data-dtab="data" onclick="setDTab('data')">データ</button>
   </nav>
 
   <!-- MY注目のピン留め写真帯。シミュレーション/データ両タブで共通（タブの外に置いて両方から見える）。
        印を付けた馬がいる間だけ表示し、スクロールしても上部に固定表示される（renderMyPicks()が再利用） -->
   <section class="pickStrip sticky" id="myPickStripDetail" data-page="detail" style="display:none;"></section>
 
-  <div class="dTabPane active" data-page="detail" data-dtab="sim">
+  <div class="dTabPane active" id="dTabPane-sim" role="tabpanel" aria-labelledby="dTabBtn-sim" data-page="detail" data-dtab="sim">
 
   <div class="dpage">
-  <h2 class="sec" id="bet">💰 配分シミュレーター（買い目を組む）</h2>
+  <h2 class="sec" id="bet">配分シミュレーター（買い目を組む）</h2>
   <p class="lead">①（任意）総予算を決める → ② 買い方と馬を選んで金額を入れ「買い目に追加」→ ③ 下の<b>展開シミュレーション</b>を実行すると、この買い目の<b>収支・的中率・破産（元割れ）率</b>が出ます。オッズは想定（sim由来）です。</p>
   <details class="panel" style="margin-bottom:14px;background:var(--card);">
-    <summary style="cursor:pointer;font-weight:700;color:var(--accent);font-size:.95rem;">📖 馬券の種類と説明（クリックで開閉）</summary>
+    <summary style="cursor:pointer;font-weight:700;color:var(--accent);font-size:.95rem;">馬券の種類と説明（クリックで開閉）</summary>
     <div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:10px;font-size:.85rem;">
       <div style="padding:8px 10px;background:#fff;border-radius:8px;border-left:3px solid #c0392b;"><b>単勝</b>：1着になる馬を当てる（軸のみ）。<br><span style="color:var(--sub);font-size:.78rem;">配当：低〜中</span></div>
       <div style="padding:8px 10px;background:#fff;border-radius:8px;border-left:3px solid #1a9e6a;"><b>複勝</b>：3着以内に来る馬を当てる（軸のみ）。一番堅い。<br><span style="color:var(--sub);font-size:.78rem;">配当：超低</span></div>
@@ -807,8 +862,9 @@
       <input type="number" id="betBudget" placeholder="未設定でもOK（例 10000）" min="0" step="100" oninput="renderBetSlip()">
       <span class="bsNote">設定すると合計が超過したとき赤で警告します</span>
     </div>
-    <div class="bsRefTitle">出走馬（印 / 枠 / 馬番 / 馬名 / 想定単勝オッズ）※枠・オッズは想定</div>
-    <div class="bsRef" id="betHorseRef"></div>
+    <!-- 参考オッズ一覧は「券種を選ぶ」より前に全14頭ぶん並べると、スマホで実際の
+         入力開始まで約1,081pxスクロールが必要だった（2026-07-25指摘）。
+         券種→軸馬→相手→金額の順を先に置き、一覧は下の折りたたみへ移した。 -->
     <div class="bsBuilder">
       <div class="bsField"><label>買い方（券種）</label>
         <select id="bsType" onchange="onBetTypeChange()">
@@ -819,7 +875,9 @@
           <option value="sanpuku">3連複（3着内3頭・軸×相手2頭以上）</option>
         </select>
       </div>
-      <div class="bsField"><label>並び順</label>
+      <div class="bsField"><label>軸馬</label><select id="bsAxis"></select></div>
+      <div class="bsField" id="bsPartnersWrap"><label>相手（複数選択可）</label><div class="bsPartners" id="bsPartners"></div></div>
+      <div class="bsField"><label>並び順（軸馬・相手の表示順）</label>
         <select id="bsSort" onchange="onBetSortChange()">
           <option value="no">馬番順</option>
           <option value="waku">枠順</option>
@@ -827,15 +885,17 @@
           <option value="mark">印・スコア順</option>
         </select>
       </div>
-      <div class="bsField"><label>軸馬</label><select id="bsAxis"></select></div>
-      <div class="bsField" id="bsPartnersWrap"><label>相手（複数選択可）</label><div class="bsPartners" id="bsPartners"></div></div>
       <div class="bsField"><label>1点あたり金額（円）</label><input type="number" id="bsAmount" value="100" min="100" step="100"></div>
       <div class="bsField"><label>点数・金額</label><span class="bsPreview" id="bsPreview"></span></div>
       <button class="runBtn" type="button" onclick="addBet()">＋ 買い目に追加</button>
     </div>
     <div id="betSlipList" class="bsList"></div>
     <div id="betSlipTotal" class="bsTotal"></div>
-    <p class="lead" style="margin-top:10px;">📉 <b>収支の結果は下の「展開シミュレーション」を実行すると表示されます</b>（この買い目＋着順分布から計算）。</p>
+    <p class="lead" style="margin-top:10px;"><b>収支の結果は下の「展開シミュレーション」を実行すると表示されます</b>（この買い目＋着順分布から計算）。</p>
+    <details class="panel" style="margin:12px 0 0;background:var(--card);">
+      <summary style="cursor:pointer;font-weight:700;color:var(--accent);font-size:.9rem;">参考：出走馬とオッズ一覧（印 / 枠 / 馬番 / 馬名 / 想定単勝オッズ）</summary>
+      <div class="bsRef" id="betHorseRef" style="margin-top:10px;"></div>
+    </details>
   </div>
 
 
@@ -843,7 +903,7 @@
   <!-- Anchored Scorecard 説明パネル（scorecard を持つ馬がいるときだけ表示） -->
   <details id="scExplain" style="display:none;background:#eff6ff;border:1px solid #bfdbfe;border-left:4px solid #5b8def;border-radius:10px;padding:10px 14px;margin:0 0 14px;font-size:.85rem;line-height:1.7;">
     <summary style="cursor:pointer;font-weight:700;color:#3b5fc7;font-size:.92rem;list-style:none;display:flex;justify-content:space-between;align-items:center;">
-      <span>📊 総合評価の内訳とは（クリックで展開）</span>
+      <span>総合評価の内訳とは（クリックで展開）</span>
     </summary>
     <div style="margin-top:10px;">
       <p style="margin:0 0 8px;"><b>ひと言で:</b> 印（◎○▲△☆）を直感や文章判断ではなく、<b>7 つの観点ごとに 0〜5 点で採点</b>し、点数の順位から印を機械的に決める仕組み。同じ情報を入れれば誰がやっても同じ点数になる＝再現性が高い。</p>
@@ -916,7 +976,7 @@
   <h2 class="sec" id="sim">展開シミュレーション</h2>
   <p class="lead">下の「今回の予測シナリオ」が初期値。条件を変えて再実行すれば「もし◯◯だったら」が試せます。</p>
   <div class="panel" id="predictionPanel" style="background:linear-gradient(180deg, #faf4dc, #f3ebc4);border:1px solid #e3cf86;margin-bottom:14px;">
-    <h3 style="margin:0 0 8px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:#7a5c12;font-weight:700;">📊 今回の予測シナリオ（天候＋脚質分布から自動推測）</h3>
+    <h3 style="margin:0 0 8px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:#7a5c12;font-weight:700;">今回の予測シナリオ（天候＋脚質分布から自動推測）</h3>
     <div id="predictionText" style="font-size:.92rem;line-height:1.75;color:#3d2f0a;"></div>
   </div>
   <div class="panel">
@@ -951,19 +1011,19 @@
     </div>
     <button class="runBtn" onclick="runUserSim()">▶ 展開シミュ実行（着順分布＋収支）</button>
     <button class="runBtn ghost" onclick="runDefaultSim()">予測シナリオに戻す</button>
-    <button class="runBtn alt" onclick="runRandomSim()">🎲 ランダムな日（10種類自動）</button>
+    <button class="runBtn alt" onclick="runRandomSim()">ランダムな日（10種類自動）</button>
     <span class="runStat" id="runStat"></span>
     <!-- 収支（配分シミュ結果）を先に、馬個別の着順分布はその下 -->
     <div id="betResult" style="margin-top:16px;"></div>
-    <h3 class="simSubHd">🐎 馬ごとの着順分布（この条件）</h3>
+    <h3 class="simSubHd">馬ごとの着順分布（この条件）</h3>
     <div id="simBox" style="margin-top:10px;"></div>
     <div id="reason" style="margin-top:14px;"></div>
   </div>
   </div><!-- /dpage sim -->
 
-  <!-- 🎯 狙い目の参考（人気馬の危なさ＋逆転候補）。未適用/空のレースではセクションごと非表示にする -->
+  <!-- 狙い目の参考（人気馬の危なさ＋逆転候補）。未適用/空のレースではセクションごと非表示にする -->
   <section id="refpickSection">
-  <h2 class="sec" id="refpick">🎯 狙い目の参考（人気馬の危なさ・逆転候補）</h2>
+  <h2 class="sec" id="refpick">狙い目の参考（人気馬の危なさ・逆転候補）</h2>
   <p class="lead">過去のレース成績データから「人気ほど信用できない馬」と「人気馬が崩れた時に浮上しそうな馬」を整理した参考情報です。<b>買えば得する、という話ではありません</b>。堅い決着も多いレースでは、本命サイド中心が無難です。</p>
   <div id="referencePickBox"></div>
   </section>
@@ -976,11 +1036,11 @@
 
   </div><!-- /dTabPane sim -->
 
-  <div class="dTabPane" data-page="detail" data-dtab="data">
+  <div class="dTabPane" id="dTabPane-data" role="tabpanel" aria-labelledby="dTabBtn-data" data-page="detail" data-dtab="data">
 
   <div class="dpage">
-  <h2 class="sec" id="sortview">🔀 出走馬 並び替えビュー</h2>
-  <p class="lead">斤量・上がり・勝率・体重などをボタン1つで一気に並び替え。昇順/降順も切り替え可能です。結論ページ(1ページ目)と同じデータをその場で計算しているので、データが更新されればここも自動で反映されます。「MY印・コメント」列の＋で自分の印を、✎でコメント（自由記述メモ）をこの表からも付けられます。</p>
+  <h2 class="sec" id="sortview">出走馬 並び替えビュー</h2>
+  <p class="lead">斤量・上がり・勝率・体重などをボタン1つで一気に並び替え。昇順/降順も切り替え可能です。予想ページ(1ページ目)と同じデータをその場で計算しているので、データが更新されればここも自動で反映されます。「MY印・コメント」列の＋で自分の印を、✎でコメント（自由記述メモ）をこの表からも付けられます。</p>
   <div class="panel">
     <div class="hsChips" id="hsChips">
       <button type="button" class="hsChip on" data-mode="no" onclick="hsSetSort('no')">馬番順</button>
@@ -1005,7 +1065,7 @@
   <h2 class="sec" id="trend">過去10年の傾向（シミュにも組み込み済み）</h2>
   <div class="panel"><div class="trendBox" id="trendBox"></div></div>
   <div class="panel" id="cmpPanel" style="margin-top:12px;">
-    <h3 style="margin:0 0 4px;font-size:.86rem;color:var(--accent-deep);">🔍 今回の顔ぶれ vs 過去10年の傾向</h3>
+    <h3 style="margin:0 0 4px;font-size:.86rem;color:var(--accent-deep);">今回の顔ぶれ vs 過去10年の傾向</h3>
     <p class="lead" style="margin-bottom:8px;">「このレースは他と何が違うか」を、過去10年の傾向と今回の出走メンバー構成をカテゴリ別に見比べて確認できます。カテゴリは上の過去傾向と同じ4分類です。</p>
     <div class="cmpChips" id="cmpChips"></div>
     <div class="cmpGrid" id="cmpBox"></div>
@@ -1024,9 +1084,9 @@
 
   </div><!-- /dTabPane data -->
 
-  <!-- 💬 他者の見方（事前評価）：X / note / Web 記事の引用カードでバランスをとる -->
+  <!-- 他者の見方（事前評価）：X / note / Web 記事の引用カードでバランスをとる -->
 
-  <h2 class="sec" id="views">💬 他者の見方（事前評価）</h2>
+  <h2 class="sec" id="views">他者の見方（事前評価）</h2>
   <p class="lead">主要プロ予想家・メディア・関係者コメントの一次引用。情報源の重みを可視化して、自分の印付けを多角的に裏付ける／反証する。</p>
   <div class="viewsGrid" id="viewsBox"></div>
 
@@ -1045,6 +1105,41 @@
 var DATA = {"race":{"title":"第67回 宝塚記念 GⅠ","meta":"2026年6月14日(日) 阪神・芝2200m・18頭立て・15:40発走","wx":["🌤 晴のち曇（6/14 日曜・午後から雲）","降水確率 40%（tenki.jp 6/12時点）","最高28℃/最低20℃","馬場想定：良（土曜は晴・最高30℃の真夏日で乾燥進む）","バイアス：先行・内枠有利"],"predict_version":"v5 当日・印再編（一次情報照合反映）","predict_asof":"2026-06-14 (日) 14:00 JST","predict_stage":"6/14(日)当日・発走前【v5 印再編】。netkeiba一次情報照合で判明した実フォームに序列を合わせ印を再編。(1)ダノンデサイル△->▲: 捏造last3を排した実走は大阪杯3-有馬3-ジャパンC3着のトップG1連続3着で12.5倍は過小。(2)ミュージアムマイル▲->◯: 有馬記念勝ちの地力で対抗が筋。(3)メイショウタバル◯->△: 近2走(有馬13・天皇賞秋6)大敗を重視、逃げ+阪神2200実績+追切Sで圏内は維持。(4)シンエンペラー△->☆: 訂正で弱さ確定の最深押さえ。◎クロワデュノール(天皇賞春・大阪杯連勝)は不変だが前日1.2倍で妙味薄、相手の人気薄で回収を作る。日曜阪神は良馬場想定。 【当日14:00オッズ追記】netkeiba確定単勝でクロワデュノール2.4倍(前日1.2倍から緩和)・メイショウタバル5.6倍(2人気浮上)・ミュージアムマイル6.0倍(3人気)・レガレイラ6.5倍(4人気)・ダノンデサイル7.5倍(5人気)・シンエンペラー75.6倍(12人気)。印6頭は不変、相手上位の人気集中で本線の妙味はやや低下。","race_id":"202606140911","odds_source":"netkeiba 単勝確定オッズ 2026-06-14 14:00 JST 取得（前回: SPREAD想定オッズ 6/12）"},"trends":[{"title":"枠順","text":"8枠が圧倒的・阪神開催9回中4勝、勝率20%・単回204%。1枠は勝利なしも複勝率トップ。"},{"title":"脚質","text":"先行最有力(勝率14.7%/複勝率26.5%)。逃げも複率40%・単回114%。追込は勝ち馬ゼロ・複率11.9%で消し条件。"},{"title":"前走ローテ","text":"天皇賞春組が3勝で最多・複回101%。前走G1組が3着内30頭中25頭と圧倒。"},{"title":"血統","text":"キタサンブラック産駒が連対率66.7%・複率66.7%・複回170%で最強。ステイゴールド系(オルフェ・ゴルシ)は距離適性で不振。"},{"title":"人気","text":"1番人気【2.3.0.5】複率50%、2番【2.0.3.5】複率50%、3番【3.0.0.7】最多3勝。1〜3番人気で軸を取れ。"},{"title":"騎手","text":"ルメール・川田は宝塚記念回収率20〜34%と低調。武豊は前年勝利で5勝目。北村友一は(1-0-0-3)複率25%。"},{"title":"過去5年勝ち馬","text":"2025メイショウタバル(7人気)・2024ブローザホーン(3人気)・2023イクイノックス(1人気)・2022タイトルホルダー(2人気)・2021クロノジェネシス(1人気)"},{"title":"今年の特殊事情","text":"ファン投票3位マスカレードボール(天皇賞秋勝ち)が放牧で回避。3歳世代3強のうち2頭(クロワデュノール・ミュージアムマイル)のみ参戦。クロワデュノール史上初の春古馬三冠なるか。"}],"trend_config":{"prev_bonus":{"天皇賞春":5.0,"大阪杯":4.0,"有馬記念":3.5,"宝塚記念":4.0,"天皇賞秋":3.0,"ジャパンC":2.5,"エリザベス女王杯":2.0,"ヴィクトリアマイル":1.0,"中山記念":1.0,"京都記念":1.5,"ステイヤーズS":-1.0,"オープン特別":-2.0}},"predicted_scenario":{"weather":"曇","going":"良","pace":"やや前傾","bias":"内・先行有利","chaos":"中"},"predicted_scenario_comment":"v1 初版(1週前段階)。6/14 阪神は曇時々晴・降水20-30%で例年と異なり良馬場想定。先行・内枠有利の王道形に。クロワデュノールが過去10年データ「天皇賞春組+キタサンブラック産駒+先行」の三拍子を完全に満たし、想定1番人気2.3倍で**春古馬三冠史上初**への最有力。前年覇者メイショウタバル(武豊・逃げ)が連覇狙い、有馬記念覇者ミュージアムマイル(D.レーン・大外差し)が3歳世代3強の代表として対抗。ファン投票3位マスカレードボール放牧回避で構図はシンプル化。波乱度は「中」想定だが、ルメール・川田の宝塚記念データ低調がレガレイラ・マイネルエンペラーの評価を下げる材料。","top_horses":[{"no":5,"name":"クロワデュノール","mark":"◎","pop":1,"color":"#c0392b","sex_age":"牡4","trainer":"栗東・斉藤崇史","sire":"キタサンブラック","jockey":"北村友一","jockey_stat":"宝塚記念(1-0-0-3)複率25%、単回102%","leg":"先行","temper":"G1で底力を見せる勝負強さ","bloodline":"キタサンブラック産駒(過去10年複率66.7%・複回170%の最強血統)","draw":"3枠5番（中目の好枠。先行集団でロスなく運べる絶好枠）","dist":"大阪杯・天皇賞春・ダービー連勝で2000-3200まで対応","weight":516,"weight_trend":"調教後516kg・前走比+2kg（天皇賞春5/3当日514kg、JRA 6/11発表比）。当日増減は当日発表待ち","oshi":"前人未到の春古馬三冠(大阪杯・天皇賞春・宝塚記念)。父キタサンブラックは産駒成績含めて宝塚記念最強血統。","oikiri":[{"src":"東スポ競馬 1週前追い切り 6/4","text":"栗東CW不良馬場でラスト11.6秒。斉藤崇師「息遣いなどは悪くない」","url":"https://tospo-keiba.jp/breaking_news/72323"},{"src":"netkeiba 最終追い切り 6/10","text":"栗東CWでグロリアラウス追走、6F82.6-11.2で併入。斉藤崇師「水・日曜より断然良くなった。直線でもしっかり動けてフィニッシュできた、ようやく走れるところまで来た」一方で「それでもまだ物足りないところがある」と辛口も。先週よりキレ向上。","url":"https://news.netkeiba.com/?pid=news_view&no=333781"},{"src":"うましる/競馬ヘッドライン 最終追い切り全頭診断 6/13","text":"【追い切り評価】うましる A / 競馬ヘッドライン A。うましる「不良馬場でもしっかりした脚取りで調子の良さ」、ヘッドライン「絶好調の前走デキをキープ、負荷も十分で充実度高い」。複数媒体で安定の高評価。","url":"https://umasiru.com/archives/20301"}],"last3":[{"race":"天皇賞春(G1)","date":"2026-05","order":1,"jockey":"北村友一","agari":34.9,"leg":"先行"},{"race":"大阪杯(G1)","date":"2026-04","order":1,"jockey":"北村友一","agari":34.9,"leg":"先行"},{"race":"ジャパンC(G1)","date":"2025-11","order":4,"jockey":"北村友一","agari":34.4}],"info_check":{"final_oikiri":"✅ 栗東CW 6F82.6-11.2 併入","pro_oikiri_eval":"⚠️ 上昇も師は辛口「まだ物足りない」","blinker_change":"❌ なし","jockey_change":"✅ 北村友一継続","stable_comment":"✅ 斉藤崇師「ようやく走れるところまで来た」","paddock":"❌ 当日","weight_actual":"✅ 調教後516kg 前走比+2kg（JRA公式6/11）当日分のみ未","last3_fresh":"✅ 2026年に2走+海外1走、鮮度OK"},"tags_strong":["春古馬二冠制覇","天皇賞春組(過去10年最多3勝)","キタサンブラック産駒","G1 4勝の地力","斉藤崇調教師の仕上げ"],"tags_weak":["想定1人気2.3倍の人気被り","2200m初経験","海外帰りからの再国内2戦目"],"prev":"天皇賞春","prev_pop":1,"cont_jockey":true,"ability":[89,92,88,90,88],"base":91,"vol":0.95,"odds":2.4,"dam_sire":"Cape Cross"},{"no":2,"name":"ミュージアムマイル","mark":"◯","pop":3,"color":"#8a4a2c","sex_age":"牡4","trainer":"美浦","sire":"リオンディーズ","jockey":"D.レーン","jockey_stat":"海外G1ジョッキー、大舞台慣れ","leg":"差し","temper":"終い特化型・大外一気","bloodline":"長距離も対応する持続力血統","draw":"1枠2番（最内。インロスなく立ち回れるが包まれ注意）","dist":"皐月賞→有馬記念で2000-2500実績","weight":510,"weight_trend":"調教後510kg・前走比+8kg（有馬記念25/12当日502kg、JRA 6/11発表比）。当日増減は当日発表待ち","oshi":"3歳世代3強の一角、有馬記念で大外一気の決め手で頂点。レーン乗り替わりで活性化期待。","oikiri":[{"src":"netkeiba 1週前追い切り 6/4","text":"栗東CW、D.レーン騎乗。6F81.9-5F65.9-4F50.8-3F36.2-2F22.7-1F11.5秒。加速ラップは理想的だがゴール前の伸びに物足りなさ。皐月賞・有馬記念時と比較し最終追い切りで確認したい。","url":"https://news.netkeiba.com/?pid=news_view&no=333267"},{"src":"netkeiba 栗東トレセンニュース 6/10","text":"栗東CWで81.9-65.9-50.8-36.2-11.5の併せ先着。終い鋭く反応、有馬記念覇者らしい完成度の高い動き。","url":"https://news.yahoo.co.jp/articles/e3af462c47297a3bcd9e571628eb24888716b1b8"},{"src":"うましる/競馬ヘッドライン 最終追い切り全頭診断 6/13","text":"【追い切り評価】競馬ヘッドライン B。「最良の出来という感じはないが、休み明けにしては動けている」。仕上がりは及第点も上積み余地。","url":"https://umasiru.com/archives/20301"}],"last3":[{"race":"有馬記念(G1)","date":"2025-12","order":1,"jockey":"C.デムーロ","agari":34.6,"leg":"差し"},{"race":"天皇賞秋(G1)","date":"2025-11","order":2,"jockey":"C.デムーロ","agari":32.3,"leg":"差し"},{"race":"セントライト記念(G2)","date":"2025-09","order":1,"jockey":"戸崎圭太","agari":34.4,"leg":"差し"}],"info_check":{"final_oikiri":"✅ 栗東CW 終い11.5併せ先着","pro_oikiri_eval":"✅ 完成度高い","blinker_change":"❌ なし","jockey_change":"✅ デムーロ→レーン乗り替わり","stable_comment":"✅ 順調","paddock":"❌ 当日","weight_actual":"✅ 調教後510kg 前走比+8kg（JRA公式6/11）当日分のみ未","last3_fresh":"✅"},"tags_strong":["3歳世代3強","有馬記念覇者","大外一気の決め手","D.レーン乗り替わり"],"tags_weak":["追込馬は宝塚記念で勝ち馬ゼロ(複率11.9%)","阪神2200は初経験","前走から5か月空き","1週前ゴール前の伸び物足りなさ"],"prev":"有馬記念","prev_pop":1,"cont_jockey":false,"ability":[85,86,92,85,84],"base":88,"vol":1.1,"odds":6.0,"dam_sire":"ハーツクライ"},{"no":1,"name":"ダノンデサイル","mark":"▲","pop":5,"color":"#7a8aa0","sex_age":"牡5","trainer":"美浦・安田翔伍","sire":"エピファネイア","jockey":"戸崎圭太","leg":"差し","temper":"GⅠでの底力・差し決め手","bloodline":"父エピファネイア(中距離G1向き)・母父Deep Impact","draw":"1枠1番（最内枠。位置取り次第でインを突ける）","dist":"24年ダービー(2400m)馬、2000-2400m対応、阪神2200は適距離","weight":522,"weight_trend":"調教後522kg・前走比+6kg（大阪杯4/5当日516kg、JRA 6/11発表比）。当日増減は当日発表待ち","oshi":"24年ダービー馬 + 26年AJCC(G2)→ドバイシーマ(海外G1)連勝で世界級の地力証明。前走大阪杯3着の悔しさを宝塚記念で晴らす。","oikiri":[{"src":"note ダノンデサイル戦績","text":"24年ダービー① / 26年AJCC① / 26年ドバイシーマクラシック①(カランダガン撃破) / 26年大阪杯③","url":"https://www.keibalab.jp/topics/46009/"},{"src":"東スポ 大阪杯3着コメント","text":"戸崎「届かなかったが感触は悪くない。距離2200mなら見直し」","url":"https://www.keibalab.jp/topics/46009/"},{"src":"東スポ競馬 1週前追い切り 6/4","text":"戸崎圭太を背に栗東ウッドで最先着。「随分といい動きができていた」と陣営。","url":"https://tospo-keiba.jp/breaking_news/72350"},{"src":"血統フェスティバル 最終追い切り 6/10","text":"素軽い動きで走る気十分、好感触の手応え。AJCC勝ちの充実度を維持。","url":"https://bfkeiba.com/takarazukakinen-2026-oikiri/"},{"src":"うましる/競馬ヘッドライン 最終追い切り全頭診断 6/13","text":"【追い切り評価】競馬ヘッドライン B。「久々でもいい仕上がり」。ウマニティ水曜診断でも高評価3頭に選出。","url":"https://umasiru.com/archives/20301"}],"last3":[{"race":"大阪杯(G1)","date":"2026-04","order":3,"jockey":"坂井瑠星","agari":34.9,"leg":"差し"},{"race":"有馬記念(G1)","date":"2025-12","order":3,"jockey":"戸崎圭太","agari":35.0},{"race":"ジャパンC(G1)","date":"2025-11","order":3,"jockey":"戸崎圭太","agari":33.8}],"info_check":{"one_week_oikiri":"⏳ 木曜以降公開","final_oikiri":"✅ 素軽い動き","pro_oikiri_eval":"✅ 好感触","blinker_change":"❌ なし","jockey_change":"✅ 戸崎継続(AJCC・ドバイ・大阪杯と4戦連続)","stable_comment":"✅ 走る気十分","paddock":"❌ 当日","weight_actual":"✅ 調教後522kg 前走比+6kg（JRA公式6/11）当日分のみ未","last3_fresh":"✅ 直近3走すべて2026年(AJCC・ドバイシーマ・大阪杯)で鮮度◎"},"tags_strong":["24年ダービー馬","ドバイシーマ1着(海外G1勝ち)","AJCC連勝","戸崎4戦連続騎乗","中距離G1の地力","1週前ウッド最先着"],"tags_weak":["大阪杯3着で◎◯に先着許す","阪神2200内回り未勝利","クロワデュノールに直接対戦で敗北"],"prev":"大阪杯","prev_pop":2,"cont_jockey":true,"ability":[82,86,84,84,84],"base":85,"vol":1.0,"jockey_stat":"新コンビ26年AJCC・ドバイシーマで連勝、相性◎","odds":7.5,"dam_sire":"Congrats"},{"no":16,"name":"メイショウタバル","mark":"△","pop":2,"color":"#27ae60","sex_age":"牡5","trainer":"栗東・石橋","sire":"ゴールドシップ","jockey":"武豊","jockey_stat":"宝塚記念5勝(歴代最多)、前年勝利の鞍上","leg":"逃げ","temper":"ハナを切る逃げ一辺倒","bloodline":"持続力タイプ・パワー血統","draw":"8枠16番（大外気味。逃げ馬には試練の枠で外を回されるロス懸念）","dist":"2200m前年覇者・阪神内回り◎","weight":506,"weight_trend":"調教後506kg・前走比+6kg（大阪杯4/5当日500kg、JRA 6/11発表比）。当日増減は当日発表待ち","oshi":"武豊との絆コンビで前年5番人気から逃げ切り戴冠。連覇なら宝塚記念史上に名を残す。","oikiri":[{"src":"東スポ競馬 1週前追い切り 6/4","text":"ビッシリ攻めた内容、石橋師「予定通り」","url":"https://tospo-keiba.jp/breaking_news/72323"},{"src":"日刊スポーツ/東スポ 最終追い切り 6/10","text":"荒れ馬場をものともせずラスト11.4秒の好時計。石橋師「いい追い切りだった/100点の状態を維持できている」。武豊とのタッグで父子連覇・史上3頭目の偉業へ態勢万全。","url":"https://tospo-keiba.jp/breaking_news/72512"},{"src":"うましる/競馬ヘッドライン 最終追い切り全頭診断 6/13","text":"【追い切り評価】うましる S(最高) / 競馬ヘッドライン A。うましる「2週続けて終いの時計が鋭くポテンシャルの高い走りに期待」、ヘッドライン「冷静にためる追い切りを消化できた点を高評価」。終い重視の好調教。","url":"https://umasiru.com/archives/20301"}],"last3":[{"race":"大阪杯(G1)","date":"2026-04","order":2,"jockey":"武豊","agari":35.6,"leg":"逃げ"},{"race":"有馬記念(G1)","date":"2025-12","order":13,"jockey":"武豊","agari":36.7,"leg":"逃げ"},{"race":"天皇賞秋(G1)","date":"2025-11","order":6,"jockey":"武豊","agari":33.1}],"info_check":{"final_oikiri":"✅ 荒れ馬場ラスト11.4の好時計","pro_oikiri_eval":"✅ 高評価「100点の状態」","blinker_change":"❌ なし","jockey_change":"✅ 武豊継続","stable_comment":"✅ 石橋師「いい追い切りだった」","paddock":"❌ 当日","weight_actual":"✅ 調教後506kg 前走比+6kg（JRA公式6/11）当日分のみ未","last3_fresh":"✅ 大阪杯3着の直近実績あり"},"tags_strong":["前年宝塚記念覇者","武豊継続騎乗","逃げ脚質(過去10年複率40%)","阪神2200実績"],"tags_weak":["前走大阪杯3着で2.5戦連敗中","他に逃げ馬がいると共倒れリスク"],"prev":"大阪杯","prev_pop":3,"cont_jockey":true,"ability":[86,84,80,88,85],"base":86,"vol":1.05,"odds":5.6,"dam_sire":"フレンチデピュティ"},{"no":17,"name":"レガレイラ","mark":"△","pop":4,"color":"#d35400","sex_age":"牝5","trainer":"美浦","sire":"スワーヴリチャード","jockey":"C.ルメール","jockey_stat":"宝塚記念回収率20-34%と低調","leg":"差し","temper":"操縦性高い","bloodline":"中距離牝馬の地力","draw":"8枠17番（外枠。差し脚活かすには展開向き必要）","dist":"牝馬56kg軽量はメリット","weight":494,"weight_trend":"調教後494kg・前走比+12kg（有馬記念25/12当日482kg、JRA 6/11発表比）。当日増減は当日発表待ち","oshi":"G1 3勝の地力(有馬記念24・エリザベス女王杯25 等)。","oikiri":[{"src":"東スポ競馬 1週前追い切り 6/4","text":"意欲的な乗り込み、陣営「中身の濃い調教ができた」","url":"https://tospo-keiba.jp/breaking_news/72323"},{"src":"X @netkeiba 6/上旬","text":"金曜から阪神入り。ルメール継続騎乗。","url":"https://x.com/netkeiba/status/1933831027505676297"},{"src":"血統フェスティバル/東スポ 最終追い切り 6/10","text":"美浦Wで反応良くしっかり負荷をかけ併入先着。陣営「中身の濃い調教ができた」。","url":"https://bfkeiba.com/takarazukakinen-2026-oikiri/"},{"src":"うましる/競馬ヘッドライン 最終追い切り全頭診断 6/13","text":"【追い切り評価】うましる A。「時計は目立たないが時計以上の内容に感じられた」。見た目以上の好内容との評。","url":"https://umasiru.com/archives/20301"}],"last3":[{"race":"有馬記念(G1)","date":"2025-12","order":4,"jockey":"C.ルメール","agari":34.6,"leg":"差し"},{"race":"エリザベス女王杯(G1)","date":"2025-11","order":1,"jockey":"戸崎圭太","agari":34.2,"leg":"差し"},{"race":"オールカマー(G2)","date":"2025-09","order":1,"jockey":"戸崎圭太","agari":34.0,"leg":"差し"}],"info_check":{"final_oikiri":"✅ 美浦W 併入先着","stable_comment":"✅ 中身の濃い調教","jockey_change":"✅ ルメール継続","weight_actual":"✅ 調教後494kg 前走比+12kg（JRA公式6/11）当日分のみ未","last3_fresh":"✅","pro_oikiri_eval":"✅ うましる全頭診断で最高評価S「譲らぬ闘争心に陰りなく完成期」"},"tags_strong":["G1 3勝の地力","牝馬56kg軽量","ルメール継続"],"tags_weak":["過去10年データでルメール宝塚回収率20-34%と低調","牡馬一線級との直接対決は実績薄","前走有馬記念4着で勢い微妙"],"prev":"有馬記念","prev_pop":1,"cont_jockey":true,"ability":[83,84,86,84,82],"base":84,"vol":1.05,"odds":6.5,"dam_sire":"ハービンジャー"},{"no":11,"name":"シンエンペラー","mark":"☆","pop":12,"color":"#7a8aa0","sex_age":"牡4","trainer":"栗東・矢作芳人","sire":"Siyouni","jockey":"坂井瑠星","leg":"差し","temper":"欧州ゴリゴリの長距離型・気性面はやや難","bloodline":"父Siyouni(欧州凱旋門賞のフランス系) / 母父Galileo(欧州G1血統)","draw":"6枠11番（中外。スムーズな先行が鍵）","dist":"欧州血統で2000-2400m対応、阪神2200は実績薄","weight":502,"weight_trend":"調教後502kg・前走比-6kg（天皇賞春5/3当日508kg、JRA 6/11発表比）。当日増減は当日発表待ち","oshi":"凱旋門賞12着の経験を持つ4歳・Siyouni産駒の希少血統。放牧明けで状態は未知数だが、ハマれば一発の地力。","oikiri":[{"src":"JRA公式 状況","text":"直前まで「放牧」表示で、宝塚記念で立て直し参戦。坂井瑠星継続。","url":"https://www.jra.go.jp/JRADB/accessU.html?CNAME=pw01dud102021110048%2FD7"},{"src":"日経 凱旋門賞12着回顧(24年)","text":"世界の壁は厚かったが、4歳になっての国内本格化に期待。","url":"https://www.nikkei.com/article/DGXZQOKC063IS0W4A001C2000000/"},{"src":"netkeiba 最終追い切り 6/10","text":"栗東CWで96.3-79.5-65.0-51.3-37.4-12.2の併せ遅れ。放牧明けから立て直しての参戦、動き自体は地味も坂井瑠星継続。","url":"https://news.netkeiba.com/?pid=news_view&no=333781"},{"src":"うましる/競馬ヘッドライン 最終追い切り全頭診断 6/13","text":"【追い切り評価】競馬ヘッドライン C。「もう少し無駄のない走りが見たかった」。放牧明けで前走比-6kgも併せ、状態は印馬中では見劣り。","url":"https://umasiru.com/archives/20301"}],"last3":[{"race":"天皇賞春(G1)","date":"2026-05","order":7,"jockey":"岩田望来","agari":35.5,"leg":"差し"},{"race":"ネオムターフC(海外G1)","date":"2026-02","order":4,"jockey":"坂井瑠星","agari":"海外"},{"race":"有馬記念(G1)","date":"2025-12","order":14,"jockey":"坂井瑠星","agari":36.0,"leg":"差し"}],"info_check":{"one_week_oikiri":"⏳ 木曜以降","final_oikiri":"✅ 栗東CW 併せ遅れ","pro_oikiri_eval":"⚠️ 動き地味","blinker_change":"❌ なし","jockey_change":"✅ 坂井瑠星継続","stable_comment":"⚠️ 放牧明け立て直し","paddock":"❌ 当日","weight_actual":"✅ 調教後502kg 前走比-6kg（JRA公式6/11）当日分のみ未","last3_fresh":"⚠️ JRA公式「放牧」表示。2025年の国内戦績が不明確で last3 鮮度が低い。要追加情報"},"tags_strong":["凱旋門賞経験(世界級の地力)","Siyouni産駒の希少血統","坂井瑠星継続","4歳世代"],"tags_weak":["放牧明けで状態未知数","国内G1勝利歴なし","2024年凱旋門賞12着で前回大敗","2025-26年の戦績が薄い"],"prev":"天皇賞春","prev_pop":0,"cont_jockey":true,"ability":[78,84,82,80,76],"base":81,"vol":1.25,"jockey_stat":"坂井瑠星・凱旋門賞でも騎乗","odds":75.6,"dam_sire":"Galileo"}],"mini_horses":[{"no":9,"name":"コスモキュランダ","jockey":"横山武史","sex_age":"牡5","trainer":"美浦・加藤士津八","leg":"差し","last":"24年弥生賞①(G2)、19戦2勝","why":"有馬2着の激走後、1番人気の日経賞で7着完敗と反動が見え近走は安定感を欠く。皐月賞2着以降は善戦止まりで阪神2200の決め手比べは分が悪い。","sim_base":78,"sim_vol":1.2,"color":"#95a5a6","sire":"アルアイン","_check":"✅ 性齢・厩舎・父・主要実績まで取得","odds":41.5,"pop":8,"last2":[{"race":"日経賞(G2)","order":7},{"race":"有馬記念(G1)","order":2}],"weight":526},{"no":13,"name":"シェイクユアハート","jockey":"古川吉洋","sex_age":"牡6","trainer":"栗東・宮徹","leg":"差し","last":"条件特別から重賞挑戦組","why":"中日新聞杯・金鯱賞と重賞連勝中だが、ともに後方一気の差しで展開に左右されやすい。8番人気V含め人気を裏切る面もあり、G1の厳しい流れでは届かない懸念。","sim_base":72,"sim_vol":1.3,"color":"#bdc3c7","sire":"ハーツクライ","_check":"⚠️ 性齢のみ、厩舎・父・近走詳細は精査未完","odds":69.8,"pop":11,"last2":[{"race":"金鯱賞(G2)","order":1},{"race":"中日新聞杯(G3)","order":1}],"weight":462},{"no":3,"name":"シュガークン","jockey":"吉村誠之助","sex_age":"牡5","trainer":"栗東・清水久詞","leg":"差し","last":"24年青葉賞①(G2)、26/5新潟大賞典⑮(2人気)で約2年ぶり復帰戦から不調","why":"24年ダービー以来の屈腱炎明けで約2年ぶり復帰の新潟大賞典を15着最下位。長期休養明けの実戦勘不足が明白で、G1級の地力に届かない。","sim_base":74,"sim_vol":1.25,"color":"#bdc3c7","sire":"ドゥラメンテ","_check":"✅ 直近1走を取得、復帰戦不調が懸念材料","odds":205.4,"pop":17,"last2":[{"race":"新潟大賞典(G3)","order":15},{"race":"日本ダービー(G1)","order":7}],"weight":520},{"no":10,"name":"ジューンテイク","jockey":"松山弘平","sex_age":"牡5","trainer":"栗東・武英智","leg":"先行","last":"JRA公式「放牧」表示","why":"京都記念を勝ったG2級だが、続く金鯱賞は先頭に立つも差されクビ差4着。G2では足りてもG1の決め手比べには一段壁があり、絶対能力に欠ける。","sim_base":73,"sim_vol":1.3,"color":"#bdc3c7","sire":"キズナ","_check":"⚠️ 放牧明けで直近戦績不明確","odds":176.0,"pop":15,"last2":[{"race":"金鯱賞(G2)","order":4},{"race":"京都記念(G2)","order":1}],"weight":506},{"no":14,"name":"スティンガーグラス","jockey":"岩田望来","sex_age":"牡5","trainer":"栗東・友道康夫","leg":"先行","last":"26/2ダイヤモンドS①(G3・ルメール・転厩後初戦)、前走アルゼンチン共和国杯②","why":"ダイヤモンドS(3600m)勝ちの長距離型で、本質的に2200mの瞬発力勝負は忙しい。天皇賞春を歩様の違和感で回避した臨戦過程にも一抹の不安。","sim_base":75,"sim_vol":1.3,"color":"#bdc3c7","sire":"キズナ","_check":"✅ 性齢・厩舎・父・近走3走まで取得","odds":115.0,"pop":13,"last2":[{"race":"ダイヤモンドS(G3)","order":1},{"race":"アルゼンチン共和国杯(G2)","order":2}],"weight":486},{"no":8,"name":"タガノデュード","jockey":"高杉吏麒","sex_age":"牡5","trainer":"栗東・宮徹","leg":"差し","last":"-","why":"小倉大賞典で重賞初制覇後、大阪杯4着・天皇賞春6着と善戦級だが勝ち切れず。G1では決め手が一枚足りず、若手騎手起用も人気を欠く一因。","sim_base":70,"sim_vol":1.35,"color":"#bdc3c7","sire":"ヤマカツエース","_check":"❌ 精査未完了、性齢から要追加","oikiri_note":"最終追い切りで仕掛けられると一気に突き抜ける動き(血統フェスティバル6/10)","odds":46.6,"pop":9,"last2":[{"race":"天皇賞春(G1)","order":6},{"race":"大阪杯(G1)","order":4}],"weight":514,"weight_diff":"+12kg・天皇賞春502kg比"},{"no":6,"name":"ビザンチンドリーム","jockey":"西村淳也","sex_age":"牡5","trainer":"栗東・坂口智康","leg":"差し","last":"-","why":"凱旋門賞5着の実績馬だが、前走カタールのG2を7着と海外帰りで状態に疑問。長期遠征の反動と阪神2200急坂への適性も読みにくい。","sim_base":72,"sim_vol":1.3,"color":"#bdc3c7","sire":"エピファネイア","_check":"⚠️ 性齢のみ、戦績は精査未完","odds":32.3,"pop":7,"last2":[{"race":"アミールトロフィー(海外G2)","order":7},{"race":"凱旋門賞(仏G1)","order":5}],"weight":470,"weight_diff":"前走海外(2月カタール)のため比較不可"},{"no":7,"name":"ファミリータイム","jockey":"幸英明","sex_age":"牡5","trainer":"栗東・石坂公一","leg":"差し","last":"-","why":"日経新春杯2着は11番人気での逃げ粘りで人気以上だが、自分の形でこその先行馬。G1の厳しい流れと一線級相手では展開頼みで決め手不足。","sim_base":70,"sim_vol":1.4,"color":"#bdc3c7","sire":"リアルスティール","_check":"❌ 全項目未取得、騎手も未定","odds":224.3,"pop":18,"last2":[{"race":"日経新春杯(G2)","order":2},{"race":"阪神ムーンライトH(3勝)","order":1}],"weight":482},{"no":12,"name":"マイネルエンペラー","jockey":"川田将雅","sex_age":"牡6","trainer":"美浦・宮田敬介","leg":"先行","last":"25年日経賞①(G2)、天皇賞春出走、24戦5勝","why":"昨年の日経賞勝ち馬だが今季はAJCC11着・阪神大賞典5着と精彩を欠く。本質は長距離型ステイヤーで、2200mの瞬発力勝負では適性も足りない。","sim_base":75,"sim_vol":1.25,"color":"#a4b0be","sire":"ゴールドシップ","_check":"✅ 性齢・厩舎・父・主要実績取得、データ的にダブル減点材料","oikiri_note":"最終追い切りで前向きさを感じる動き(血統フェスティバル6/10)","odds":117.2,"pop":14,"last2":[{"race":"阪神大賞典(G2)","order":5},{"race":"AJCC(G2)","order":11}],"weight":494},{"no":15,"name":"マイユニバース","jockey":"横山典弘","sex_age":"牡4","trainer":"栗東・武幸四郎","leg":"差し","last":"-","why":"日経賞勝ちの4歳上がり馬だが、前走は3勝クラスを勝った直後で2500m向きの持続力タイプ。G1初挑戦かつ阪神2200の急坂・瞬発力勝負では経験と決め手が不足。","sim_base":72,"sim_vol":1.3,"color":"#bdc3c7","sire":"レイデオロ","_check":"❌ 性齢から精査未完","odds":17.3,"pop":6,"last2":[{"race":"日経賞(G2)","order":1},{"race":"湾岸S(3勝)","order":1}],"weight":498,"weight_diff":"+30kg・日経賞468kg比"},{"no":4,"name":"ミクニインスパイア","jockey":"丹内祐次","sex_age":"牡4","trainer":"美浦・林徹","leg":"先行","last":"中距離OP級","why":"4歳の上がり馬で日経賞2着は強いが、3勝クラスから2戦目のG1挑戦。古馬一線級との実績差と日経賞からの中3ヶ月ぶっつけが不安。","sim_base":71,"sim_vol":1.3,"color":"#bdc3c7","sire":"アドマイヤマーズ","_check":"❌ 詳細精査未完","odds":56.6,"pop":10,"last2":[{"race":"日経賞(G2)","order":2},{"race":"グレイトフルS(3勝)","order":1}],"weight":510},{"no":18,"name":"ミステリーウェイ","jockey":"松本大輝","sex_age":"せん8","trainer":"栗東・小林真也","leg":"差し","last":"-","why":"8歳セン馬で有馬16着・日経賞14着と大敗続き。天皇賞春は逃げて8着に粘ったが上位とは差があり、本質はハンデG2級。G1の急坂2200では力不足。","sim_base":70,"sim_vol":1.4,"color":"#bdc3c7","sire":"ジャスタウェイ","_check":"❌ 全項目未取得","odds":196.8,"pop":16,"last2":[{"race":"天皇賞春(G1)","order":8},{"race":"日経賞(G2)","order":14}],"weight":508,"weight_diff":"+2kg・天皇賞春506kg比"}],"bet_plans":[{"title":"本線（◎クロワデュノール軸の馬連・ワイド流し）","lines":[{"text":"馬連 ◎→◯▲△△☆","prefix":"クロワデュノール→","numbers":[]},{"text":"ワイド ◎→◯▲△△☆","prefix":"クロワデュノール→","numbers":[]}],"note":"天皇賞春・大阪杯を連勝した最強馬を軸に。ただし前日1.2倍に圧縮で妙味は薄く、相手の人気薄(特に▲ダノン12.5倍)で回収率を作る。"},{"title":"妙味（▲ダノンデサイルの過小評価を突く）","lines":[{"text":"馬連 ▲→◎◯","prefix":"ダノンデサイル→","numbers":[]},{"text":"ワイド ▲→◎◯△","prefix":"ダノンデサイル→","numbers":[]}],"note":"大阪杯・有馬・ジャパンCで3連続3着のトップG1常連が12.5倍。netkeiba照合で判明した実力に人気が追いついていない本命級の押さえ。"},{"title":"3連複1頭軸（◎軸・相手広め）","lines":[{"text":"3連複 ◎-(◯▲)-(◯▲△△☆)","prefix":"クロワデュノール-","numbers":[]}],"note":"◎軸+相手で堅め配当狙い。有馬勝ちの◯ミュージアム・3着続きの▲ダノンを厚く。"},{"title":"印付け馬総取りボックス(安田記念R6改善点反映)","lines":[{"text":"3連複 ◎◯▲△△☆ ボックス","prefix":"","numbers":[]}],"note":"軸不発時の保険として6頭BOX(20通り)で印が3着内に入れば的中。安田記念2026振り返りの改善点として導入。"}],"pending_info":[{"label":"最終追い切り","when":"6/10(水)午前 実施予定","memo":"6/10(水)午前に最終追い切り実施・確定。クロワ(CW82.6-11.2併入/師は辛口)、タバル(荒れ馬場11.4好時計)、ミュージアム(11.5併先着)、ダノン(素軽い)、レガレイラ(美浦W併先着)、シンエンペラー(併せ遅れ)。詳細評価記事は金曜公開予定。","done":true},{"label":"枠順確定","when":"6/11(木) 15:00 確定","memo":"6/11(木)15:00確定。クロワ3-5、タバル8-16、ミュージアム1-2、ダノンデ1-1、レガレイラ8-17、シンエンペラー6-11。全18頭のno更新済み。逃げ・先行馬がやや外目に固まり、内の立ち回り組に展開利の可能性。","done":true},{"label":"想定オッズ→確定オッズ","when":"6/14(日) 朝〜直前","memo":"枠順確定後(6/11夜)も上位人気の構図は不変。クロワデュノール2.3-2.7倍で確固たる1人気。2-3番人気はミュージアムマイル(4.5-5.3)とメイショウタバル(3.7-5.2)が拮抗しソースで前後。ダノンデサイル6.9-8.0、レガレイラ8.6-9.5。確定オッズは6/14当日。","done":true},{"label":"馬場発表","when":"6/14(日) 9:30","memo":"現時点で良馬場想定だが、土曜の使い込み具合 / 当日朝の降水で稍重に振れる可能性。当日朝に必ず再評価。","note":"日曜良馬場想定(当日朝の正式発表待ち)"},{"label":"当日馬体重","when":"発走60分前","memo":"調教後馬体重はJRA公式(6/11)で全頭取得済み。残りは当日の増減発表のみ。"},{"label":"パドック気配","when":"発走30分前","memo":"毛づや・歩様・チャカつき。武豊×メイショウタバルの絆気配は特に。"},{"label":"前走天皇賞春の反動","when":"6/14(日) 当日","memo":"クロワデュノールは天皇賞春から中6週でゆとりあるが、長距離G1からの距離短縮反動が出ないか。"},{"label":"ファミリータイム・ミステリーウェイの想定騎手","when":"6/9(月)〜","memo":"確定済み: ファミリータイム=幸英明、ミステリーウェイ=松本大輝（mini_horses 反映済み）","done":true}],"external_views":[{"src":"note:@実績競馬","stance":"data","target":"全頭","text":"宝塚記念過去10年データ：脚質先行が勝率14.7%・複率26.5%で最有力、枠順8枠が5勝・単回204%。前走天皇賞春組が3勝で最多・複回101%。キタサンブラック産駒が連対率66.7%・複回170%。追込・ルメール・川田は宝塚記念で回収率低調。","url":"https://note.com/jissekikeiba/n/n3415c93510e6"},{"src":"東スポ競馬：1週前追い切り","stance":"bull","target":"クロワデュノール","text":"栗東CW不良馬場でラスト11.6秒。斉藤崇調教師「息遣いなどは悪くない」","url":"https://tospo-keiba.jp/breaking_news/72323"},{"src":"東スポ競馬：1週前追い切り","stance":"bull","target":"メイショウタバル","text":"ビッシリ攻めた内容、石橋師「予定通り」。連覇に向けて順調な仕上がり。","url":"https://tospo-keiba.jp/breaking_news/72323"},{"src":"東スポ競馬：1週前追い切り","stance":"bull","target":"レガレイラ","text":"意欲的な乗り込み、陣営「中身の濃い調教ができた」","url":"https://tospo-keiba.jp/breaking_news/72323"},{"src":"SPREAD編集部 想定オッズ","stance":"data","target":"上位5頭","text":"クロワデュノール 2.3倍(1人気)、メイショウタバル 3.7倍(2人気)、ミュージアムマイル 5.2倍(3人気)、レガレイラ 8.6倍(5人気)。3歳世代3強のうちマスカレードボール放牧回避でクロワ一強感が増す。","url":"https://spread-sports.jp/archives/388642"},{"src":"ファン投票最終結果 (5/28)","stance":"data","target":"全頭","text":"1位クロワデュノール 366,039票 / 2位メイショウタバル / 3位マスカレードボール（放牧で回避） / 4位レガレイラ / 5位ミュージアムマイル / 6位ダノンデサイル。ファン投票3位の天皇賞秋勝ち馬不在は構図変化の最大要素。","url":"https://dir.netkeiba.com/keibamatome/detail.html?no=5717"},{"src":"デイリースポーツ うま屋","stance":"data","target":"全頭","text":"宝塚記念に春3冠を目指すクロワデュノール、連覇を狙うメイショウタバルなど強豪がズラリ18頭がエントリー。","url":"https://www.daily.co.jp/umaya/news/2026/05/31/0020422063.shtml"},{"src":"東スポ：天皇賞春コメント","stance":"bull","target":"クロワデュノール","text":"北村友一「ゴールしたときは本当に分からなくて…」鼻差(推定2cm)の激戦を制して春古馬二冠を達成。父子制覇でG1 4勝目。","url":"https://tospo-keiba.jp/breaking_news/71221"},{"src":"中日スポーツ：宝塚記念展望","stance":"data","target":"3歳世代3強","text":"有馬記念覇者ミュージアムマイル、天皇賞秋勝ち馬マスカレードボール、ダービー馬クロワデュノールの3歳世代3強が中心。ただしマスカレードボール放牧でクロワ・ミュージアムの2頭対決構図。","url":"https://www.chunichi.co.jp/article/1187128"},{"src":"ぱねす note 回顧","stance":"data","target":"メイショウタバル","text":"2025年宝塚記念は武豊7番人気の絆勝利。逃げ切りでベラジオオペラに3馬身差。武豊5勝目で宝塚記念最年長Vの記録更新。今年もハナを切る逃げ脚質は変わらない見込み。","url":"https://note.com/xenospn/n/n8cffa72e065a"},{"src":"SPREAD 前走ローテ分析","stance":"bear","target":"クロワデュノール","text":"天皇賞春組は宝塚で馬券内率75%該当も、唯一の着外は父キタサンブラック産駒。距離適性に注意。","url":"https://spread-sports.jp/archives/388719"},{"src":"tenki.jp 6/10 取得","stance":"data","target":"馬場想定","text":"6/14(日) 阪神 曇り26/20℃ 降水30%。前日土曜は晴30%。良馬場想定が現実的。","url":"https://tenki.jp/leisure/horse/6/31/32008/10days.html"},{"source":"netkeiba AI予想オッズ (6/9時点)","title":"クロワデュノール 2.3倍(1人気)、メイショウタバル 5.0倍、ミュージアムマイル 5.3倍、ダノンデサイル 9.3倍、レガレイラ 10.3倍。上位4頭が一桁オッズ。日刊スポーツ予想ではミュージアムマイル4.5倍まで支持。"},{"source":"netkeiba 最終追い切り速報 (6/10)","title":"クロワデュノール栗東CW6F82.6-11.2で併入、斉藤崇師「ようやく走れるところまで来た」も「まだ物足りない」と辛口評価。最終追い切りで先週よりキレ向上。"},{"source":"日刊スポーツ/東スポ厩舎直送 (6/10)","title":"メイショウタバル荒れ馬場ラスト11.4の好時計。石橋師「100点の状態を維持」、武豊で父子連覇・史上3頭目の偉業へ態勢万全。"},{"source":"netkeiba 栗東トレセンニュース (6/10)","title":"ミュージアムマイル栗東CW終い11.5で併せ先着、有馬記念覇者らしい完成度。シンエンペラーは併せ遅れで放牧明けの立て直し途上。"},{"source":"日刊スポーツ 予想オッズ (6/10更新)","title":"クロワデュノール2.7倍、ミュージアムマイル4.5倍、メイショウタバル5.2倍、ダノンデサイル8.0倍、レガレイラ9.5倍。上位5頭が一桁オッズで混戦模様。"},{"src":"日刊スポーツ 予想オッズ","stance":"data","target":"全頭","text":"想定単勝: クロワ2.7-ミュージアム4.5-タバル5.2-ダノンデ8.0-レガレイラ9.5。ミュージアムとタバルの2-3番人気はソースで割れる（SPREADは逆）。","url":"https://www.keibanomiryoku.com/宝塚記念"},{"src":"東スポ競馬／netkeiba 枠順確定報 6/11","stance":"data","target":"全頭","text":"宝塚記念枠順確定。クロワデュノール3枠5番、武豊メイショウタバル8枠16番、ミュージアムマイル1枠2番、ダノンデサイル1枠1番、レガレイラ8枠17番。逃げ・先行タイプが外目に多く「先行しそうな馬が外に多数、逆の方が…」と兼ね合いを懸念する声も。","url":"https://tospo-keiba.jp/breaking_news/72621"},{"src":"SPREAD／netkeiba AI 枠順確定後想定オッズ","stance":"data","target":"全頭","text":"枠順確定後想定単勝: クロワ2.3-ミュージアム5.2-タバル3.7-ダノンデ6.9-レガレイラ8.6。上位5頭の人気構図は枠順発表後も大きく動かず、クロワデュノールの抜けた1人気は揺るがず。","url":"https://spread-sports.jp/archives/388642"},{"src":"宝塚記念 過去データ（開催4日目傾向）","stance":"data","target":"枠順・脚質","text":"開催4日目の宝塚記念は圧倒的に前有利で逃げ先行が過去3年3勝、逃げ馬の馬券内率40%。枠は見解が割れ、内枠有利説(1枠複勝率50%・1〜4枠が外の3倍)と外枠有利説(8枠5勝)が併存。最終的には枠より阪神2200mの舞台適性を重視すべきとの分析。","url":"https://winsight.jp/column/column_page?id=25058"},{"src":"note:スノウ|追い切りメモ 6/10","stance":"bull","target":"メイショウタバル","text":"追い切りだけで見るなら中心はメイショウタバル。1週前で負荷をかけ最終で反応確認という理想的な流れで、厩舎コメント「予定通りの調整」とも合致。クロワデュノールは能力上位も追い切りだけ見ると今回は少し慎重、厩舎コメントも完全な絶賛ではない。コスモキュランダは1週前の内容が目立ちタフ条件で穴として面白い。","url":"https://note.com/hanasa4_jp/n/nf8988a445496"},{"src":"SPREAD 宝塚記念2026特集（追い切り診断・6/12時点）","stance":"bull","target":"レガレイラ","text":"全頭追い切り診断で最高評価Sはレガレイラ「譲らぬ闘争心に陰りなく、完成期迎えた証」。クロワデュノールはA評価「高いレベルで状態維持」。想定オッズはクロワ2.3倍1人気、タバル3.7倍2人気、ミュージアムマイル5.2倍3人気とタバルが2人気に再浮上。","url":"https://spread-sports.jp/archives/388642"},{"src":"ウマニティ 調教診断・関係者談話","stance":"data","target":"ダノンデサイル/マイユニバース/メイショウタバル","text":"水曜追い切りチェックでダノンデサイル・マイユニバース・メイショウタバルの3頭を高評価。クロワデュノール斉藤崇師「息遣いは大丈夫。気持ちの部分と体の引き締めをしっかり」、タバル石橋師「ここ2週は併せ馬で気を抜くところがなかった。これで変わる」、マイユニバース武幸師「間隔を空けたことでメンタルが良くなっている」。","url":"https://umanity.jp/racedata/race_newsdet.php?nid=11871022"},{"src":"JRA公式 調教後の馬体重（6/11発表）","stance":"data","target":"全18頭","text":"調教後馬体重: 1ダノンデサイル 522kg、2ミュージアムマイル 510kg、3シュガークン 520kg、4ミクニインスパイア 510kg、5クロワデュノール 516kg、6ビザンチンドリーム 470kg、7ファミリータイム 482kg、8タガノデュード 514kg、9コスモキュランダ 526kg、10ジューンテイク 506kg、11シンエンペラー 502kg、12マイネルエンペラー 494kg、13シェイクユアハート 462kg、14スティンガーグラス 486kg、15マイユニバース 498kg、16メイショウタバル 506kg、17レガレイラ 494kg、18ミステリーウェイ 508kg。トップハンデ級の馬格はコスモキュランダ526kg・ダノンデサイル522kg、最軽量はシェイクユアハート462kg・ビザンチンドリーム470kg。【前走当日比】◎クロワ+2(天皇賞春514)、◯タバル+6(大阪杯500)、▲ミュージアム+8(有馬502)、△ダノンデサイル+6(大阪杯516)、△レガレイラ+12(有馬482)、△シンエンペラー-6(天皇賞春508・放牧明け)。miniではマイユニバース+30(日経賞468・netkeibaも「30キロ増」と報道)、タガノデュード+12(天皇賞春502)、ミステリーウェイ+2(天皇賞春506)。ビザンチンドリームは前走が海外(2月カタール)で当日体重発表なし・助手談「昨年天皇賞春2着時より10キロ以上増えていそう」。残り8頭は前走当日体重未取得のため増減算出せず。","url":"https://www.jra.go.jp/news/202606/061103.html"},{"src":"ウマニティ 前日オッズ(6/13 18:00)","stance":"data","target":"全18頭","text":"前日オッズ: ⑤クロワデュノール1.2倍(1人気)、⑯メイショウタバル10.0倍(2人気)、②ミュージアムマイル11.9倍(3人気)、⑰レガレイラ12.0倍(4人気)、①ダノンデサイル12.5倍(5人気)、⑮マイユニバース31.6倍(6人気)、⑥ビザンチンドリーム66.1倍、⑨コスモキュランダ91.1倍、⑧タガノデュード97.9倍。6/12時点(タバル3.7倍2人気)から一変し、クロワデュノールが断然の1強ムードに。2~5人気が10~12倍台で拮抗。","url":"https://umanity.jp/racedata/race_newsdet.php?nid=11872065"},{"src":"うましる 最終追い切り評価/全頭診断","stance":"data","target":"全18頭","text":"最終追い切り全頭診断。最高評価Sはメイショウタバル(2週続けて終い鋭くポテンシャル高い走りに期待)。A評価にクロワデュノール(不良馬場でも調子の良さ)・レガレイラ(時計以上の内容)。マイユニバースも馬なりで高水準の時計と好評。","url":"https://umasiru.com/archives/20301"},{"src":"競馬ヘッドライン 最終追い切り診断","stance":"data","target":"クロワデュノール/メイショウタバル/マイユニバース","text":"編集部が買えると判断したA評価3頭はクロワデュノール・メイショウタバル・マイユニバース。クロワ「絶好調の前走デキをキープ」、タバル「冷静にためる追い切りを消化、自分の競馬ができるか」、マイユニバース「2週続けて高水準の時計で状態は前走以上」。ミュージアムマイル・ダノンデサイルはB、シンエンペラーはCと印馬で評価差。","url":"https://keiba-headline.com/best-work-out-horses-of-takarazuka-kinen-2026-400822"},{"src":"日本気象協会 tenki.jp 阪神6/14予報","stance":"data","target":"馬場/天候","text":"6/14(日)の阪神競馬場は晴れ時々くもり、最高29℃・最低19℃。前日土曜も晴れで芝・ダートとも良発表のため、日曜も良馬場想定。高速馬場でのスピード勝負になる可能性。","url":"https://tenki.jp/leisure/horse/6/31/32008/"},{"src":"keiba.sqlite(netkeiba連動DB)による一次情報照合","stance":"data","target":"印付き6頭","text":"整備中のヒストリカルDB+netkeiba馬ページで印6頭の血統・全走歴を照合。ダノンデサイルのlast3がWeb収集時に捏造(ドバイ/AJCC2026走は実在せず実際は大阪杯3-有馬3-ジャパンC3着のトップG1連続3着)、クロワデュノール3走目はジャパンC4着(仏G3勝ちではない)、メイショウタバル3走目は天皇賞秋6着が正、と判明し訂正。dam_sireはクロワ=Cape Cross、タバル=フレンチデピュティ、ミュージアム=ハーツクライ、ダノン=Congrats、レガ=ハービンジャー、シンエン=Galileo。","url":"https://race.netkeiba.com/race/shutuba.html?race_id=202609030411"},{"src":"印再編の根拠(v5)","stance":"data","target":"印付き6頭","text":"一次情報照合の事実訂正を受け、実フォーム序列に印を整合。ダノンデサイル(3-3-3 championship)を▲へ昇格、有馬勝ちのミュージアムマイルを◯へ、近2走大敗のメイショウタバルを△へ降格、弱さ確定のシンエンペラーを☆へ。◎クロワは不変。","url":"https://race.netkeiba.com/race/shutuba.html?race_id=202609030411"},{"src":"netkeiba 確定単勝オッズ","stance":"data","target":"全18頭","text":"2026-06-14 14:00 JST時点の確定単勝。1番人気クロワデュノール2.4倍/2メイショウタバル5.6/3ミュージアムマイル6.0/4レガレイラ6.5/5ダノンデサイル7.5/6マイユニバース17.3/12シンエンペラー75.6。前日(クロワ1.2倍)から本命が緩和し、対抗以下が拮抗する混戦オッズに。","url":"https://race.netkeiba.com/odds/index.html?race_id=202609030411"}],"slug":"takarazuka_2026"};
 
 var AX = ["速さ","スタミナ","瞬発力","コース適性","仕上がり"];
+
+// ========== 馬色バッジの文字色を自動判定 ==========
+// 馬ごとの色(data.json の color)を背景に白文字を乗せていたため、淡い色では
+// コントラストが WCAG AA(4.5:1) を下回っていた（#7a8aa0 で3.52:1、#16a085 で3.28:1、
+// 2026-07-25指摘）。色定義は過去レースぶんも含む確定記録なので data 側は変更せず、
+// 背景輝度から白／濃紺を選び直して 4.5:1 を確保する。
+// 文字色の候補。デザイン既定の白を最優先し、4.5:1 を満たさなければ順に濃くする。
+// 中間トーン（例 #2980b9）は白3.55:1・濃紺3.55:1 とどちらも基準を割るため、
+// 最後の砦としてほぼ黒を置く（1色だけでは全色を救えない）。
+var INK_CANDIDATES = ['#ffffff', '#10233a', '#000000'];
+function _relLuminance(hex){
+  var h = String(hex||'').replace('#','');
+  if(h.length===3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+  if(!/^[0-9a-fA-F]{6}$/.test(h)) return null;
+  var ch = [0,2,4].map(function(i){
+    var c = parseInt(h.substr(i,2),16)/255;
+    return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4);
+  });
+  return 0.2126*ch[0] + 0.7152*ch[1] + 0.0722*ch[2];
+}
+// 背景色に対し、WCAG AA(4.5:1)を満たす最初の候補色を返す。
+// どれも満たさない場合は、比が最も大きい候補で妥協する。
+function inkOn(bgHex){
+  var L = _relLuminance(bgHex);
+  if(L==null) return '#ffffff';
+  var best = null, bestRatio = 0;
+  for(var i=0;i<INK_CANDIDATES.length;i++){
+    var ink = INK_CANDIDATES[i];
+    var iL = _relLuminance(ink);
+    var ratio = (Math.max(L,iL) + 0.05) / (Math.min(L,iL) + 0.05);
+    if(ratio >= 4.5) return ink;
+    if(ratio > bestRatio){ bestRatio = ratio; best = ink; }
+  }
+  return best || '#ffffff';
+}
 
 // ========== モーダル表示中の背面スクロール固定 ==========
 // body{overflow:hidden}だけではiOS Safariで背面ページがラバーバンドスクロールしてしまう
@@ -1107,9 +1202,12 @@ function favBtnHtml(name, size){
   var m = myMark(name);
   var esc = String(name).replace(/'/g,"\\'");
   var sm = size==='sm' ? ' sm' : '';
-  var main = '<button type="button" class="favBtn'+sm+(m?' on':'')+'" data-fav-name="'+escHtml(name)+'" title="自分の印をつける（タップで選択）" onclick="toggleMarkPicker(event,this,\''+esc+'\')">'+(m||'＋')+'</button>';
+  // 読み上げでは記号（＋／✕／✎）だけではどの馬への操作か分からないため、
+  // aria-label に馬名と現在の印を必ず含める（2026-07-25指摘）。
+  var favLabel = m ? escHtml(name)+'の自分の印は現在'+m+'。変更する' : escHtml(name)+'に自分の印をつける';
+  var main = '<button type="button" class="favBtn'+sm+(m?' on':'')+'" data-fav-name="'+escHtml(name)+'" aria-label="'+favLabel+'" title="自分の印をつける（タップで選択）" onclick="toggleMarkPicker(event,this,\''+esc+'\')">'+(m||'＋')+'</button>';
   // 印が付いている間だけ隣に常駐する✕。ポップアップを開かず1タップで解除できる（目立たせない配色）
-  var clear = '<button type="button" class="favClearBtn'+sm+(m?' show':'')+'" data-fav-clear="'+escHtml(name)+'" title="印を外す" onclick="event.stopPropagation();setMark(\''+esc+'\',\'\')">✕</button>';
+  var clear = '<button type="button" class="favClearBtn'+sm+(m?' show':'')+'" data-fav-clear="'+escHtml(name)+'" aria-label="'+escHtml(name)+'の自分の印を外す" title="印を外す" onclick="event.stopPropagation();setMark(\''+esc+'\',\'\')">✕</button>';
   return main + clear;
 }
 // 印の選択メニューはbody直下に1個だけ生成し、開いたボタンの位置へfixed配置する
@@ -1182,7 +1280,8 @@ function getMemo(name){ return MEMOS[name] || ''; }
 function memoBtnHtml(name, size){
   var has = !!getMemo(name);
   var esc = String(name).replace(/'/g,"\\'");
-  return '<button type="button" class="memoBtn'+(size==='sm'?' sm':'')+(has?' has':'')+'" data-memo-btn="'+escHtml(name)+'" title="自分用メモ" onclick="event.stopPropagation();openMemoModal(\''+esc+'\')">✎</button>';
+  var label = escHtml(name)+'の自分用メモを'+(has?'編集':'書く');
+  return '<button type="button" class="memoBtn'+(size==='sm'?' sm':'')+(has?' has':'')+'" data-memo-btn="'+escHtml(name)+'" aria-label="'+label+'" title="自分用メモ" onclick="event.stopPropagation();openMemoModal(\''+esc+'\')">✎</button>';
 }
 // メモは「保存」を押すまで確定しない（欄外クリック・×・Escapeはすべて未保存として破棄）。
 // 自動保存だと今どっちの状態か分からなくなるため、明示的な確定操作にした（ユーザー指摘）。
@@ -1192,7 +1291,7 @@ function memoModalEl(){
     el = document.createElement('div');
     el.id = 'memoModal';
     el.className = 'memoModalOverlay';
-    el.innerHTML = '<div class="memoModal"><div class="memoModalHd"><span class="mmTitle"></span>'
+    el.innerHTML = '<div class="memoModal" role="dialog" aria-modal="true" aria-labelledby="mmTitleMemo"><div class="memoModalHd"><span class="mmTitle" id="mmTitleMemo"></span>'
       + '<button type="button" aria-label="閉じる（未保存の内容は破棄）" onclick="cancelMemoModal()">×</button></div>'
       + '<div class="memoModalBody">'
       +   '<textarea placeholder="この馬についてのメモ（狙い・気になる点など）"></textarea>'
@@ -1205,6 +1304,31 @@ function memoModalEl(){
   }
   return el;
 }
+/* ===== モーダルと端末の「戻る」の連携 =====
+   モーダルを開いている間だけ履歴エントリを1つ積んでおき、戻る操作ではページを離脱せず
+   モーダルだけを閉じる。これが無いと過去走モーダルを開いたまま戻るとサイト先頭へ飛んで
+   読んでいた位置を失う（2026-07-30 指摘）。
+   閉じ方は2経路ある。(a) 戻る操作 → popstate が来るので DOM を閉じるだけ、
+   (b) ×/保存/Esc/背景タップ → こちらから history.back() で積んだ分を戻す。 */
+var KB_MODAL_STACK = [];   // 開いているモーダルの「DOMを閉じるだけの関数」スタック
+function kbModalOpened(closeDom){
+  KB_MODAL_STACK.push(closeDom);
+  try{ history.pushState({kbModal: KB_MODAL_STACK.length}, ''); }catch(e){}
+}
+function kbModalClosed(){
+  if(!KB_MODAL_STACK.length) return;
+  KB_MODAL_STACK.pop();
+  if(history.state && history.state.kbModal){ try{ history.back(); }catch(e){} }
+}
+window.addEventListener('popstate', function(){
+  var closeDom = KB_MODAL_STACK.pop();
+  if(closeDom){ try{ closeDom(); }catch(e){} }
+});
+
+function memoModalCloseDom(){
+  var el = document.getElementById('memoModal');
+  if(el){ el.classList.remove('open'); kbUnlockScroll(); }
+}
 function openMemoModal(name){
   var el = memoModalEl();
   el.setAttribute('data-for', name);
@@ -1212,11 +1336,12 @@ function openMemoModal(name){
   el.querySelector('textarea').value = getMemo(name);
   el.classList.add('open');
   kbLockScroll();
+  kbModalOpened(memoModalCloseDom);
   setTimeout(function(){ el.querySelector('textarea').focus(); }, 50);
 }
 function cancelMemoModal(){
-  var el = document.getElementById('memoModal');
-  if(el){ el.classList.remove('open'); kbUnlockScroll(); }
+  memoModalCloseDom();
+  kbModalClosed();
 }
 function saveMemoModal(){
   var el = document.getElementById('memoModal');
@@ -1229,8 +1354,8 @@ function saveMemoModal(){
   document.querySelectorAll('[data-memo-btn="'+sel+'"]').forEach(function(b){
     b.classList.toggle('has', !!text);
   });
-  el.classList.remove('open');
-  kbUnlockScroll();
+  memoModalCloseDom();
+  kbModalClosed();
   if(typeof renderMyPicks === 'function') renderMyPicks(); // MY注目のメモプレビューにも反映
 }
 
@@ -1274,7 +1399,7 @@ function prNoteModalEl(){
     el = document.createElement('div');
     el.id = 'prNoteModal';
     el.className = 'memoModalOverlay';
-    el.innerHTML = '<div class="memoModal"><div class="memoModalHd"><span class="mmTitle"></span>'
+    el.innerHTML = '<div class="memoModal" role="dialog" aria-modal="true" aria-labelledby="mmTitlePrNote"><div class="memoModalHd"><span class="mmTitle" id="mmTitlePrNote"></span>'
       + '<button type="button" aria-label="閉じる（未保存の内容は破棄）" onclick="cancelPrNoteModal()">×</button></div>'
       + '<div class="memoModalBody">'
       +   '<div class="prMarkRow"></div>'
@@ -1300,11 +1425,16 @@ function openPrNoteModal(key){
   el.querySelector('textarea').value = n.note || '';
   el.classList.add('open');
   kbLockScroll();
+  kbModalOpened(prNoteModalCloseDom);
   setTimeout(function(){ el.querySelector('textarea').focus(); }, 50);
 }
-function cancelPrNoteModal(){
+function prNoteModalCloseDom(){
   var el = document.getElementById('prNoteModal');
   if(el){ el.classList.remove('open'); kbUnlockScroll(); }
+}
+function cancelPrNoteModal(){
+  prNoteModalCloseDom();
+  kbModalClosed();
 }
 function savePrNoteModal(){
   var el = document.getElementById('prNoteModal');
@@ -1319,8 +1449,8 @@ function savePrNoteModal(){
     b.classList.toggle('has', !!(mark||note));
     b.textContent = mark || '✎';
   });
-  el.classList.remove('open');
-  kbUnlockScroll();
+  prNoteModalCloseDom();
+  kbModalClosed();
 }
 
 // 印(myMark)が付いた馬をカード化して指定boxへ描画する共通処理。
@@ -1341,7 +1471,7 @@ function renderMyPicksInto(boxId, crossPage){
   picks.forEach(function(p){
     var h = p.h;
     var no = (h.no_provisional || !h.no || h.no===0) ? '想定' : h.no;
-    var photo = '<div class="pc-photoWrap"><div class="pc-ph0">🐎</div>'
+    var photo = '<div class="pc-photoWrap"><div class="pc-ph0"></div>'
       + (h.photo ? '<img class="pc-photo" src="'+h.photo+'" alt="'+h.name+'の馬体" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '')
       + '</div>';
     var memo = getMemo(h.name);
@@ -1352,8 +1482,8 @@ function renderMyPicksInto(boxId, crossPage){
       + '<div class="pc-body">'
       +   '<div class="pc-name">'+no+' '+h.name+'</div>'
       +   '<div class="pc-meta"><span class="pc-pop">公式印 '+(h.mark||'-')+'</span>'+favBtnHtml(h.name,'sm')+memoBtnHtml(h.name,'sm')+'</div>'
-      +   (memo ? '<div class="pc-memo">📝 '+escHtml(memo)+'</div>' : '')
-      +   '<a class="pc-jump" href="'+jumpHref+'">'+(crossPage ? '結論ページのカードへ →' : 'カード詳細 →')+'</a>'
+      +   (memo ? '<div class="pc-memo">'+escHtml(memo)+'</div>' : '')
+      +   '<a class="pc-jump" href="'+jumpHref+'">'+(crossPage ? '予想ページのカードへ →' : 'カード詳細 →')+'</a>'
       + '</div></div>';
   });
   html += '</div>';
@@ -1406,6 +1536,14 @@ document.getElementById("raceTitle").textContent = DATA.race.title;
     // 「特別確定N頭」のように"特別"だけが浮いて残ってしまう。先頭の「特別」も一緒に消費する。
     meta = meta.replace(/(?:特別)?登録\d+頭(\(フルゲート\d+頭\))?/, countTxt).replace(/確定\d+頭(?!（)/, countTxt);
     if(meta.indexOf(countTxt) < 0 && !/確定\d+頭/.test(meta)) meta += '・' + countTxt;
+  }
+  // 発走時刻は meta 末尾にあるため、スマホの1行クランプで切れていた。以前は日付・競馬場・
+  // 発走時刻を下段のチップ列で二重に出していたが、日付と競馬場が meta 行と丸かぶりだった
+  // （2026-07-26指摘）。チップ列は廃止し、発走時刻だけを日付の直後へ前出しする。
+  var tm = meta.match(/[・\s]*(\d{1,2}:\d{2})\s*発走/);
+  var dateRe = /((?:\d{4}年)?\d{1,2}月\d{1,2}日(?:\([日月火水木金土]\))?)/;
+  if(tm && dateRe.test(meta)){
+    meta = meta.replace(tm[0], '').replace(dateRe, '$1 ' + tm[1] + '発走');
   }
   document.getElementById("raceMeta").textContent = meta;
 })();
@@ -1490,7 +1628,7 @@ function pvRelTime(asof){
   for(var j=0;j<ORDER.length;j++){
     steps += '<div class="st'+(j<ci?' done':(j===ci?' cur':''))+'"><div class="dot"></div>'+LBL[ORDER[j]]+'</div>';
   }
-  var stepHd = '<div class="pv-steps-hd"><span class="ti">📅 予想の更新ステージ</span><span class="sub">レース当日へ情報が揃うほど右へ進む（サイトの現在地ではありません）</span></div>';
+  var stepHd = '<div class="pv-steps-hd"><span class="ti">予想の更新ステージ</span><span class="sub">レース当日へ情報が揃うほど右へ進む（サイトの現在地ではありません）</span></div>';
   var stepBlock = stepHd + '<div class="pv-steps">'+steps+'</div>';
   if(ci<0 && stage){
     // 自由文の段階は全文をここに出さない（下の「予想方針」カードで整形表示）。版だけ短く示す。
@@ -1518,7 +1656,7 @@ function pvRelTime(asof){
   if(inline) inline.textContent = (label||pv||'-') + (asof?' ('+asof+')':'');
 })();
 
-// 📝 予想方針・更新ログ（自由文 predict_stage を見出し+文単位の箇条書きに整形。追記ブロックは折りたたみ）
+// 予想方針・更新ログ（自由文 predict_stage を見出し+文単位の箇条書きに整形。追記ブロックは折りたたみ）
 (function(){
   var box = document.getElementById("predictStageBox");
   if(!box) return;
@@ -1533,7 +1671,7 @@ function pvRelTime(asof){
   // 見出し1行だけ常時表示。現行版の要点バレットも更新ログも全て折りたたみ(details)に格納
   // 「未取得だった」等の過去DRAFT履歴(【追記】ログ)は蓄積しても価値が薄いので表示しない。
   // 現行版の要点(本体の文)だけを畳んで見せる。
-  var html = '<div class="stageHead">📝 '+head+'</div>';
+  var html = '<div class="stageHead">'+head+'</div>';
   if(ms.length){
     html += '<details class="stageMore"><summary>予想方針の詳細</summary>';
     html += '<ul class="stageList">'+ms.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ul>';
@@ -1542,7 +1680,7 @@ function pvRelTime(asof){
   box.innerHTML = html;
 })();
 
-// 🎯 狙い目の参考（人気馬の危なさ＋逆転候補）。DATA.reference_pick を描画
+// 狙い目の参考（人気馬の危なさ＋逆転候補）。DATA.reference_pick を描画
 (function(){
   var box = document.getElementById("referencePickBox");
   if(!box) return;
@@ -1587,14 +1725,14 @@ function pvRelTime(asof){
   var html = '<div style="background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:.9rem;line-height:1.6;">'+(rp.note||'')+'</div>';
   // あぶない人気馬
   html += '<div style="border:1px solid #f0d6c0;border-radius:10px;overflow:hidden;margin-bottom:14px;">';
-  html += '<div style="background:#fdecea;color:#c0392b;font-weight:800;padding:9px 12px;">⚠️ あぶない人気馬（中心から外す候補）</div>';
+  html += '<div style="background:#fdecea;color:#c0392b;font-weight:800;padding:9px 12px;">⚠ あぶない人気馬（中心から外す候補）</div>';
   if(rp.danger_favorites && rp.danger_favorites.length) html += rp.danger_favorites.map(function(h){return row(h,true);}).join('');
   else html += '<div style="padding:9px 12px;color:var(--sub);font-size:.85rem;">該当なし（上位人気は手堅い顔ぶれ）</div>';
   html += why('▸ なぜ「あぶない」と言える？', whyDanger);
   html += '</div>';
   // 逆転候補
   html += '<div style="border:1px solid #cfe3d0;border-radius:10px;overflow:hidden;margin-bottom:12px;">';
-  html += '<div style="background:#eaf6ec;color:#27734a;font-weight:800;padding:9px 12px;">🎯 逆転候補（人気馬が崩れた時に狙う馬／参考）</div>';
+  html += '<div style="background:#eaf6ec;color:#27734a;font-weight:800;padding:9px 12px;">逆転候補（人気馬が崩れた時に狙う馬／参考）</div>';
   if(rp.reference_holes && rp.reference_holes.length) html += rp.reference_holes.map(function(h){return row(h,false);}).join('');
   else html += '<div style="padding:9px 12px;color:var(--sub);font-size:.85rem;">該当なし</div>';
   html += why('▸ どういう馬を選んでいる？', whyHole);
@@ -1603,7 +1741,7 @@ function pvRelTime(asof){
   if(rp.bet_suggestion){
     var bs = rp.bet_suggestion;
     html += '<div style="border:1px solid #cdd9ef;border-radius:10px;overflow:hidden;margin-bottom:12px;">';
-    html += '<div style="background:#eef2fb;color:#2c4a7c;font-weight:800;padding:9px 12px;">💰 逆転を買うなら（参考の買い目・'+bs.type+(bs.points?' '+bs.points+'点':'')+'）</div>';
+    html += '<div style="background:#eef2fb;color:#2c4a7c;font-weight:800;padding:9px 12px;">逆転を買うなら（参考の買い目・'+bs.type+(bs.points?' '+bs.points+'点':'')+'）</div>';
     html += '<div style="padding:10px 12px;">';
     if(bs.axis) html += '<div style="font-size:.85rem;margin-bottom:8px;">軸（中心）：<b>'+bs.axis.name+'</b>（'+bs.axis.pop+'番人気・手堅い上位人気）</div>';
     html += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;">'
@@ -1612,7 +1750,7 @@ function pvRelTime(asof){
     html += '<div style="color:var(--sub);font-size:.82rem;line-height:1.6;">'+(bs.note||'')+'</div>';
     html += '</div></div>';
   }
-  if(rp.evidence) html += '<div style="color:var(--sub);font-size:.78rem;line-height:1.6;">📊 '+rp.evidence+'</div>';
+  if(rp.evidence) html += '<div style="color:var(--sub);font-size:.78rem;line-height:1.6;">'+rp.evidence+'</div>';
   box.innerHTML = html;
 })();
 
@@ -1624,7 +1762,7 @@ function pvRelTime(asof){
   if(!list.length){ box.innerHTML = '<p style="color:var(--sub);font-size:.84rem;margin:0;">未確定情報の登録がありません。</p>'; return; }
   // 今後更新予定のチェックリスト（確定=☑ / 未確定=☐、進捗カウント付き）
   var done = list.filter(function(p){return p.done;}).length;
-  var head = '<div class="pendChkHead">📋 今後の更新チェック<span class="pcCount">'+done+' / '+list.length+' 確定</span></div>';
+  var head = '<div class="pendChkHead">今後の更新チェック<span class="pcCount">'+done+' / '+list.length+' 確定</span></div>';
   box.innerHTML = head + '<ul class="pendChk">' + list.map(function(p){
     return '<li class="'+(p.done?'done':'')+'"><span class="ck">'+(p.done?'☑':'☐')+'</span>'
          + '<div class="pcbody"><div class="pctop"><b>'+p.label+'</b>'+(p.when?'<span class="when">'+p.when+'</span>':'')+'</div>'
@@ -1632,7 +1770,7 @@ function pvRelTime(asof){
   }).join("") + '</ul>';
 })();
 
-// 💬 他者の見方（DATA.external_views: 配列）
+// 他者の見方（DATA.external_views: 配列）
 (function(){
   var box = document.getElementById("viewsBox");
   if(!box) return;
@@ -1744,15 +1882,6 @@ function chaosLabel(label){
   if(label === '中') return '少し荒れ';
   return '堅め';
 }
-// 馬場アイコンを going 値に連動（🌱固定をやめる）。良=新芽 / 稍重=薄曇 / 重=雨 / 不良=濁流
-function goingIcon(going){
-  going = String(going || '');
-  if(/不良/.test(going)) return '🌊';
-  if(/重/.test(going) && !/稍/.test(going)) return '🌧';
-  if(/稍/.test(going)) return '🌤';
-  if(/良/.test(going)) return '🌱';
-  return '🏇';
-}
 // 馬場が確定済みか（going_confirmed=true、または「馬場発表」系の未確定 pending が無い）
 function goingConfirmed(){
   var pred = DATA.predicted_scenario || {};
@@ -1790,20 +1919,18 @@ function impScore(sc){
   return (typeof sc.final_score === 'number' ? sc.final_score.toFixed(1) : sc.final_score) + '/5';
 }
 function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : '低')); }
+// data.json 側の文字列（天気メモ等）に混ざる絵文字は、表示直前に落とす。
+// UIから絵文字を排する方針のため、テンプレートを直しても過去レースのデータに残るのを防ぐ。
+function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u26FF\uFE0F]/gu,'').replace(/\s{2,}/g,' ').trim(); }
 
 // ファーストビューの視覚サマリ。天気/馬場/波乱/本命/買い目を文章より先に見せる。
 (function(){
   var box = document.getElementById('heroVisual');
   if(!box) return;
-  var wxText = ((DATA.race && DATA.race.wx) || []).join(' ');
+  var wxText = deEmoji(((DATA.race && DATA.race.wx) || []).join(' '));
   var pred = DATA.predicted_scenario || {};
   // pred.weather が確定済みならそれを最優先（wxTextは「梅雨シーズン」「雨なら〜警戒」等の
   // 条件文・注意書きを含み「雨」の字だけ拾うと誤判定するため、weather未確定時のフォールバックに留める）
-  var icon = /豪雨|雷/.test(pred.weather || wxText) ? '⛈'
-    : /雨/.test(pred.weather || wxText) ? '☔'
-    : /曇/.test(pred.weather || wxText) ? '☁'
-    : /晴/.test(pred.weather || wxText) ? '☀'
-    : '🌤';
   var weatherLabel = pred.weather || (wxText.match(/雨のち曇|雨|曇|晴/) || ['天気'])[0];
   var going = pred.going || (wxText.match(/不良|稍重|重|良/) || ['馬場'])[0];
   var goConf = goingConfirmed();
@@ -1831,32 +1958,33 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
   var cp = (DATA.race && DATA.race.course_profile) || null;
   var cpFit = '';
   if(cp && cp.fit_rule){
-    cpFit = Object.keys(cp.fit_rule).filter(function(k){return /[◎○]/.test(cp.fit_rule[k]);})
+    // ◎（このコースで最も恵まれる脚質）だけを出す。○まで並べると
+    // 「逃げ◎ 先行◎ 差し○」のように要点がぼやけるため（2026-07-26指摘）
+    cpFit = Object.keys(cp.fit_rule).filter(function(k){return /◎/.test(cp.fit_rule[k]);})
       .map(function(k){return k + cp.fit_rule[k].charAt(0);}).join(' ');
   }
   if(cp && !cpFit) cpFit = shortText(cp.bias_leg || cp.straight_note || '', 26);
   var courseCard = cp
-    ? '<div class="signalCard"><div class="icon">🏟</div><div><b>コース適性</b><strong>'+(cpFit || '-')+'</strong><small>'+shortText(cp.name || 'コース', 24)+'</small></div></div>'
+    ? '<div class="signalCard"><div><b>コース適性</b><strong>'+(cpFit || '-')+'</strong><small>'+shortText(cp.name || 'コース', 24)+'</small></div></div>'
     : '';
   // レース傾向(荒れ度)カードは過去傾向データから実際に算出できた(grounded)場合のみ表示。
   // 根拠が無いと「荒れそう」の当て推量バッジが毎回同じ文言で出るだけになり、ui-guidelines.mdの
   // 「根拠非表示のバッジ禁止」に反するため（ユーザー指摘・2026-07-18）。
   var chaosCard = ch.grounded
-    ? '<div class="signalCard '+scenarioTone(chaos)+'"><div class="icon">⚡</div><div><b>レース傾向</b><strong>'+chaosLabel(chaos)+'</strong><div class="riskDots" aria-hidden="true">'+dots+'</div><small class="chaosWhy">'+shortText(ch.reason, 34)+'</small></div></div>'
+    ? '<div class="signalCard '+scenarioTone(chaos)+'"><div><b>レース傾向</b><strong>'+chaosLabel(chaos)+'</strong><div class="riskDots" aria-hidden="true">'+dots+'</div><small class="chaosWhy">'+shortText(ch.reason, 34)+'</small></div></div>'
     : '';
   box.innerHTML =
-    // 天気オーブは「天気」専任。馬場は下の要点グリッドの「馬場」カードに一本化し二重表現を排除。
-    '<div class="weatherOrb">'
-      + '<div><div class="big">'+icon+'</div><b>'+weatherLabel+'</b><small class="wxMini">'+shortText(wxText, 40)+'</small></div>'
+    // signalHeadはheroVisualの1行目にフルスパンで置き、weatherOrb（天気専任）とsignalGridを
+    // 2行目の同じ行の2カラムにする。馬場は下の要点グリッドの「馬場」カードに一本化し二重表現を排除。
+    '<div class="signalHead">今日見るべき要点<span style="font-weight:600;opacity:.7;font-size:.72rem;">結論を先に</span></div>'
+    + '<div class="weatherOrb">'
+      + '<div><b>'+weatherLabel+'</b><small class="wxMini">'+shortText(wxText, 40)+'</small></div>'
     + '</div>'
-    + '<div class="signalArea">'
-      + '<div class="signalHead">📌 今日見るべき要点<span style="font-weight:600;opacity:.7;font-size:.72rem;">結論を先に</span></div>'
-      + '<div class="signalGrid">'
-        + '<div class="signalCard '+scenarioTone(going)+(goConf?'':' prov')+'"><div class="icon">'+goingIcon(going)+'</div><div><b>馬場'+(goConf?'':'（想定）')+'</b><strong>'+going+'</strong><small>'+goingSub+'</small></div></div>'
-        + chaosCard
-        + courseCard
-        + '<div class="signalCard"><div class="icon">◎</div><div><b>中心に見る馬</b><strong>'+shortText(honmei.name||'-', 9)+'</strong><small>'+score+'</small></div></div>'
-      + '</div>'
+    + '<div class="signalGrid">'
+      + '<div class="signalCard '+scenarioTone(going)+(goConf?'':' prov')+'"><div><b>馬場'+(goConf?'':'（想定）')+'</b><strong>'+going+'</strong><small>'+goingSub+'</small></div></div>'
+      + chaosCard
+      + courseCard
+      + '<div class="signalCard"><div><b>中心に見る馬</b><strong>'+shortText(honmei.name||'-', 9)+'</strong><small>'+score+'</small></div></div>'
     + '</div>';
 })();
 
@@ -1883,11 +2011,11 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
   }
   var bias = '';
   if(cp.bias_leg||cp.bias_frame){
-    bias = '<div class="cp-bias"><b>📍 バイアス</b><br>'
+    bias = '<div class="cp-bias"><b>バイアス</b><br>'
       + (cp.bias_leg?'脚質: '+cp.bias_leg+'<br>':'')
       + (cp.bias_frame?'枠: '+cp.bias_frame:'') + '</div>' + fit;
   }
-  box.innerHTML = '<div class="courseprofile"><h3>🏟 コース特性 - '+(cp.name||'')+'</h3>'
+  box.innerHTML = '<div class="courseprofile"><h3>コース特性 - '+(cp.name||'')+'</h3>'
     + '<div class="cp-grid">'+grid+'</div>' + bias + '</div>';
 })();
 
@@ -1919,17 +2047,17 @@ function applyPickStripVisibility(){
   var marks = '◎○◯▲☆△';  // ◯(U+25EF)と○(U+25CB)はデータ生成側で表記揺れがあるため両方許容
   var picks = sortByMark(DATA.top_horses).filter(function(h){ return h.mark && marks.indexOf(h.mark)>=0; }).slice(0,6);
   if(!picks.length){ box.style.display='none'; return; }
-  var html = '<div class="pickHd">🎯 印付き注目馬<span style="font-weight:600;opacity:.7;">（横スワイプ）</span><span class="ln"></span>'
+  var html = '<div class="pickHd">印付き注目馬<span style="font-weight:600;opacity:.7;">（横スワイプ）</span><span class="ln"></span>'
     + '<button type="button" class="pickHideBtn" onclick="togglePickStrip()">非表示</button></div><div class="pickRow">';
   picks.forEach(function(h){
     var no = (h.no_provisional || !h.no || h.no===0) ? '想定' : h.no;
     var pop = h.pop ? ((h.pop_provisional===false?'':'想定')+h.pop+'番人気'+(h.odds!=null?'・'+h.odds+'倍':'')) : '人気想定';
     var catchTxt = h.oshi || ((h.oikiri && h.oikiri[0]) ? h.oikiri[0].text : '') || (h.bloodline||'');
-    var photo = '<div class="pc-photoWrap"><div class="pc-ph0">🐎</div>'
+    var photo = '<div class="pc-photoWrap"><div class="pc-ph0"></div>'
       + (h.photo ? '<img class="pc-photo" src="'+h.photo+'" alt="'+h.name+'の馬体" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '')
       + '</div>';
     var leg = h.leg ? '<span class="pc-leg legBadge leg-'+h.leg+'" style="font-size:.64rem;">'+h.leg+'</span>' : '';
-    html += '<div class="pickCard'+(isFav(h.name)?' isFav':'')+'" data-fav-card="'+escHtml(h.name)+'" style="--pc:'+(h.color||'#555')+'">'
+    html += '<div class="pickCard'+(isFav(h.name)?' isFav':'')+'" data-fav-card="'+escHtml(h.name)+'" style="--pc:'+(h.color||'#555')+';--onc:'+inkOn(h.color||'#555')+'">'
       + photo
       + '<span class="pc-mark">'+h.mark+'</span>' + leg
       + '<div class="pc-body">'
@@ -1950,23 +2078,7 @@ function applyPickStripVisibility(){
   sortedTop.forEach(function(h){
     var tags = (h.tags_strong||[]).map(function(t){return '<span class="tag s">'+t+'</span>';}).join("")
              + (h.tags_weak||[]).map(function(t){return '<span class="tag w">'+t+'</span>';}).join("");
-    var past = '<div class="past">';
-    (h.last3||[]).forEach(function(r){
-      var cls = r.order===1?'p win':(r.order===2?'p snd':(r.order===3?'p trd':'p out'));
-      var ord = (!r.order||r.order==='-')?'-':r.order;
-      // date / jockey を明示（安田記念2026 振り返りで導入：レース名だけでは鮮度・継続騎乗を判定できない）
-      var meta = [];
-      if(r.date) meta.push(r.date);
-      if(r.jockey && r.jockey !== '-') meta.push(r.jockey);
-      var metaStr = meta.length ? '<span class="meta">'+meta.join(' / ')+'</span>' : '';
-      var distStr = r.dist ? '<span class="r">'+r.dist+'</span>' : '';
-      past += '<div class="'+cls+'"><span class="ord">'+ord+'</span><span class="r">'+r.race+'</span>'
-        + metaStr
-        + distStr
-        + '<span class="r">上がり '+(r.agari||'-')+'</span>'
-        + '<span class="legBadge leg-'+(r.leg||'未確認')+'" style="font-size:.62rem;margin-top:2px;">'+(r.leg||'-')+'</span></div>';
-    });
-    past += '</div>';
+    var past = pastBlockHtml(h.last3);
     var oik = '';
     (h.oikiri||[]).forEach(function(o){
       var src = o.url ? '<a href="'+o.url+'" target="_blank">'+o.src+'</a>' : o.src;
@@ -1977,7 +2089,9 @@ function applyPickStripVisibility(){
       if(!h.past_races||!h.past_races.length) return '';
       var hAvg=prAverages(h.past_races);
       var prows=h.past_races.map(function(r){ return prRowHtml(r,hAvg,h.name); }).join('');
-      return '<details class="pastfull" data-horse="'+(h.name||'')+'" data-no="'+((h.no_provisional||!h.no||h.no===0)?'想定':h.no)+'" data-mark="'+(h.mark||'')+'" data-weight="'+(h.weight||'')+'" data-impost="'+(h.impost||'')+'" data-draw="'+(h.draw||'')+'"><summary>📋 全'+h.past_races.length+'走の記録（通過・ペース・馬場・斤量）</summary>'
+      // 適性プロフィール（好走時条件差）は通常時のカードを縦長にしないよう、ここ（全戦績モーダル内）にのみ表示する
+      return '<details class="pastfull" data-horse="'+(h.name||'')+'" data-no="'+((h.no_provisional||!h.no||h.no===0)?'想定':h.no)+'" data-mark="'+(h.mark||'')+'" data-weight="'+(h.weight||'')+'" data-impost="'+(h.impost||'')+'" data-draw="'+(h.draw||'')+'"><summary>全'+h.past_races.length+'走の記録（通過・ペース・馬場・斤量）</summary>'
+        +prFitProfileHtml(h)
         +prTrendSvg(h.past_races)
         +'<div class="pastfull-wrap"><table class="prtab"><thead><tr>'
         +prHeadHtml()
@@ -1988,34 +2102,33 @@ function applyPickStripVisibility(){
     var noDisp = (h.no_provisional || !h.no || h.no === 0) ? '想定' : h.no;
     var noTitle = (h.no_provisional || !h.no || h.no === 0) ? '枠順確定後に馬番が入る' : ('馬番 '+h.no);
     var hid = 'horse-' + h.name.replace(/\s+/g, '-');
-    html += '<div class="card'+(isFav(h.name)?' isFav':'')+'" id="'+hid+'" data-fav-card="'+escHtml(h.name)+'" style="--c:'+h.color+'">'
+    html += '<div class="card'+(isFav(h.name)?' isFav':'')+'" id="'+hid+'" data-fav-card="'+escHtml(h.name)+'" style="--c:'+h.color+';--onc:'+inkOn(h.color)+'">'
       + '<div class="top"><span class="mark">'+h.mark+'</span>'
       + '<span class="num" title="'+noTitle+'">'+noDisp+'</span><span class="name">'+h.name+'</span>'
+      + '<div class="cardActions">'+favBtnHtml(h.name)+memoBtnHtml(h.name)+'</div>'
       + '<span class="pop">'+(h.pop?((h.pop_provisional===false?'':'想定')+h.pop+'番人気'+(h.odds!=null?'（'+h.odds+'倍）':'')):'人気想定')+'</span>'
-      + favBtnHtml(h.name)
-      + memoBtnHtml(h.name)
       + '</div>'
       + (h.photo?'<div class="horsephoto"><img src="'+h.photo+'" alt="'+h.name+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"><span class="photocred">写真: netkeiba</span></div>':'')
       + (function(){
           var chips = [];
-          if(h.blinker_first) chips.push('<span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">🔰初ブリンカー</span>');
-          if(h.jockey) chips.push('<span class="factChip">🏇 '+h.jockey+'</span>');
+          if(h.blinker_first) chips.push('<span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">初ブリンカー</span>');
+          if(h.jockey) chips.push('<span class="factChip">'+h.jockey+'</span>');
           if(h.leg) chips.push('<span class="factChip good">↗ '+h.leg+'</span>');
           if(h.aptitude && h.aptitude.course_fit_tier){
             var atc={'◎好相性':'#0f8456','○相性可':'#2a72a3','△疑問符':'#b5640a','▲割引':'#c1432d'}[h.aptitude.course_fit_tier]||'#64748b';
-            chips.push('<span class="factChip" style="background:'+atc+'1f;color:'+atc+';border-color:'+atc+'55;">🎯 '+h.aptitude.course_fit_tier+'</span>');
+            chips.push('<span class="factChip" style="background:'+atc+'1f;color:'+atc+';border-color:'+atc+'55;">'+h.aptitude.course_fit_tier+'</span>');
           }
           if(h.weight) chips.push('<span class="factChip">'+h.weight+'kg</span>');
           if(h.scorecard && h.scorecard.final_score!==undefined){
             var s = impScore(h.scorecard);
             var cw2 = confWord(h.scorecard.confidence_avg);
-            chips.push('<span class="factChip warn" title="実力＝7-11軸の加重平均(0-5)。確信度は採点根拠の充実度">⭐ 実力 '+s+(cw2?' ・確信'+cw2:'')+'</span>');
+            chips.push('<span class="factChip warn" title="実力＝7-11軸の加重平均(0-5)。確信度は採点根拠の充実度">実力 '+s+(cw2?' ・確信'+cw2:'')+'</span>');
           }
           return chips.length ? '<div class="chipRow">'+chips.join('')+'</div>' : '';
         })()
       + (h.oshi?'<div class="oshi">★ 推し：'+h.oshi+'</div>':'')
       + pastSection
-      + (oik?'<details class="fold oikFold" open><summary><span>🏇 追い切り・関係者コメント</span><span class="factChip">'+(h.oikiri||[]).length+'件</span></summary><div class="foldBody">'+oik+'</div></details>':'')
+      + (oik?'<details class="fold oikFold" open><summary><span>追い切り・関係者コメント</span><span class="factChip">'+(h.oikiri||[]).length+'件</span></summary><div class="foldBody">'+oik+'</div></details>':'')
       + (function(){
           // 基本属性（性齢・厩舎）- 安田記念2026 振り返りで「これらが空欄のまま発走を迎えた」反省より必須化
           var bits = [];
@@ -2045,14 +2158,13 @@ function applyPickStripVisibility(){
           var ds=a.dist_summary||{};
           var drow=Object.keys(ds).sort().map(function(b){var v=ds[b];return '<span class="dchip'+(b==='2000'?' hot':'')+'">'+b+': '+v.n+'戦'+v.win+'勝複'+v.place+'</span>';}).join('');
           return '<div class="apt">'
-            +'<div class="apt-h"><b>🎯 コース適性（全戦績から判定）</b><span class="tier" style="background:'+tc+'">'+a.course_fit_tier+'</span></div>'
+            +'<div class="apt-h"><b>コース適性（全戦績から判定）</b><span class="tier" style="background:'+tc+'">'+a.course_fit_tier+'</span></div>'
             +'<div class="apt-v">'+a.verdict+'</div>'
             +(a.leg_evidence?'<div class="apt-e">脚質根拠: '+a.leg_evidence+'</div>':'')
             +(drow?'<div class="dchips">'+drow+'</div>':'')
             +'</div>';
         })()
       + (h.weight?'<div class="row"><b>馬体重：</b>'+h.weight+'kg（'+(h.weight_trend||'')+'） - '+weightComment(h.weight)+'</div>':'')
-      + prFitProfileHtml(h)
       + (h.temper?'<div class="row"><b>気性：</b>'+h.temper+'</div>':'')
       + (tags?'<div class="tags">'+tags+'</div>':'')
       + (function(){
@@ -2095,7 +2207,7 @@ function applyPickStripVisibility(){
           var adj = '';
           if(sc.adjustments && sc.adjustments.length){
             adj = '<div style="font-size:.7rem;color:#a06020;margin-top:6px;border-top:1px dashed #e5d5b8;padding-top:6px;">'
-                + '<div style="font-weight:700;margin-bottom:2px;">📝 補正（隠れ補正禁止・evidence 付き）</div>';
+                + '<div style="font-weight:700;margin-bottom:2px;">補正（隠れ補正禁止・evidence 付き）</div>';
             sc.adjustments.forEach(function(a){
               var sign = (a.delta>=0?'+':'');
               var axisJa = axisLabels[a.affected_axis] || a.affected_axis;
@@ -2108,14 +2220,14 @@ function applyPickStripVisibility(){
           if(sc.raw_score!==undefined) summary += '<span title="raw_score = 7軸スコアの加重平均（補正適用前）">加重合計 <b>'+(typeof sc.raw_score==='number'?sc.raw_score.toFixed(2):sc.raw_score)+'</b></span>';
           if(sc.final_score!==undefined && sc.adjustments && sc.adjustments.length) summary += '<span title="final_score = 加重合計 + adjustments の合計">補正後 <b>'+(typeof sc.final_score==='number'?sc.final_score.toFixed(2):sc.final_score)+'</b></span>';
           if(sc.confidence_avg!==undefined) summary += '<span title="各軸の情報量（採点根拠の充実度）の平均。0/5=ほぼ材料なし、5/5=一次情報まで揃った確信ベース">情報量 <b>'+(typeof sc.confidence_avg==='number'?sc.confidence_avg.toFixed(2):sc.confidence_avg)+'/5</b></span>';
-          if(sc.anchor_score!==undefined) summary += '<span style="background:rgba(91,141,239,.18);padding:2px 10px;border-radius:6px;font-weight:700;" title="総合スコア = 加重合計 × (情報量/5)。印選定に使う内部ランキング値。情報量(確信度)が低い段階(追切/枠順前)は低めに出る">⭐ 総合スコア（確信反映後） <b style="color:#3b5fc7;">'+(typeof sc.anchor_score==='number'?sc.anchor_score.toFixed(2):sc.anchor_score)+'</b></span>';
+          if(sc.anchor_score!==undefined) summary += '<span style="background:rgba(91,141,239,.18);padding:2px 10px;border-radius:6px;font-weight:700;" title="総合スコア = 加重合計 × (情報量/5)。印選定に使う内部ランキング値。情報量(確信度)が低い段階(追切/枠順前)は低めに出る">総合スコア（確信反映後） <b style="color:#3b5fc7;">'+(typeof sc.anchor_score==='number'?sc.anchor_score.toFixed(2):sc.anchor_score)+'</b></span>';
           summary += '</div>';
           // 用語ガイド（コンパクト）
           var legend = '<div style="font-size:.66rem;color:#7a8aa0;margin-top:6px;border-top:1px dotted #cdd5e1;padding-top:4px;">'
-                     + '💡 採点(0-5)＝10観点ごとのアンカー基準 / 情報量＝採点の根拠がどれだけ揃っているか / <b>総合スコア</b>＝補正後×(情報量/5)。この順位から印が機械的に決まる（<a href="#scExplain" style="color:#3b5fc7;" onclick="document.getElementById(\'scExplain\').open=true;">詳細</a>）'
+                     + '採点(0-5)＝10観点ごとのアンカー基準 / 情報量＝採点の根拠がどれだけ揃っているか / <b>総合スコア</b>＝補正後×(情報量/5)。この順位から印が機械的に決まる（<a href="#scExplain" style="color:#3b5fc7;" onclick="document.getElementById(\'scExplain\').open=true;">詳細</a>）'
                      + '</div>';
           return '<details class="fold scorecard">'
-               + '<summary><span>📊 総合評価の内訳</span><span class="factChip warn">実力 '+(impScore(sc)||'-')+'</span></summary>'
+               + '<summary><span>総合評価の内訳</span><span class="factChip warn">実力 '+(impScore(sc)||'-')+'</span></summary>'
                + '<div class="foldBody">'
                + '<div style="font-size:.78rem;font-weight:700;color:#3b5fc7;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:8px;">'
                +   '<span>10観点 0-5 採点</span>'
@@ -2127,7 +2239,7 @@ function applyPickStripVisibility(){
           // 連覇プレミアム表示（trend_config.same_race_repeat_bonus）
           var bonus = (DATA.trend_config && DATA.trend_config.same_race_repeat_bonus) || {};
           var v = bonus[h.name]; if(!v) return '';
-          return '<div style="margin-top:6px;padding:4px 10px;background:rgba(217,156,71,.16);border-left:3px solid #d99c47;border-radius:6px;font-size:.78rem;color:#7a5a1d;"><b>🏆 連覇プレミアム R12</b> course_dist 軸に +'+v+' 加点（trend_config.same_race_repeat_bonus）</div>';
+          return '<div style="margin-top:6px;padding:4px 10px;background:rgba(217,156,71,.16);border-left:3px solid #d99c47;border-radius:6px;font-size:.78rem;color:#7a5a1d;"><b>連覇プレミアム R12</b> course_dist 軸に +'+v+' 加点（trend_config.same_race_repeat_bonus）</div>';
         })()
       + '</div>';
   });
@@ -2167,15 +2279,22 @@ function applyPickStripVisibility(){
       + (m.weight && m.impost ? '　/　' : '')
       + (m.impost ? '斤量：'+m.impost+'kg' : '')
       + '</div>' : '';
-    // 直近2走（last2優先、なければ旧last）。上がりが取れている場合のみ併記
+    // 直近3走：past_races先頭3件を6頭カードと同じ区切りブロックで表示（過去走の手書き禁止方針に沿い、
+    // 生文字列の正規表現分割はしない。past_races未接地の馬のみ旧last2/last文字列にフォールバック）。
+    var miniLast3 = (m.past_races||[]).slice(0,3).map(function(r){
+      return {race:r.race, date:r.date, order:r.finish, jockey:r.jockey, dist:r.dist, agari:r.agari, leg:r.style};
+    });
+    var pastBlockM = pastBlockHtml(miniLast3);
     var recHtml = '';
-    if(m.last2 && m.last2.length){
-      recHtml = '<div class="row">直近：'+ m.last2.map(function(r){
-        var ag = (r.agari && r.agari!=='不明' && r.agari!=='-') ? '<span style="color:var(--sub);">(上り'+r.agari+')</span>' : '';
-        return r.race+' <b>'+r.order+'着</b>'+ag;
-      }).join(' ← ') +'</div>';
-    } else if(m.last){
-      recHtml = '<div class="row">直近：'+m.last+'</div>';
+    if(!pastBlockM){
+      if(m.last2 && m.last2.length){
+        recHtml = '<div class="row">直近：'+ m.last2.map(function(r){
+          var ag = (r.agari && r.agari!=='不明' && r.agari!=='-') ? '<span style="color:var(--sub);">(上り'+r.agari+')</span>' : '';
+          return r.race+' <b>'+r.order+'着</b>'+ag;
+        }).join(' ← ') +'</div>';
+      } else if(m.last){
+        recHtml = '<div class="row">直近：'+m.last+'</div>';
+      }
     }
     // 写真（base64・netkeiba）
     var photoHtml = m.photo ? '<div class="horsephoto" style="width:80px;margin:0 0 4px 8px;"><img src="'+m.photo+'" alt="'+m.name+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'" style="width:80px;height:60px;object-fit:cover;border-radius:7px;border:1px solid #d7e0ea;"><span class="photocred">写真: netkeiba</span></div>' : '';
@@ -2187,13 +2306,13 @@ function applyPickStripVisibility(){
         var src=o.url?'<a href="'+o.url+'" target="_blank">'+o.src+'</a>':o.src;
         return '<div><b>'+src+':</b> 「'+emphOikiri(o.text)+'」</div>';
       }).join('');
-      return '<details class="fold oikFold" open><summary><span>🏇 追い切り・関係者コメント</span><span class="factChip">'+m.oikiri.length+'件</span></summary><div class="foldBody">'+body+'</div></details>';
+      return '<details class="fold oikFold" open><summary><span>追い切り・関係者コメント</span><span class="factChip">'+m.oikiri.length+'件</span></summary><div class="foldBody">'+body+'</div></details>';
     })();
     var aptHtml = (function(){
       var a=m.aptitude; if(!a) return '';
       var tc={'◎好相性':'#0f8456','○相性可':'#2a72a3','△疑問符':'#b5640a','▲割引':'#c1432d'}[a.course_fit_tier]||'#64748b';
       return '<div class="apt" style="margin:5px 0;padding:6px 9px;">'
-        +'<div class="apt-h"><b>🎯 コース適性</b><span class="tier" style="background:'+tc+'">'+a.course_fit_tier+'</span></div>'
+        +'<div class="apt-h"><b>コース適性</b><span class="tier" style="background:'+tc+'">'+a.course_fit_tier+'</span></div>'
         +'<div class="apt-v" style="font-size:.76rem;">'+a.verdict+'</div></div>';
     })();
     // 全戦績テーブル（折りたたみ）
@@ -2201,24 +2320,24 @@ function applyPickStripVisibility(){
       if(!m.past_races||!m.past_races.length) return '';
       var mAvg=prAverages(m.past_races);
       var rows=m.past_races.map(function(r){ return prRowHtml(r,mAvg,m.name); }).join('');
-      return '<details class="pastfull" data-horse="'+(m.name||'')+'" data-no="'+((m.no_provisional||!m.no||m.no===0)?'想定':m.no)+'" data-mark="'+(m.mark||'')+'" data-weight="'+(m.weight||'')+'" data-impost="'+(m.impost||'')+'" data-draw="'+(m.draw||'')+'"><summary>📋 全'+m.past_races.length+'走の記録（通過・ペース・斤量）</summary>'+prTrendSvg(m.past_races)+'<div class="pastfull-wrap"><table class="prtab"><thead><tr>'+prHeadHtml()+'</tr></thead><tbody>'+rows+'</tbody></table></div></details>';
+      return '<details class="pastfull" data-horse="'+(m.name||'')+'" data-no="'+((m.no_provisional||!m.no||m.no===0)?'想定':m.no)+'" data-mark="'+(m.mark||'')+'" data-weight="'+(m.weight||'')+'" data-impost="'+(m.impost||'')+'" data-draw="'+(m.draw||'')+'"><summary>全'+m.past_races.length+'走の記録（通過・ペース・斤量）</summary>'+prTrendSvg(m.past_races)+'<div class="pastfull-wrap"><table class="prtab"><thead><tr>'+prHeadHtml()+'</tr></thead><tbody>'+rows+'</tbody></table></div></details>';
     })();
-    mhtml += '<div class="m'+(isFav(m.name)?' isFav':'')+'" id="mini-horse-'+m.name.replace(/\s+/g,'-')+'" data-fav-card="'+escHtml(m.name)+'" style="--c:'+m.color+'">'
+    mhtml += '<div class="m'+(isFav(m.name)?' isFav':'')+'" id="mini-horse-'+m.name.replace(/\s+/g,'-')+'" data-fav-card="'+escHtml(m.name)+'" style="--c:'+m.color+';--onc:'+inkOn(m.color)+'">'
       + '<div class="hd"><span class="nm">'+mnoDisp+'</span>'+sexAge+m.name
-      + (m.blinker_first?' <span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">🔰初ブリンカー</span>':'')
+      + (m.blinker_first?' <span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">初ブリンカー</span>':'')
       + ' <span style="color:var(--sub);font-size:.74rem;">/ '+m.jockey+'</span>'
-      + favBtnHtml(m.name,'sm')
-      + memoBtnHtml(m.name,'sm')
-      + ' <span class="legBadge leg-'+(m.leg||'未確認')+'" style="margin-left:auto;">'+(m.leg||'-')+'</span></div>'
+      + ' <span class="legBadge leg-'+(m.leg||'未確認')+'" style="margin-left:auto;">'+(m.leg||'-')+'</span>'
+      + '<div class="cardActions" style="margin-left:6px;">'+favBtnHtml(m.name)+memoBtnHtml(m.name)+'</div></div>'
       + photoHtml
+      + pastBlockM
+      + recHtml
       + profHtml
       + oddsHtml
       + weightHtml
-      + recHtml
       + miniOik
       + aptHtml
       + pastFullHtml
-      + (hasMarks && m.pop && m.pop<=6 ? '<div class="factChip warn" style="margin:4px 0 0;">⚠️ 人気'+m.pop+'番なのに軽視した理由</div>' : '')
+      + (hasMarks && m.pop && m.pop<=6 ? '<div class="factChip warn" style="margin:4px 0 0;">⚠ 人気'+m.pop+'番なのに軽視した理由</div>' : '')
       + '<div class="why">'+m.why+'</div>'
       + '</div>';
   });
@@ -2289,14 +2408,18 @@ function prFitProfile(h){
     isGoodOnly: good.length>0
   };
 }
-function prFitRowHtml(label, ideal, current, unit, digits){
+// 「今回」の値を主役にし、好走平均との差を許容誤差(tolerance)内かどうかで色分け＋一言のラベルに翻訳する。
+// 生の差分数値だけだと良し悪しの判断を読者に丸投げすることになるため（ユーザー指摘）。
+function prFitRowHtml(label, ideal, current, unit, digits, tolerance, upWord, downWord){
   if(ideal==null || current==null || isNaN(current)) return '';
   var diff = current - ideal, sign = diff>0 ? '+' : '';
-  return '<div class="fitRow"><span class="fitLbl">'+label+'</span>'
-    + '<span class="fitVal">'+ideal.toFixed(digits)+unit+'前後</span>'
-    + '<span class="fitArrow">→</span>'
+  var absDiff = Math.abs(diff);
+  var tone = absDiff <= tolerance ? 'ok' : (diff>0 ? 'up' : 'down');
+  var word = absDiff <= tolerance ? '標準的' : (diff>0 ? upWord : downWord);
+  return '<div class="fitRow fit-'+tone+'"><span class="fitLbl">'+label+'</span>'
     + '<span class="fitNow">今回'+current.toFixed(digits)+unit+'</span>'
-    + '<span class="fitDiff">('+sign+diff.toFixed(digits)+unit+')</span></div>';
+    + '<span class="fitTag">'+word+'</span>'
+    + '<span class="fitDiff">好走平均'+ideal.toFixed(digits)+unit+'（'+sign+diff.toFixed(digits)+unit+'）</span></div>';
 }
 function prFitProfileHtml(h){
   var fp = prFitProfile(h);
@@ -2304,12 +2427,13 @@ function prFitProfileHtml(h){
   var curWeight = prBwNum(h.weight);
   var curImpost = typeof h.impost==='number' ? h.impost : parseFloat(h.impost);
   var curDist = raceDistNum();
-  var rows = prFitRowHtml('適性体重', fp.idealWeight, curWeight, 'kg', 0)
-    + prFitRowHtml('適性斤量', fp.idealImpost, curImpost, 'kg', 1)
-    + prFitRowHtml('適性距離', fp.idealDist, curDist, 'm', 0);
+  var rows = prFitRowHtml('体重', fp.idealWeight, curWeight, 'kg', 0, 10, '重め', '軽め')
+    + prFitRowHtml('斤量', fp.idealImpost, curImpost, 'kg', 1, 1.0, '斤量増', '斤量減')
+    + prFitRowHtml('距離', fp.idealDist, curDist, 'm', 0, 200, '距離延長', '距離短縮');
   if(!rows) return '';
+  var n = fp.isGoodOnly ? '好走['+fp.n+'走]' : '過去'+fp.n+'走';
   return '<div class="fitProfile">'
-    + '<div class="fitProfile-h">📐 適性プロフィール（'+(fp.isGoodOnly?'好走[3着以内]'+fp.n+'走':'過去'+fp.n+'走')+'の平均 → 今回）</div>'
+    + '<div class="fitProfile-h">好走時との条件差<span class="fitProfile-n" title="'+n+'の平均を基準に算出">（'+n+'平均比）</span></div>'
     + rows
     + '</div>';
 }
@@ -2346,17 +2470,17 @@ function renderQuantRankings(){
 
   var html='<div class="qrGrid">';
   if(agariItems.length){
-    html += '<div class="qr"><h4>⚡ 上がり3ハロン（自己ベスト平均）</h4>'
+    html += '<div class="qr"><h4>上がり3ハロン（自己ベスト平均）</h4>'
       + qrRankListHtml(agariItems, function(v){ return v.toFixed(1)+'秒'; })
       + '<p class="qrNote">各馬の過去走の上がり3F上位3走を平均（小さいほど速い）。距離・馬場条件は揃えていない単純比較です。</p></div>';
   }
   if(impostItems.length){
-    html += '<div class="qr"><h4>⚖️ 平均斤量（過去走）</h4>'
+    html += '<div class="qr"><h4>⚖ 平均斤量（過去走）</h4>'
       + qrRankListHtml(impostItems, function(v){ return v.toFixed(1)+'kg'; })
       + '<p class="qrNote">過去走で背負った斤量の単純平均。重い斤量をこなしてきた実績の目安です。</p></div>';
   }
   if(staminaItems.length){
-    html += '<div class="qr"><h4>🏃 スタミナ指数（'+(rd?rd+'m以上':'距離不問')+'での平均着順）</h4>'
+    html += '<div class="qr"><h4>スタミナ指数（'+(rd?rd+'m以上':'距離不問')+'での平均着順）</h4>'
       + qrRankListHtml(staminaItems, function(v){ return v.toFixed(1)+'着'; })
       + '<p class="qrNote">今回と同等以上の距離を走った過去走に絞った平均着順（2走以上のデータがある馬のみ・小さいほど良好）。</p></div>';
   }
@@ -2493,7 +2617,10 @@ renderHorseSortTable();
 // ========== 詳細ページ内タブ（シミュレーション / データ） ==========
 function setDTab(tab){
   document.querySelectorAll('.dTabBtn').forEach(function(b){
-    b.classList.toggle('active', b.getAttribute('data-dtab')===tab);
+    var on = b.getAttribute('data-dtab')===tab;
+    b.classList.toggle('active', on);
+    // 支援技術には class ではなく aria-selected で選択状態を伝える
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
   });
   document.querySelectorAll('.dTabPane').forEach(function(p){
     p.classList.toggle('active', p.getAttribute('data-dtab')===tab);
@@ -2587,8 +2714,8 @@ function renderCmp(){
   var cur = trends.filter(function(t){ return t.title===CMP_CAT; })[0];
   var nowFn = cmpNowFnForTitle(CMP_CAT);
   var nowTxt = nowFn ? nowFn() : 'このカテゴリの今回データは対象外です（脚質・枠・斤量・血統など定型カテゴリのみ対応）。';
-  box.innerHTML = '<div class="cmpCol"><h4>📚 過去10年の傾向</h4><p>'+(cur ? cur.text : '-')+'</p></div>'
-    + '<div class="cmpCol now"><h4>🐎 今回の顔ぶれ</h4><p>'+nowTxt+'</p></div>';
+  box.innerHTML = '<div class="cmpCol"><h4>過去10年の傾向</h4><p>'+(cur ? cur.text : '-')+'</p></div>'
+    + '<div class="cmpCol now"><h4>今回の顔ぶれ</h4><p>'+nowTxt+'</p></div>';
 }
 renderCmp();
 
@@ -2646,14 +2773,29 @@ function legPaceBonus(h, pace){
   return 0;
 }
 
+// シミュ入力(base/ability)が欠けている馬を fallback 値で参戦させると、実データ勢を
+// 上回る架空の最強値で走ってしまう。関屋記念2026では昇格2頭が ability=null のまま
+// base=80(実データ勢は35〜55)で走り、シミュ勝率45%を出して◎(1%)と結論が逆転した。
+// 値を捏造せず、シミュ対象から外して SIM_EXCLUDED に記録し、UI側で「データ不足」と明示する。
+var SIM_EXCLUDED = [];
 function buildField(){
-  var top = DATA.top_horses.map(function(h){
-    var ab = h.ability || [70,70,70,70,70];
-    return Object.assign({}, h, {ability:ab, base:h.base||80, vol:h.vol||1.05, hasData: !!h.ability});
+  SIM_EXCLUDED = [];
+  var top = [];
+  (DATA.top_horses||[]).forEach(function(h){
+    if(!h.ability || h.base==null){
+      SIM_EXCLUDED.push({no:h.no, name:h.name, mark:h.mark||'-'});
+      return;
+    }
+    top.push(Object.assign({}, h, {base:h.base, vol:h.vol||1.1, hasData:true}));
   });
-  var mini = (DATA.mini_horses||[]).map(function(m){
+  var mini = [];
+  (DATA.mini_horses||[]).forEach(function(m){
+    if(m.sim_base==null){
+      SIM_EXCLUDED.push({no:m.no, name:m.name, mark:'-'});
+      return;
+    }
     var ab=[m.sim_base+2,m.sim_base+2,m.sim_base+2,m.sim_base+2,m.sim_base+2];
-    return Object.assign({}, m, {mark:"-",pop:99,ability:ab,base:m.sim_base||65,vol:m.sim_vol||1.15,hasData:false});
+    mini.push(Object.assign({}, m, {mark:"-",pop:99,ability:ab,base:m.sim_base,vol:m.sim_vol||1.15,hasData:false}));
   });
   return top.concat(mini);
 }
@@ -2851,13 +2993,40 @@ function prGradeColor(g){
   if(/未勝利|新馬/.test(g)) return '#9aa5b1';
   return '#7c5cff';
 }
+// 直近走を区切られたブロックで表示する共有関数（元は上位6頭カード専用だったものを、
+// 人気薄カードでも同じ見え方にできるよう切り出した。r.order は数値/数値文字列/'-' いずれも許容。
+// r.agari は「上がり」接頭辞の有無が呼び出し元によって異なる（sync_last3済みは接頭辞あり・
+// past_races直参照は接頭辞なし）ため、二重表記(「上がり 上がり34.2」)にならないよう吸収する）。
+function pastBlockHtml(races){
+  if(!races || !races.length) return '';
+  var html = '<div class="past">';
+  races.forEach(function(r){
+    var ordNum = parseInt(r.order, 10);
+    var cls = ordNum===1?'p win':(ordNum===2?'p snd':(ordNum===3?'p trd':'p out'));
+    var ord = (r.order===undefined || r.order===null || r.order==='' || r.order==='-') ? '-' : r.order;
+    var meta = [];
+    if(r.date) meta.push(r.date);
+    if(r.jockey && r.jockey !== '-') meta.push(r.jockey);
+    var metaStr = meta.length ? '<span class="meta">'+meta.join(' / ')+'</span>' : '';
+    var distStr = r.dist ? '<span class="r">'+r.dist+'</span>' : '';
+    var agariTxt = (r.agari && r.agari!=='-' && r.agari!=='不明') ? r.agari : '-';
+    var agariLabel = /^上が/.test(agariTxt) ? agariTxt : ('上がり '+agariTxt);
+    html += '<div class="'+cls+'"><span class="ord">'+ord+'</span><span class="r">'+(r.race||'')+'</span>'
+      + metaStr
+      + distStr
+      + '<span class="r">'+agariLabel+'</span>'
+      + '<span class="legBadge leg-'+(r.leg||'未確認')+'" style="font-size:.62rem;margin-top:2px;">'+(r.leg||'-')+'</span></div>';
+  });
+  html += '</div>';
+  return html;
+}
 /* 過去走の着順推移を折れ線グラフで（「ランキングの上下動を折れ線グラフで、タップしたら見れるやつでいい」への対応）。
    points の位置決めだけで完結させ、日付ラベル等の詳細はタップ時に下へ表示する(prTrendTap)。
    モーダル複製(outerHTML)でも安全に動くよう、要素IDではなく最寄りの.prTrendWrapをclosestで辿る。 */
 function prTrendSvg(rows){
   if(!rows || rows.length<2) return ''; // 1走以下では推移が描けない
   var asc = rows.slice().reverse(); // past_racesは新→旧順なので古→新に並べ替えて左から右へ読めるようにする
-  var W=Math.max(220, Math.min(360, asc.length*24)), H=92, padL=20, padR=10, padT=10, padB=18;
+  var W=Math.max(220, Math.min(360, asc.length*24)), H=92, padL=22, padR=10, padT=10, padB=18;
   var maxFinish = 8;
   asc.forEach(function(r){ var n=parseInt(r.finish,10); if(!isNaN(n) && n>maxFinish) maxFinish=n; });
   function fy(finish){
@@ -2875,19 +3044,35 @@ function prTrendSvg(rows){
       +'data-date="'+escHtml(r.date||'')+'" data-race="'+escHtml(r.race||'')+'" data-grade="'+escHtml(g)+'" data-finish="'+escHtml(String(isNaN(n)?(r.finish||'-'):n))+'" '
       +'onclick="event.stopPropagation();prTrendTap(this);" style="cursor:pointer;"><title>'+escHtml((r.date||'')+' '+(r.race||'')+' '+(isNaN(n)?(r.finish||'-'):n)+'着')+'</title></circle>';
   }).join('');
-  var winY = fy(1).toFixed(1);
-  var winLine = '<line x1="'+padL+'" y1="'+winY+'" x2="'+(W-padR)+'" y2="'+winY+'" stroke="#e2e8f0" stroke-dasharray="2,2"/>';
-  var svg = '<svg class="prTrendChart" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'">'
-    + winLine
+  // 順位の目盛り線（読み取りやすさのため複数本。1着ラインだけ点線で強調）
+  var gridStep = maxFinish<=5 ? 1 : maxFinish<=9 ? 2 : maxFinish<=16 ? 4 : 6;
+  var gridRanks = [];
+  for(var gn=1; gn<=maxFinish; gn+=gridStep){ gridRanks.push(gn); }
+  if(gridRanks[gridRanks.length-1]!==maxFinish) gridRanks.push(maxFinish);
+  var gridLines = gridRanks.map(function(gn){
+    var gy=fy(gn), isWin=(gn===1);
+    return '<line x1="'+padL+'" y1="'+gy.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+gy.toFixed(1)+'" stroke="'+(isWin?'#dfe3ea':'#eef2f6')+'" stroke-width="1"'+(isWin?' stroke-dasharray="2,2"':'')+'/>';
+  }).join('');
+  // ラベル(順位・日付)はSVG内のtextにせず絶対配置のHTMLにする。
+  // width:100%＋preserveAspectRatio="none"でグラフを横幅いっぱいに広げる(非等倍スケール)ため、
+  // SVG内蔵のtextだと文字が横方向だけ歪むのを避ける。位置は%指定でpadL/Wと連動させ目盛り線とズレないようにする。
+  var rankLeftPct = (padL/W*100).toFixed(2);
+  var rankLabels = gridRanks.map(function(gn){
+    var gy=fy(gn);
+    return '<span class="prTrendRankLbl" style="left:'+rankLeftPct+'%;top:'+gy.toFixed(1)+'px;">'+gn+'</span>';
+  }).join('');
+  var dateLeftPct = (padL/W*100).toFixed(2), dateRightPct = (padR/W*100).toFixed(2);
+  var dateLabels = '<span class="prTrendDateLbl" style="left:'+dateLeftPct+'%;">'+escHtml(asc[0].date||'')+'</span>'
+    + '<span class="prTrendDateLbl" style="right:'+dateRightPct+'%;">'+escHtml(asc[asc.length-1].date||'')+'</span>';
+  var svg = '<svg class="prTrendChart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:100%;height:'+H+'px;">'
+    + gridLines
     + '<polyline points="'+poly+'" fill="none" stroke="#7c5cff" stroke-width="1.6" opacity="0.75"/>'
     + dots
-    + '<text x="'+padL+'" y="'+(H-4)+'" font-size="8" fill="#8a97a6">'+escHtml(asc[0].date||'')+'</text>'
-    + '<text x="'+(W-padR)+'" y="'+(H-4)+'" font-size="8" fill="#8a97a6" text-anchor="end">'+escHtml(asc[asc.length-1].date||'')+'</text>'
     + '</svg>';
   return '<div class="prTrendWrap">'
-    + '<div class="prTrendHd"><span>📈 着順の推移（タップで詳細）</span>'
+    + '<div class="prTrendHd"><span>着順の推移（タップで詳細）</span>'
     +   '<span class="prTrendLegend"><span style="color:#d4af37;">●G1</span><span style="color:#8a8a8a;">●G2</span><span style="color:#b87333;">●G3</span><span style="color:#6b6ecf;">●L/OP</span></span></div>'
-    + svg
+    + '<div class="prTrendBox">' + svg + rankLabels + dateLabels + '</div>'
     + '<div class="prTrendInfo" style="display:none;"></div>'
     + '</div>';
 }
@@ -2913,7 +3098,7 @@ function prRowHtml(r, avg, horseName){
   var bwVal = prBwNum(r.bw);
   var bwAbove = avg.bw!=null && bwVal!=null && bwVal>avg.bw;
   var bwHtml = !r.bw ? '-' : ('<span'+(bwAbove?' style="color:#b5640a;font-weight:700;"':'')+'>'+r.bw+'</span>');
-  var raceHtml = (r.race||'')+(hcap?' <span class="hcapTag" title="ハンデ戦">⚖️ハンデ</span>':'');
+  var raceHtml = (r.race||'')+(hcap?' <span class="hcapTag" title="ハンデ戦">⚖ハンデ</span>':'');
   return '<tr>'
     +'<td data-th="日付" class="pr-date">'+(r.date||'')+'</td>'
     +'<td data-th="レース" class="pr-race" title="'+(r.race||'')+'">'+raceHtml+'</td>'
@@ -2993,7 +3178,7 @@ function renderSimResult(targetId, result, scen, field){
   document.getElementById(targetId).innerHTML=html;
   var top3names = rows.slice(0,3).map(function(o){return (o.h.mark||"-")+" "+o.h.name;}).join(" / ");
   var summary = '<div class="panel" style="background:var(--card);border-left:4px solid var(--accent);">'
-    + '<h3 style="margin:0 0 8px;font-size:1rem;">📋 この条件のまとめ</h3>'
+    + '<h3 style="margin:0 0 8px;font-size:1rem;">この条件のまとめ</h3>'
     + '<div style="font-size:.86rem;">条件：<b>'+scen.weather+'／'+scen.going+'／'+scen.pace+'／'+scen.bias+'／混戦度'+scen.chaos+'</b></div>'
     + '<div style="font-size:.86rem;margin-top:6px;">上位3頭：<b>'+top3names+'</b></div>'
     + '<div style="font-size:.78rem;margin-top:6px;color:var(--sub);">試行回数：<b>'+T.toLocaleString()+'回</b>（モンテカルロ・各条件で毎回再抽選）</div>'
@@ -3090,7 +3275,7 @@ function runDefaultSim(){
 }
 function runRandomSim(){
   var weathers=["晴","曇","雨","豪雨"], goings=["良","稍重","重","不良"], paces=["スロー","平均","ハイ"], biases=["フラット","内有利","外伸び"], chaoses=["低","中","高"];
-  var html="<h3 style='font-size:1rem;'>🎲 ランダム10種の結果（上位3頭のみ）</h3>";
+  var html="<h3 style='font-size:1rem;'>ランダム10種の結果（上位3頭のみ）</h3>";
   for(var i=0;i<10;i++){
     var scen={weather:weathers[Math.floor(Math.random()*weathers.length)],
               going:goings[Math.floor(Math.random()*goings.length)],
@@ -3337,7 +3522,7 @@ function runBetSim(silent){
   var over=budget>0&&totalCost>budget;
   var scen=(typeof getScenario==='function')?getScenario():null;
   var html='<div class="panel betResultPanel">';
-  html+='<h3 style="margin:0 0 4px;">🎫 この買い目の収支シミュ</h3>';
+  html+='<h3 style="margin:0 0 4px;">この買い目の収支シミュ</h3>';
   html+='<div style="font-size:.76rem;color:var(--sub);margin-bottom:10px;">'+N.toLocaleString()+'回試行'+(scen?'（条件: '+scen.weather+'／'+scen.going+'／'+scen.pace+'／'+scen.bias+'）':'')+'</div>';
   html+='<div class="bsKpis">';
   html+=bsKpi('総投資', '¥'+totalCost.toLocaleString()+(over?' ⚠超過':''), over?'bad':'');
@@ -3385,7 +3570,7 @@ function renderPredictionText(raw){
   if(!bullets.length) bullets = [text];
   box.innerHTML =
     '<div class="scenarioDigest">'
-      + '<div class="scenarioLead"><span class="ico">📊</span><div><b>'+emphScenario(lead)+'</b><small>'+emphScenario(shortText(leadSub, 54))+'</small></div></div>'
+      + '<div class="scenarioLead"><div><b>'+emphScenario(lead)+'</b><small>'+emphScenario(shortText(leadSub, 54))+'</small></div></div>'
       + '<ul class="scenarioBullets">' + bullets.map(function(s){return '<li>'+emphScenario(shortText(s, 62))+'</li>';}).join('') + '</ul>'
       + '<details class="scenarioMore"><summary>全文を読む</summary><p class="scenarioFull">'+emphScenario(text)+'</p></details>'
     + '</div>';
@@ -3398,31 +3583,73 @@ initBetSlip();
 
 // ========== 最終判断（印・評価・適性・シミュ結果を1頭1枚に統合） ==========
 function verdictBetLean(winPct, tier, score){
+  // winPct が null = シミュ対象外(能力データ未整備)。勝率0%として扱うと「押さえ程度」等の
+  // 断定が出てしまうため、判定に入れず未算出であることを明示する。
+  if(winPct==null) return 'シミュ未算出（能力データ未整備）。印と採点で判断';
   if(winPct>=20) return '軸候補。単勝も面白い';
+  // 低勝率の判定を score より先に置く。以前は score<3.2 の分岐が先にあったため、
+  // シミュ勝率1%の馬にも「複勝圏重視」と表示されていた（2026-07-25 指摘）。
+  if(winPct<3) return '人気になれば厳しい。押さえ程度';
   if(/△疑問符/.test(tier) || (score!=null && score<3.2)) return '複勝圏重視。単勝より馬連・ワイド向き';
   if(/◎好相性|○相性可/.test(tier) && winPct>=8) return '馬連・ワイドの軸候補。崩れにくい';
-  if(winPct<3) return '人気になれば厳しい。押さえ程度';
   return '展開次第。相手評価向き';
 }
 (function(){
   var box = document.getElementById('verdictBox'); if(!box) return;
   var recs = LAST_SIM.records, N = recs.length;
-  var win = {};
-  DATA.top_horses.forEach(function(h){ win[h.no]=0; });
-  for(var t=0;t<N;t++){ if(win[recs[t][0]]!=null) win[recs[t][0]]++; }
+  var excluded = {};
+  SIM_EXCLUDED.forEach(function(e){ excluded[e.no] = true; });
+  // 1着回数は mini_horses も含む出走全頭で数える。top_horses だけに絞ると
+  // 「シミュ首位は人気薄」というケースを取り違えるため。
+  var winAll = {};
+  for(var t=0;t<N;t++){ winAll[recs[t][0]] = (winAll[recs[t][0]]||0)+1; }
+  var allHorses = (DATA.top_horses||[]).concat(DATA.mini_horses||[]);
+  var nameOf = {};
+  allHorses.forEach(function(h){ nameOf[h.no] = h.name; });
+  function pct(no){ return N ? Math.round((winAll[no]||0)/N*100) : null; }
+
+  var honmei = (DATA.top_horses||[]).filter(function(h){ return h.mark === '◎'; })[0] || null;
+  var simTop = Object.keys(winAll).sort(function(a,b){ return winAll[b]-winAll[a]; })[0];
+  var mktTop = allHorses.filter(function(h){ return h.pop!=null && h.pop!==99; })
+    .sort(function(a,b){ return a.pop-b.pop; })[0] || null;
+
+  // 「公式印」「市場人気」「シミュ結果」が割れた場合は、無理に一つの結論へ丸めず差異を警告として見せる。
+  var diffs = [];
+  if(honmei && simTop!=null && String(honmei.no)!==String(simTop)){
+    diffs.push('印の中心は◎' + honmei.name + '（シミュ勝率'
+      + (excluded[honmei.no] ? '未算出' : pct(honmei.no) + '%')
+      + '）ですが、シミュ首位は' + nameOf[simTop] + '（' + pct(simTop) + '%）です。');
+  }
+  if(honmei && mktTop && String(honmei.no)!==String(mktTop.no)){
+    diffs.push('市場の1番人気は' + mktTop.name
+      + '（' + (mktTop.odds!=null ? mktTop.odds + '倍' : 'オッズ未取得') + '）で、印の中心とは別の馬です。');
+  }
+  if(SIM_EXCLUDED.length){
+    diffs.push(SIM_EXCLUDED.map(function(e){ return e.name; }).join('・')
+      + ' は能力データが未整備のためシミュ対象外です。表示中の勝率はこの'
+      + SIM_EXCLUDED.length + '頭を含まない値です。');
+  }
+  var warn = diffs.length
+    ? '<div class="verdictWarn"><b>⚠ 見方が割れています</b><ul>'
+        + diffs.map(function(d){ return '<li>' + d + '</li>'; }).join('')
+        + '</ul><small>印・市場人気・シミュレーションが一致していません。一つの結論に絞らず差異のまま示します。'
+        + 'どの見方を採るかを決めてから買ってください。</small></div>'
+    : '';
+
   var marked = sortByMark(DATA.top_horses||[]);
-  box.innerHTML = marked.map(function(h){
+  box.innerHTML = warn + marked.map(function(h){
     var sc = h.scorecard || {};
     var score = (typeof sc.final_score==='number') ? sc.final_score : null;
     var tier = (h.aptitude||{}).course_fit_tier || '';
     var conf = sc.confidence_avg!=null ? confWord(sc.confidence_avg) : '';
-    var winPct = N ? Math.round(win[h.no]/N*100) : null;
+    var winPct = (excluded[h.no] || !N) ? null : pct(h.no);
     var reasonBits = [(h.tags_strong||[])[0], (h.tags_weak||[])[0]].filter(Boolean);
-    var lean = verdictBetLean(winPct||0, tier, score);
+    var lean = verdictBetLean(winPct, tier, score);
     var bits = [];
     if(score!=null) bits.push('総合評価'+score.toFixed(1)+'/5');
     if(tier) bits.push('コース適性'+tier);
     if(winPct!=null) bits.push('シミュ勝率'+winPct+'%');
+    else if(excluded[h.no]) bits.push('シミュ対象外（能力データ未整備）');
     return '<div class="verdictCard" style="--c:'+(h.color||'#888')+'">'
       + '<div class="vHd"><b class="vMk">'+(h.mark||'-')+'</b><b class="vNm">'+h.no+' '+h.name+'</b></div>'
       + (bits.length?'<div class="vBits">'+bits.join(' ・ ')+'</div>':'')
@@ -3493,9 +3720,14 @@ function doApplyBetPlan(planIdx){
         planTotal += comp.total;
         ln += '<div class="ln"><b>'+comp.label+'</b><br><span class="nm">'+comp.names+'</span></div>';
       } else {
-        var names = line.numbers ? line.numbers.map(betPlanHorseName).join(", ") : "";
+        // prefix は「軸馬名＋つなぎ記号」、numbers は「相手の馬番」が本来の役割だが、
+        // prefix 側にも相手を含む馬名を書いたデータがあり「ドンインザムードドンインザムード」の
+        // ように二重表示されていた（2026-07-26指摘）。prefix に既出の馬名は落として繋ぐ。
+        var raw = line.numbers ? line.numbers.map(betPlanHorseName) : [];
+        var pfx = line.prefix || '';
+        var names = raw.filter(function(n){ return n && pfx.indexOf(n) < 0; }).join(", ");
         ln += '<div class="ln">'+line.text;
-        if(names) ln += '<br><span class="nm">'+(line.prefix||'')+names+'</span>';
+        if(raw.length) ln += '<br><span class="nm">'+pfx+names+'</span>';
         ln += '</div>';
       }
     });
@@ -3515,15 +3747,18 @@ function doApplyBetPlan(planIdx){
 /* ページ内ナビの現在地ハイライト（scroll-spy）＋ アクティブchipをナビ内に自動センタリング */
 (function(){
   var nav=document.querySelector('.tocnav'); if(!nav) return;
-  var links=[].slice.call(nav.querySelectorAll('a'));
+  // 横スクロールするのは.tocnav-scroll(ページ内アンカー分)のみ。「能力比較・シミュ」は
+  // 別ページ遷移の固定チップのため対象外（そちらのhrefは#で始まらずidも一致しないので自然に除外される）。
+  var scrollBox=nav.querySelector('.tocnav-scroll')||nav;
+  var links=[].slice.call(scrollBox.querySelectorAll('a'));
   var map={}; links.forEach(function(a){ map[a.getAttribute('href').slice(1)]=a; });
   var secs=Object.keys(map).map(function(id){return document.getElementById(id);}).filter(Boolean);
   if(!secs.length) return;
   function setActive(id){
     links.forEach(function(a){a.classList.remove('active');});
     var a=map[id]; if(!a) return; a.classList.add('active');
-    if(nav.scrollWidth>nav.clientWidth+4){
-      nav.scrollTo({left:a.offsetLeft-nav.clientWidth/2+a.offsetWidth/2,behavior:'smooth'});
+    if(scrollBox.scrollWidth>scrollBox.clientWidth+4){
+      scrollBox.scrollTo({left:a.offsetLeft-scrollBox.clientWidth/2+a.offsetWidth/2,behavior:'smooth'});
     }
   }
   var io=new IntersectionObserver(function(ents){
@@ -3545,16 +3780,38 @@ function doApplyBetPlan(planIdx){
 (function(){
   var ov=document.createElement('div');
   ov.className='cardModalOverlay';
-  ov.innerHTML='<div class="cardModal"><div class="cardModalHd"><span class="cmTitle"></span><button type="button" aria-label="閉じる">×</button></div><div class="cardModalBody"></div></div>';
+  // 支援技術向け: ダイアログとして認識させ、開いたらフォーカスを×へ移し、Tabはモーダル内で
+  // 循環させ、閉じたら開いた要素へ返す。これが無いとVoiceOver/キーボードでは背面の
+  // summary にフォーカスが残ったままで、モーダルが開いたことが伝わらなかった（2026-07-26指摘）。
+  ov.innerHTML='<div class="cardModal" role="dialog" aria-modal="true" aria-labelledby="cmTitleId" tabindex="-1"><div class="cardModalHd"><span class="cmTitle" id="cmTitleId"></span><button type="button" aria-label="閉じる">×</button></div><div class="cardModalBody"></div></div>';
   document.body.appendChild(ov);
   var titleEl=ov.querySelector('.cmTitle'), bodyEl=ov.querySelector('.cardModalBody');
-  function close(){
+  var dlg=ov.querySelector('.cardModal'), closeBtn=ov.querySelector('.cardModalHd button'), lastFocus=null;
+  // closeDom は「DOMを閉じるだけ」。端末の戻る操作（popstate）から呼ばれるのはこちらで、
+  // 履歴には触らない。×/背景/Esc から閉じるときだけ close() 経由で履歴も1つ戻す。
+  function closeDom(){
     if(!ov.classList.contains('open')) return;
     ov.classList.remove('open'); bodyEl.innerHTML=''; kbUnlockScroll();
+    if(lastFocus && lastFocus.focus){ try{ lastFocus.focus(); }catch(e){} }
+    lastFocus=null;
+  }
+  function close(){
+    if(!ov.classList.contains('open')) return;
+    closeDom();
+    kbModalClosed();
   }
   ov.addEventListener('click',function(e){ if(e.target===ov) close(); });
-  ov.querySelector('.cardModalHd button').addEventListener('click',close);
+  closeBtn.addEventListener('click',close);
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  // フォーカストラップ（開いている間だけ）
+  dlg.addEventListener('keydown',function(e){
+    if(e.key!=='Tab') return;
+    var f=dlg.querySelectorAll('a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if(!f.length) return;
+    var first=f[0], last=f[f.length-1];
+    if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+  });
   // 今回のレース条件（距離・回り・馬場）は全馬共通なので1回だけ算出し、全戦績モーダルの
   // ヘッダーで使い回す（過去走を見ながら「今回はどういう条件か」を見失わないため）。
   var raceCtx = (function(){
@@ -3565,7 +3822,7 @@ function doApplyBetPlan(planIdx){
     var turn = (r.course_profile && r.course_profile.turn) || '';
     var dir = (turn.match(/^[右左]/) || [''])[0];
     var pred = DATA.predicted_scenario || {};
-    var wxText = (r.wx || []).join(' ');
+    var wxText = deEmoji((r.wx || []).join(' '));
     var going = pred.going || (wxText.match(/不良|稍重|重|良/) || [''])[0];
     var goConf = (typeof goingConfirmed === 'function') && goingConfirmed();
     return { dist: dist, dir: dir, going: going ? ((goConf?'':'想定')+going) : '' };
@@ -3601,6 +3858,9 @@ function doApplyBetPlan(planIdx){
       bodyEl.scrollTop=0;  // 前に開いた別の馬のスクロール位置が残らないよう、開くたびに先頭へ戻す
       ov.classList.add('open');
       kbLockScroll();
+      kbModalOpened(closeDom);
+      lastFocus=document.activeElement;
+      closeBtn.focus();
     });
   });
 })();

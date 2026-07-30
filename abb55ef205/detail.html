@@ -272,7 +272,10 @@
   /* お気に入り(+)/メモ(✎)ボタンの置き場所。カード最下部だと押すたびに下までスクロールが要るため、
      カード先頭(.top/.hd の前)の独立した1行として右上に置く(2026-07-29 指摘)。
      absolute ではなく通常フローの行なので、float の馬体写真や details の開閉状態と衝突しない。 */
-  .cardActions{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:0 0 2px;clear:both;}
+  /* 見出し行（.top / .hd）の中に入れて右端へ寄せる。専用行を作ると馬名の上に1行まるごと
+     余白ができて場所を食うため（2026-07-30 指摘）。モバイルは pop が flex-basis:100% で
+     次行に落ちるので、DOM上 pop より前に置くことで馬名と同じ行の右端に収まる */
+  .cardActions{display:flex;align-items:center;gap:6px;margin-left:auto;}
   .cardActions .favBtn, .cardActions .memoBtn{margin-left:0;}
   /* 印の選択メニュー(◎○▲△☆を縦積み。body直下にfixed配置し、overflow:hiddenのカード内に置くと見切れる問題を回避) */
   .markPicker{display:none;position:fixed;z-index:9999;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(15,26,38,.22);padding:6px;gap:3px;}
@@ -1301,6 +1304,31 @@ function memoModalEl(){
   }
   return el;
 }
+/* ===== モーダルと端末の「戻る」の連携 =====
+   モーダルを開いている間だけ履歴エントリを1つ積んでおき、戻る操作ではページを離脱せず
+   モーダルだけを閉じる。これが無いと過去走モーダルを開いたまま戻るとサイト先頭へ飛んで
+   読んでいた位置を失う（2026-07-30 指摘）。
+   閉じ方は2経路ある。(a) 戻る操作 → popstate が来るので DOM を閉じるだけ、
+   (b) ×/保存/Esc/背景タップ → こちらから history.back() で積んだ分を戻す。 */
+var KB_MODAL_STACK = [];   // 開いているモーダルの「DOMを閉じるだけの関数」スタック
+function kbModalOpened(closeDom){
+  KB_MODAL_STACK.push(closeDom);
+  try{ history.pushState({kbModal: KB_MODAL_STACK.length}, ''); }catch(e){}
+}
+function kbModalClosed(){
+  if(!KB_MODAL_STACK.length) return;
+  KB_MODAL_STACK.pop();
+  if(history.state && history.state.kbModal){ try{ history.back(); }catch(e){} }
+}
+window.addEventListener('popstate', function(){
+  var closeDom = KB_MODAL_STACK.pop();
+  if(closeDom){ try{ closeDom(); }catch(e){} }
+});
+
+function memoModalCloseDom(){
+  var el = document.getElementById('memoModal');
+  if(el){ el.classList.remove('open'); kbUnlockScroll(); }
+}
 function openMemoModal(name){
   var el = memoModalEl();
   el.setAttribute('data-for', name);
@@ -1308,11 +1336,12 @@ function openMemoModal(name){
   el.querySelector('textarea').value = getMemo(name);
   el.classList.add('open');
   kbLockScroll();
+  kbModalOpened(memoModalCloseDom);
   setTimeout(function(){ el.querySelector('textarea').focus(); }, 50);
 }
 function cancelMemoModal(){
-  var el = document.getElementById('memoModal');
-  if(el){ el.classList.remove('open'); kbUnlockScroll(); }
+  memoModalCloseDom();
+  kbModalClosed();
 }
 function saveMemoModal(){
   var el = document.getElementById('memoModal');
@@ -1325,8 +1354,8 @@ function saveMemoModal(){
   document.querySelectorAll('[data-memo-btn="'+sel+'"]').forEach(function(b){
     b.classList.toggle('has', !!text);
   });
-  el.classList.remove('open');
-  kbUnlockScroll();
+  memoModalCloseDom();
+  kbModalClosed();
   if(typeof renderMyPicks === 'function') renderMyPicks(); // MY注目のメモプレビューにも反映
 }
 
@@ -1396,11 +1425,16 @@ function openPrNoteModal(key){
   el.querySelector('textarea').value = n.note || '';
   el.classList.add('open');
   kbLockScroll();
+  kbModalOpened(prNoteModalCloseDom);
   setTimeout(function(){ el.querySelector('textarea').focus(); }, 50);
 }
-function cancelPrNoteModal(){
+function prNoteModalCloseDom(){
   var el = document.getElementById('prNoteModal');
   if(el){ el.classList.remove('open'); kbUnlockScroll(); }
+}
+function cancelPrNoteModal(){
+  prNoteModalCloseDom();
+  kbModalClosed();
 }
 function savePrNoteModal(){
   var el = document.getElementById('prNoteModal');
@@ -1415,8 +1449,8 @@ function savePrNoteModal(){
     b.classList.toggle('has', !!(mark||note));
     b.textContent = mark || '✎';
   });
-  el.classList.remove('open');
-  kbUnlockScroll();
+  prNoteModalCloseDom();
+  kbModalClosed();
 }
 
 // 印(myMark)が付いた馬をカード化して指定boxへ描画する共通処理。
@@ -2069,9 +2103,9 @@ function applyPickStripVisibility(){
     var noTitle = (h.no_provisional || !h.no || h.no === 0) ? '枠順確定後に馬番が入る' : ('馬番 '+h.no);
     var hid = 'horse-' + h.name.replace(/\s+/g, '-');
     html += '<div class="card'+(isFav(h.name)?' isFav':'')+'" id="'+hid+'" data-fav-card="'+escHtml(h.name)+'" style="--c:'+h.color+';--onc:'+inkOn(h.color)+'">'
-      + '<div class="cardActions">'+favBtnHtml(h.name)+memoBtnHtml(h.name)+'</div>'
       + '<div class="top"><span class="mark">'+h.mark+'</span>'
       + '<span class="num" title="'+noTitle+'">'+noDisp+'</span><span class="name">'+h.name+'</span>'
+      + '<div class="cardActions">'+favBtnHtml(h.name)+memoBtnHtml(h.name)+'</div>'
       + '<span class="pop">'+(h.pop?((h.pop_provisional===false?'':'想定')+h.pop+'番人気'+(h.odds!=null?'（'+h.odds+'倍）':'')):'人気想定')+'</span>'
       + '</div>'
       + (h.photo?'<div class="horsephoto"><img src="'+h.photo+'" alt="'+h.name+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"><span class="photocred">写真: netkeiba</span></div>':'')
@@ -2289,11 +2323,11 @@ function applyPickStripVisibility(){
       return '<details class="pastfull" data-horse="'+(m.name||'')+'" data-no="'+((m.no_provisional||!m.no||m.no===0)?'想定':m.no)+'" data-mark="'+(m.mark||'')+'" data-weight="'+(m.weight||'')+'" data-impost="'+(m.impost||'')+'" data-draw="'+(m.draw||'')+'"><summary>全'+m.past_races.length+'走の記録（通過・ペース・斤量）</summary>'+prTrendSvg(m.past_races)+'<div class="pastfull-wrap"><table class="prtab"><thead><tr>'+prHeadHtml()+'</tr></thead><tbody>'+rows+'</tbody></table></div></details>';
     })();
     mhtml += '<div class="m'+(isFav(m.name)?' isFav':'')+'" id="mini-horse-'+m.name.replace(/\s+/g,'-')+'" data-fav-card="'+escHtml(m.name)+'" style="--c:'+m.color+';--onc:'+inkOn(m.color)+'">'
-      + '<div class="cardActions">'+favBtnHtml(m.name)+memoBtnHtml(m.name)+'</div>'
       + '<div class="hd"><span class="nm">'+mnoDisp+'</span>'+sexAge+m.name
       + (m.blinker_first?' <span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">初ブリンカー</span>':'')
       + ' <span style="color:var(--sub);font-size:.74rem;">/ '+m.jockey+'</span>'
-      + ' <span class="legBadge leg-'+(m.leg||'未確認')+'" style="margin-left:auto;">'+(m.leg||'-')+'</span></div>'
+      + ' <span class="legBadge leg-'+(m.leg||'未確認')+'" style="margin-left:auto;">'+(m.leg||'-')+'</span>'
+      + '<div class="cardActions" style="margin-left:6px;">'+favBtnHtml(m.name)+memoBtnHtml(m.name)+'</div></div>'
       + photoHtml
       + pastBlockM
       + recHtml
@@ -3753,11 +3787,18 @@ function doApplyBetPlan(planIdx){
   document.body.appendChild(ov);
   var titleEl=ov.querySelector('.cmTitle'), bodyEl=ov.querySelector('.cardModalBody');
   var dlg=ov.querySelector('.cardModal'), closeBtn=ov.querySelector('.cardModalHd button'), lastFocus=null;
-  function close(){
+  // closeDom は「DOMを閉じるだけ」。端末の戻る操作（popstate）から呼ばれるのはこちらで、
+  // 履歴には触らない。×/背景/Esc から閉じるときだけ close() 経由で履歴も1つ戻す。
+  function closeDom(){
     if(!ov.classList.contains('open')) return;
     ov.classList.remove('open'); bodyEl.innerHTML=''; kbUnlockScroll();
     if(lastFocus && lastFocus.focus){ try{ lastFocus.focus(); }catch(e){} }
     lastFocus=null;
+  }
+  function close(){
+    if(!ov.classList.contains('open')) return;
+    closeDom();
+    kbModalClosed();
   }
   ov.addEventListener('click',function(e){ if(e.target===ov) close(); });
   closeBtn.addEventListener('click',close);
@@ -3817,6 +3858,7 @@ function doApplyBetPlan(planIdx){
       bodyEl.scrollTop=0;  // 前に開いた別の馬のスクロール位置が残らないよう、開くたびに先頭へ戻す
       ov.classList.add('open');
       kbLockScroll();
+      kbModalOpened(closeDom);
       lastFocus=document.activeElement;
       closeBtn.focus();
     });
