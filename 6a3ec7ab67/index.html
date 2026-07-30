@@ -255,7 +255,7 @@
   .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-2);border-color:color-mix(in srgb, var(--c, #888) 25%, var(--line));}
   .card .top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:4px 0 10px;}
   .card .mark{font-weight:700;font-size:1.3rem;color:var(--c,#333);letter-spacing:-.02em;}
-  .card .num{font-size:.78rem;color:var(--ink,#fff);background:var(--c,#888);border-radius:6px;padding:2px 9px;font-weight:700;font-feature-settings:"tnum" 1;}
+  .card .num{font-size:.78rem;color:var(--onc,#fff);background:var(--c,#888);border-radius:6px;padding:2px 9px;font-weight:700;font-feature-settings:"tnum" 1;}
   .card .name{font-size:1.15rem;font-weight:700;letter-spacing:-.01em;}
   .card .pop{margin-left:auto;font-size:.76rem;color:var(--sub);font-feature-settings:"tnum" 1;}
   .oshi{font-size:.84rem;color:#5c4a10;background:rgba(138,112,32,.07);border-radius:var(--radius-md);padding:8px 12px;margin:8px 0;border-left:3px solid var(--gold);font-weight:600;}
@@ -269,9 +269,10 @@
   .favClearBtn.show{display:inline-block;}
   .favClearBtn:hover{opacity:1;background:#f5f5f5;}
   .favClearBtn.sm{width:16px;height:16px;font-size:.56rem;line-height:14px;margin-left:2px;}
-  /* お気に入り(+)/メモ(✎)ボタンの置き場所。以前はヘッダー行内・馬体写真の近くにあり視覚的に重なっていたため、
-     カード最下部(常に存在する要素の後)へ独立させた。DOM順で配置するのでfloat写真やdetailsの開閉状態に関わらず衝突しない。 */
-  .cardActions{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);clear:both;}
+  /* お気に入り(+)/メモ(✎)ボタンの置き場所。カード最下部だと押すたびに下までスクロールが要るため、
+     カード先頭(.top/.hd の前)の独立した1行として右上に置く(2026-07-29 指摘)。
+     absolute ではなく通常フローの行なので、float の馬体写真や details の開閉状態と衝突しない。 */
+  .cardActions{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:0 0 2px;clear:both;}
   .cardActions .favBtn, .cardActions .memoBtn{margin-left:0;}
   /* 印の選択メニュー(◎○▲△☆を縦積み。body直下にfixed配置し、overflow:hiddenのカード内に置くと見切れる問題を回避) */
   .markPicker{display:none;position:fixed;z-index:9999;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(15,26,38,.22);padding:6px;gap:3px;}
@@ -493,7 +494,7 @@
   .mini .m{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;font-size:.85rem;border-left:3px solid var(--c,#888);transition:transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);}
   .mini .m:hover{transform:translateY(-1px);box-shadow:var(--shadow-1);}
   .mini .m .hd{font-weight:700;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;margin-bottom:4px;}
-  .mini .m .hd .nm{background:var(--c,#888);color:var(--ink,#fff);padding:1px 6px;border-radius:5px;font-size:.72rem;}
+  .mini .m .hd .nm{background:var(--c,#888);color:var(--onc,#fff);padding:1px 6px;border-radius:5px;font-size:.72rem;}
   .mini .m .row{font-size:.78rem;color:var(--sub);margin-top:3px;}
   .mini .m .why{color:#4a5560;margin-top:5px;font-size:.82rem;}
   .scenarioBox{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:14px;margin-bottom:14px;}
@@ -719,12 +720,12 @@
   .pickStrip .pickCard .pc-ph0{display:flex;align-items:center;justify-content:center;height:150px;font-size:2.7rem;color:#b7c2cf;background:linear-gradient(135deg,#e7edf4,#dbe3ec);}
   .pickStrip .pickCard .pc-photo{position:absolute;inset:0;width:100%;height:150px;object-fit:cover;display:block;}
   .pickStrip .pickCard::after{content:"";position:absolute;left:0;right:0;top:96px;height:54px;background:linear-gradient(180deg,transparent,rgba(15,26,38,.30));pointer-events:none;}
-  .pickStrip .pickCard .pc-mark{position:absolute;z-index:2;top:11px;left:11px;min-width:40px;height:40px;padding:0 7px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:800;color:var(--ink,#fff);background:var(--pc,#555);box-shadow:0 3px 10px rgba(13,40,70,.4);}
+  .pickStrip .pickCard .pc-mark{position:absolute;z-index:2;top:11px;left:11px;min-width:40px;height:40px;padding:0 7px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:800;color:var(--onc,#fff);background:var(--pc,#555);box-shadow:0 3px 10px rgba(13,40,70,.4);}
   .pickStrip .pickCard .pc-leg{position:absolute;z-index:2;top:15px;right:12px;box-shadow:0 2px 6px rgba(13,40,70,.3);}
   .pickStrip .pickCard .pc-body{position:relative;z-index:2;padding:11px 14px 14px;}
   .pickStrip .pickCard .pc-name{font-size:1.16rem;font-weight:700;letter-spacing:-.01em;line-height:1.2;}
   .pickStrip .pickCard .pc-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:7px 0;font-size:.74rem;color:var(--sub);font-feature-settings:"tnum" 1;}
-  .pickStrip .pickCard .pc-pop{background:var(--pc,#555);color:var(--ink,#fff);border-radius:6px;padding:1px 8px;font-weight:700;}
+  .pickStrip .pickCard .pc-pop{background:var(--pc,#555);color:var(--onc,#fff);border-radius:6px;padding:1px 8px;font-weight:700;}
   .pickStrip .pickCard .pc-catch{font-size:.8rem;color:var(--ink);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .pickStrip .pickCard .pc-jump{display:inline-block;margin-top:9px;font-size:.74rem;font-weight:700;color:var(--accent);text-decoration:none;}
   .pickStrip .pickCard .pc-jump:active{opacity:.6;}
@@ -876,7 +877,7 @@
   <p class="lead">能力評価のデータが薄い馬は数値推定を出していません（信頼度の偽装を避けるため）。</p>
   <div class="mini" id="mini"></div>
 
-  <a class="pageJump toMain" data-page="detail" href="index.html">◀ 結論ページに戻る<small>（買い目・全馬リスト）</small></a>
+  <a class="pageJump toMain" data-page="detail" href="index.html">◀ 予想ページに戻る<small>（印・買い目・全頭の評価）</small></a>
 
   <!-- 詳細ページ内タブ：シミュレーション(配分・展開・狙い目・能力比較) / データ(並び替え・過去傾向・定量ランキング)。
        1画面に全部並べると縦に長すぎるという指摘への対応でタブ分割。中身のIDや計算ロジックは従来のまま。 -->
@@ -1088,7 +1089,7 @@
 
   <div class="dpage">
   <h2 class="sec" id="sortview">出走馬 並び替えビュー</h2>
-  <p class="lead">斤量・上がり・勝率・体重などをボタン1つで一気に並び替え。昇順/降順も切り替え可能です。結論ページ(1ページ目)と同じデータをその場で計算しているので、データが更新されればここも自動で反映されます。「MY印・コメント」列の＋で自分の印を、✎でコメント（自由記述メモ）をこの表からも付けられます。</p>
+  <p class="lead">斤量・上がり・勝率・体重などをボタン1つで一気に並び替え。昇順/降順も切り替え可能です。予想ページ(1ページ目)と同じデータをその場で計算しているので、データが更新されればここも自動で反映されます。「MY印・コメント」列の＋で自分の印を、✎でコメント（自由記述メモ）をこの表からも付けられます。</p>
   <div class="panel">
     <div class="hsChips" id="hsChips">
       <button type="button" class="hsChip on" data-mode="no" onclick="hsSetSort('no')">馬番順</button>
@@ -1500,7 +1501,7 @@ function renderMyPicksInto(boxId, crossPage){
       +   '<div class="pc-name">'+no+' '+h.name+'</div>'
       +   '<div class="pc-meta"><span class="pc-pop">公式印 '+(h.mark||'-')+'</span>'+favBtnHtml(h.name,'sm')+memoBtnHtml(h.name,'sm')+'</div>'
       +   (memo ? '<div class="pc-memo">'+escHtml(memo)+'</div>' : '')
-      +   '<a class="pc-jump" href="'+jumpHref+'">'+(crossPage ? '結論ページのカードへ →' : 'カード詳細 →')+'</a>'
+      +   '<a class="pc-jump" href="'+jumpHref+'">'+(crossPage ? '予想ページのカードへ →' : 'カード詳細 →')+'</a>'
       + '</div></div>';
   });
   html += '</div>';
@@ -2074,7 +2075,7 @@ function applyPickStripVisibility(){
       + (h.photo ? '<img class="pc-photo" src="'+h.photo+'" alt="'+h.name+'の馬体" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '')
       + '</div>';
     var leg = h.leg ? '<span class="pc-leg legBadge leg-'+h.leg+'" style="font-size:.64rem;">'+h.leg+'</span>' : '';
-    html += '<div class="pickCard'+(isFav(h.name)?' isFav':'')+'" data-fav-card="'+escHtml(h.name)+'" style="--pc:'+(h.color||'#555')+';--ink:'+inkOn(h.color||'#555')+'">'
+    html += '<div class="pickCard'+(isFav(h.name)?' isFav':'')+'" data-fav-card="'+escHtml(h.name)+'" style="--pc:'+(h.color||'#555')+';--onc:'+inkOn(h.color||'#555')+'">'
       + photo
       + '<span class="pc-mark">'+h.mark+'</span>' + leg
       + '<div class="pc-body">'
@@ -2119,7 +2120,8 @@ function applyPickStripVisibility(){
     var noDisp = (h.no_provisional || !h.no || h.no === 0) ? '想定' : h.no;
     var noTitle = (h.no_provisional || !h.no || h.no === 0) ? '枠順確定後に馬番が入る' : ('馬番 '+h.no);
     var hid = 'horse-' + h.name.replace(/\s+/g, '-');
-    html += '<div class="card'+(isFav(h.name)?' isFav':'')+'" id="'+hid+'" data-fav-card="'+escHtml(h.name)+'" style="--c:'+h.color+';--ink:'+inkOn(h.color)+'">'
+    html += '<div class="card'+(isFav(h.name)?' isFav':'')+'" id="'+hid+'" data-fav-card="'+escHtml(h.name)+'" style="--c:'+h.color+';--onc:'+inkOn(h.color)+'">'
+      + '<div class="cardActions">'+favBtnHtml(h.name)+memoBtnHtml(h.name)+'</div>'
       + '<div class="top"><span class="mark">'+h.mark+'</span>'
       + '<span class="num" title="'+noTitle+'">'+noDisp+'</span><span class="name">'+h.name+'</span>'
       + '<span class="pop">'+(h.pop?((h.pop_provisional===false?'':'想定')+h.pop+'番人気'+(h.odds!=null?'（'+h.odds+'倍）':'')):'人気想定')+'</span>'
@@ -2257,7 +2259,6 @@ function applyPickStripVisibility(){
           var v = bonus[h.name]; if(!v) return '';
           return '<div style="margin-top:6px;padding:4px 10px;background:rgba(217,156,71,.16);border-left:3px solid #d99c47;border-radius:6px;font-size:.78rem;color:#7a5a1d;"><b>連覇プレミアム R12</b> course_dist 軸に +'+v+' 加点（trend_config.same_race_repeat_bonus）</div>';
         })()
-      + '<div class="cardActions">'+favBtnHtml(h.name)+memoBtnHtml(h.name)+'</div>'
       + '</div>';
   });
   document.getElementById("cardsBox").innerHTML = html;
@@ -2339,7 +2340,8 @@ function applyPickStripVisibility(){
       var rows=m.past_races.map(function(r){ return prRowHtml(r,mAvg,m.name); }).join('');
       return '<details class="pastfull" data-horse="'+(m.name||'')+'" data-no="'+((m.no_provisional||!m.no||m.no===0)?'想定':m.no)+'" data-mark="'+(m.mark||'')+'" data-weight="'+(m.weight||'')+'" data-impost="'+(m.impost||'')+'" data-draw="'+(m.draw||'')+'"><summary>全'+m.past_races.length+'走の記録（通過・ペース・斤量）</summary>'+prTrendSvg(m.past_races)+'<div class="pastfull-wrap"><table class="prtab"><thead><tr>'+prHeadHtml()+'</tr></thead><tbody>'+rows+'</tbody></table></div></details>';
     })();
-    mhtml += '<div class="m'+(isFav(m.name)?' isFav':'')+'" id="mini-horse-'+m.name.replace(/\s+/g,'-')+'" data-fav-card="'+escHtml(m.name)+'" style="--c:'+m.color+';--ink:'+inkOn(m.color)+'">'
+    mhtml += '<div class="m'+(isFav(m.name)?' isFav':'')+'" id="mini-horse-'+m.name.replace(/\s+/g,'-')+'" data-fav-card="'+escHtml(m.name)+'" style="--c:'+m.color+';--onc:'+inkOn(m.color)+'">'
+      + '<div class="cardActions">'+favBtnHtml(m.name)+memoBtnHtml(m.name)+'</div>'
       + '<div class="hd"><span class="nm">'+mnoDisp+'</span>'+sexAge+m.name
       + (m.blinker_first?' <span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">初ブリンカー</span>':'')
       + ' <span style="color:var(--sub);font-size:.74rem;">/ '+m.jockey+'</span>'
@@ -2355,7 +2357,6 @@ function applyPickStripVisibility(){
       + pastFullHtml
       + (hasMarks && m.pop && m.pop<=6 ? '<div class="factChip warn" style="margin:4px 0 0;">⚠ 人気'+m.pop+'番なのに軽視した理由</div>' : '')
       + '<div class="why">'+m.why+'</div>'
-      + '<div class="cardActions">'+favBtnHtml(m.name)+memoBtnHtml(m.name)+'</div>'
       + '</div>';
   });
   document.getElementById("mini").innerHTML = mhtml;

@@ -32,8 +32,6 @@
   header.hero::after{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg, transparent, rgba(255,255,255,.18) 40%, rgba(255,255,255,.08) 70%, transparent);}
   header.hero h1{margin:0 0 10px;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-.02em;font-weight:700;line-height:1.15;text-wrap:balance;position:relative;}
   header.hero .meta{font-size:.93rem;opacity:.80;letter-spacing:.008em;line-height:1.6;position:relative;}
-  /* 発走時刻チップ。PCは .meta が全文見えるので不要 */
-  .metaChips{display:none;}
   .heroVisual{position:relative;display:grid;grid-template-columns:170px 1fr;gap:8px 12px;margin-top:18px;}
   /* signalHeadをheroVisualの1行目にフルスパンで置き、weatherOrb/signalGridを2行目の同じ行の
      2カラムにする（heroVisual直下の子2つがそのままGrid行になり、高さが揃う）。
@@ -145,7 +143,7 @@
   .pendingCard.done{background:#eef7f2;border-color:#bce0cc;border-left-color:#0f8456;}
   .pendingCard.done h4{color:#0f6447;}
   .pendingCard.done h4 .when{color:#0f8456;}
-  /* 💬 他者の見方 */
+  /* 他者の見方 */
   .viewsGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:10px;}
   .viewCard{background:#faf7ec;border-left:4px solid var(--gold);padding:11px 14px;border-radius:0 8px 8px 0;font-size:.84rem;line-height:1.6;}
   .viewCard .vcTop{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0 0 6px;font-size:.74rem;}
@@ -257,7 +255,7 @@
   .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-2);border-color:color-mix(in srgb, var(--c, #888) 25%, var(--line));}
   .card .top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:4px 0 10px;}
   .card .mark{font-weight:700;font-size:1.3rem;color:var(--c,#333);letter-spacing:-.02em;}
-  .card .num{font-size:.78rem;color:var(--ink,#fff);background:var(--c,#888);border-radius:6px;padding:2px 9px;font-weight:700;font-feature-settings:"tnum" 1;}
+  .card .num{font-size:.78rem;color:var(--onc,#fff);background:var(--c,#888);border-radius:6px;padding:2px 9px;font-weight:700;font-feature-settings:"tnum" 1;}
   .card .name{font-size:1.15rem;font-weight:700;letter-spacing:-.01em;}
   .card .pop{margin-left:auto;font-size:.76rem;color:var(--sub);font-feature-settings:"tnum" 1;}
   .oshi{font-size:.84rem;color:#5c4a10;background:rgba(138,112,32,.07);border-radius:var(--radius-md);padding:8px 12px;margin:8px 0;border-left:3px solid var(--gold);font-weight:600;}
@@ -271,9 +269,10 @@
   .favClearBtn.show{display:inline-block;}
   .favClearBtn:hover{opacity:1;background:#f5f5f5;}
   .favClearBtn.sm{width:16px;height:16px;font-size:.56rem;line-height:14px;margin-left:2px;}
-  /* お気に入り(+)/メモ(✎)ボタンの置き場所。以前はヘッダー行内・馬体写真の近くにあり視覚的に重なっていたため、
-     カード最下部(常に存在する要素の後)へ独立させた。DOM順で配置するのでfloat写真やdetailsの開閉状態に関わらず衝突しない。 */
-  .cardActions{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);clear:both;}
+  /* お気に入り(+)/メモ(✎)ボタンの置き場所。カード最下部だと押すたびに下までスクロールが要るため、
+     カード先頭(.top/.hd の前)の独立した1行として右上に置く(2026-07-29 指摘)。
+     absolute ではなく通常フローの行なので、float の馬体写真や details の開閉状態と衝突しない。 */
+  .cardActions{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:0 0 2px;clear:both;}
   .cardActions .favBtn, .cardActions .memoBtn{margin-left:0;}
   /* 印の選択メニュー(◎○▲△☆を縦積み。body直下にfixed配置し、overflow:hiddenのカード内に置くと見切れる問題を回避) */
   .markPicker{display:none;position:fixed;z-index:9999;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(15,26,38,.22);padding:6px;gap:3px;}
@@ -495,7 +494,7 @@
   .mini .m{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;font-size:.85rem;border-left:3px solid var(--c,#888);transition:transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);}
   .mini .m:hover{transform:translateY(-1px);box-shadow:var(--shadow-1);}
   .mini .m .hd{font-weight:700;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;margin-bottom:4px;}
-  .mini .m .hd .nm{background:var(--c,#888);color:var(--ink,#fff);padding:1px 6px;border-radius:5px;font-size:.72rem;}
+  .mini .m .hd .nm{background:var(--c,#888);color:var(--onc,#fff);padding:1px 6px;border-radius:5px;font-size:.72rem;}
   .mini .m .row{font-size:.78rem;color:var(--sub);margin-top:3px;}
   .mini .m .why{color:#4a5560;margin-top:5px;font-size:.82rem;}
   .scenarioBox{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:14px;margin-bottom:14px;}
@@ -602,27 +601,23 @@
   @media(max-width:600px){
     /* 下余白は固定ボタン3つ（左下=アーカイブ / 右下=トップへ戻る / その上=要望）の
        占有分を確保する。56pxでは最下部までスクロールしたときに本文（最終判断カードの
-       文章）が実際に隠れていた（2026-07-25指摘）。 */
-    .wrap{padding:16px 12px 128px;padding-bottom:calc(128px + env(safe-area-inset-bottom));}
+       文章）が実際に隠れていた（2026-07-25指摘）。128pxでも一番高い要望ボタン
+       （bottom:126px・高さ40px＝下端から166px）に免責文が被っていたため、
+       166px＋余白14pxの180pxまで広げる（390px実測・2026-07-26指摘）。 */
+    .wrap{padding:16px 12px 180px;padding-bottom:calc(180px + env(safe-area-inset-bottom));}
     header.hero{padding:18px 16px 17px;border-radius:14px;}
     header.hero h1{font-size:1.24rem;line-height:1.22;margin-bottom:5px;}
     header.hero .meta{font-size:.78rem;line-height:1.45;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
-    /* クランプで切れる発走時刻・日付・競馬場を、切れないチップとして常時出す（2026-07-25指摘） */
-    .metaChips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
-    .metaChips span{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.20);
-      padding:3px 9px;border-radius:999px;font-size:.7rem;font-weight:700;
-      font-feature-settings:"tnum" 1;white-space:nowrap;}
-    /* 要点は「天候・馬場・コース適性・中心馬」の4項目しかないのに、スマホでは
-       weatherOrb が2行分の縦長(300px)に伸び、signalGrid 側は2列×3枚で右下に空セルが
-       出て、いびつな並びのまま縦を無駄に食っていた（390px実測 327px・2026-07-25 指摘）。
-       2×2 に組み替えると並びは揃うが、折り返しの多いカード(馬場・コース適性)が行高を
-       決めてしまい 273px 止まりだった。そこで1カラムの均一な行に変え、
-       「アイコン＋見出し＋値」を1行、補足を2行目に置く。
-       signalGrid は display:contents で子カードを heroVisual へ直接参加させる。 */
-    .heroVisual{display:flex;flex-direction:column;gap:5px;margin-top:12px;}
+    /* 要点は「天候・馬場・コース適性・中心馬」の4項目。1カラムの縦積みだと4行ぶん
+       縦を食うため、2×2 に組み替える（2026-07-26指摘）。
+       signalGrid は display:contents で子カードを heroVisual のグリッドへ直接参加させ、
+       見出し(signalHead)だけ全幅に伸ばす。カード内は「アイコン＋見出し＋値」を1行、
+       補足を2行目に置く。 */
+    .heroVisual{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:12px;align-items:stretch;}
+    .signalHead{grid-column:1/-1;}
     .signalGrid{display:contents;}
     .weatherOrb,.signalCard{min-height:0;border-radius:10px;padding:6px 9px;
-      flex-direction:row;align-items:baseline;gap:7px;}
+      display:flex;flex-direction:row;align-items:baseline;gap:7px;}
     /* 見出しと値を同じ行に流し、補足(small)だけを flex-basis:100% で次の行へ落とす */
     .weatherOrb>*:last-child,.signalCard>*:last-child{display:flex;flex-direction:row;
       align-items:baseline;flex-wrap:wrap;gap:2px 7px;min-width:0;flex:1 1 auto;}
@@ -691,7 +686,8 @@
     .tocnav-scroll::-webkit-scrollbar{display:none;}
     .tocnav-scroll a{padding:4px 9px;white-space:nowrap;flex:0 0 auto;}
     .toc-div{flex:0 0 auto;}
-    .toc-detail{padding:4px 10px;font-size:.78rem;}
+    /* ラベルを「シミュ」から省略なしに戻した分、スクロール領域を削らないよう詰める */
+    .toc-detail{padding:4px 8px;font-size:.72rem;}
     details.fold>summary{min-height:42px;font-size:.78rem;}
     .foldBody{font-size:.8rem;}
     .past{overflow-x:auto;padding-bottom:4px;scroll-snap-type:x proximity;}
@@ -724,12 +720,12 @@
   .pickStrip .pickCard .pc-ph0{display:flex;align-items:center;justify-content:center;height:150px;font-size:2.7rem;color:#b7c2cf;background:linear-gradient(135deg,#e7edf4,#dbe3ec);}
   .pickStrip .pickCard .pc-photo{position:absolute;inset:0;width:100%;height:150px;object-fit:cover;display:block;}
   .pickStrip .pickCard::after{content:"";position:absolute;left:0;right:0;top:96px;height:54px;background:linear-gradient(180deg,transparent,rgba(15,26,38,.30));pointer-events:none;}
-  .pickStrip .pickCard .pc-mark{position:absolute;z-index:2;top:11px;left:11px;min-width:40px;height:40px;padding:0 7px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:800;color:var(--ink,#fff);background:var(--pc,#555);box-shadow:0 3px 10px rgba(13,40,70,.4);}
+  .pickStrip .pickCard .pc-mark{position:absolute;z-index:2;top:11px;left:11px;min-width:40px;height:40px;padding:0 7px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:800;color:var(--onc,#fff);background:var(--pc,#555);box-shadow:0 3px 10px rgba(13,40,70,.4);}
   .pickStrip .pickCard .pc-leg{position:absolute;z-index:2;top:15px;right:12px;box-shadow:0 2px 6px rgba(13,40,70,.3);}
   .pickStrip .pickCard .pc-body{position:relative;z-index:2;padding:11px 14px 14px;}
   .pickStrip .pickCard .pc-name{font-size:1.16rem;font-weight:700;letter-spacing:-.01em;line-height:1.2;}
   .pickStrip .pickCard .pc-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:7px 0;font-size:.74rem;color:var(--sub);font-feature-settings:"tnum" 1;}
-  .pickStrip .pickCard .pc-pop{background:var(--pc,#555);color:var(--ink,#fff);border-radius:6px;padding:1px 8px;font-weight:700;}
+  .pickStrip .pickCard .pc-pop{background:var(--pc,#555);color:var(--onc,#fff);border-radius:6px;padding:1px 8px;font-weight:700;}
   .pickStrip .pickCard .pc-catch{font-size:.8rem;color:var(--ink);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .pickStrip .pickCard .pc-jump{display:inline-block;margin-top:9px;font-size:.74rem;font-weight:700;color:var(--accent);text-decoration:none;}
   .pickStrip .pickCard .pc-jump:active{opacity:.6;}
@@ -827,33 +823,32 @@
   <header class="hero">
     <h1 id="raceTitle"></h1>
     <div class="meta" id="raceMeta"></div>
-    <!-- スマホは .meta を1行にクランプするため、末尾の発走時刻や条件が見えなくなる。
-         日付・競馬場・発走時刻だけは短いチップとして常時表示する（PCでは非表示） -->
-    <div class="metaChips" id="raceMetaChips"></div>
     <div class="src-link" id="raceSrc" style="font-size:.78rem;margin-top:5px;opacity:.9;"></div>
     <div class="heroVisual" id="heroVisual"></div>
     <details class="predictVer" id="predictVer"></details>
   </header>
 
+  <!-- MY注目（自分で印を付けた馬）はヘッダー直下に置く。印が無いときは display:none の
+       ままなので通常のファーストビューは変わらない。写真カルーセル(#pickStrip)だけを
+       結論の後ろに残す（2026-07-26指摘） -->
   <section class="pickStrip" id="myPickStrip" style="display:none;"></section>
-  <section class="pickStrip" id="pickStrip"></section>
 
   <nav class="tocnav" id="tocnav" aria-label="ページ内ナビゲーション">
     <div class="tocnav-scroll">
       <a href="#verdict">最終判断</a>
       <a href="#picks">買い目</a>
-      <a href="#cards">本命〜上位</a>
-      <a href="#minisec">人気薄</a>
+      <a href="#cards">印あり</a>
+      <a href="#minisec">印なし</a>
       <span class="toc-div" aria-hidden="true"></span>
       <a href="#trend">過去傾向</a>
       <a href="#views">他者の見方</a>
       <a href="#pending">⏳ 更新予定</a>
     </div>
-    <a class="toc-detail" href="detail.html">📊 シミュ →</a>
+    <a class="toc-detail" href="detail.html">シミュレーション →</a>
   </nav>
 
   <!-- 最終判断: 印・評価・適性・シミュ結果を1頭1枚に統合。下の詳細指標を読む前に結論だけ分かるようにする -->
-  <h2 class="sec" id="verdict">🎯 最終判断</h2>
+  <h2 class="sec" id="verdict">最終判断</h2>
   <p class="lead">印・総合評価・コース適性・展開シミュを1頭1行に要約。詳しい内訳は下の各セクションを参照。</p>
   <div id="verdictBox" class="verdictList"></div>
 
@@ -861,12 +856,15 @@
   <h2 class="sec" id="picks">買い目（馬名付き）</h2>
   <div class="pickList" id="picksBox"></div>
 
-  <a class="pageJump toDetail" href="detail.html#bet">▶ 能力比較・展開／配分シミュレーションを見る<small>（詳細分析ページ・配分シミュレーターへ直接移動）</small></a>
+
+  <!-- 印付き注目馬の写真カルーセルは結論より後ろに置く。ヘッダー直下にあった頃は
+       390px実機で「最終判断」が上端から962px下（PCでも900px画面の最下端）になり、
+       結論より先に写真を見せてしまっていた（2026-07-26指摘）。 -->
+  <section class="pickStrip" id="pickStrip"></section>
 
   <!-- 過去10年傾向は全馬リストの下へ、今後更新チェックリストは結論ページ最下部へ移設（下部参照） -->
 
-  <h2 class="sec" id="cards">本命〜上位</h2>
-  <p class="lead">推し（金）と追い切り（青、複数X引用＋リンク）をカード上部に。脚質は色付きバッジ、直近3走は着順を色分け（金=1着 銀=2着 銅=3着）。</p>
+  <h2 class="sec" id="cards">印をつけた馬（詳しい根拠）</h2>
 
   <div id="courseProfileBox"></div>
 
@@ -875,17 +873,17 @@
   <!-- Anchored Scorecard 説明パネルの移設先（結論ページ・各馬スコアカード直後）。JS で #scExplain をここへ移動する -->
   <div id="scExplainMount"></div>
 
-  <h2 class="sec" id="minisec">中位〜人気薄（全頭・なぜ印に入らないか）</h2>
+  <h2 class="sec" id="minisec">印をつけなかった馬（全頭・その理由）</h2>
   <p class="lead">能力評価のデータが薄い馬は数値推定を出していません（信頼度の偽装を避けるため）。</p>
   <div class="mini" id="mini"></div>
 
-  <a class="pageJump toMain" data-page="detail" href="index.html">◀ 結論ページに戻る<small>（買い目・全馬リスト）</small></a>
+  <a class="pageJump toMain" data-page="detail" href="index.html">◀ 予想ページに戻る<small>（印・買い目・全頭の評価）</small></a>
 
   <!-- 詳細ページ内タブ：シミュレーション(配分・展開・狙い目・能力比較) / データ(並び替え・過去傾向・定量ランキング)。
        1画面に全部並べると縦に長すぎるという指摘への対応でタブ分割。中身のIDや計算ロジックは従来のまま。 -->
   <nav class="dTabHd" data-page="detail" role="tablist">
-    <button type="button" role="tab" id="dTabBtn-sim" aria-selected="true" aria-controls="dTabPane-sim" class="dTabBtn active" data-dtab="sim" onclick="setDTab('sim')">🎮 シミュレーション</button>
-    <button type="button" role="tab" id="dTabBtn-data" aria-selected="false" aria-controls="dTabPane-data" class="dTabBtn" data-dtab="data" onclick="setDTab('data')">📊 データ</button>
+    <button type="button" role="tab" id="dTabBtn-sim" aria-selected="true" aria-controls="dTabPane-sim" class="dTabBtn active" data-dtab="sim" onclick="setDTab('sim')">シミュレーション</button>
+    <button type="button" role="tab" id="dTabBtn-data" aria-selected="false" aria-controls="dTabPane-data" class="dTabBtn" data-dtab="data" onclick="setDTab('data')">データ</button>
   </nav>
 
   <!-- MY注目のピン留め写真帯。シミュレーション/データ両タブで共通（タブの外に置いて両方から見える）。
@@ -895,10 +893,10 @@
   <div class="dTabPane active" id="dTabPane-sim" role="tabpanel" aria-labelledby="dTabBtn-sim" data-page="detail" data-dtab="sim">
 
   <div class="dpage">
-  <h2 class="sec" id="bet">💰 配分シミュレーター（買い目を組む）</h2>
+  <h2 class="sec" id="bet">配分シミュレーター（買い目を組む）</h2>
   <p class="lead">①（任意）総予算を決める → ② 買い方と馬を選んで金額を入れ「買い目に追加」→ ③ 下の<b>展開シミュレーション</b>を実行すると、この買い目の<b>収支・的中率・破産（元割れ）率</b>が出ます。オッズは想定（sim由来）です。</p>
   <details class="panel" style="margin-bottom:14px;background:var(--card);">
-    <summary style="cursor:pointer;font-weight:700;color:var(--accent);font-size:.95rem;">📖 馬券の種類と説明（クリックで開閉）</summary>
+    <summary style="cursor:pointer;font-weight:700;color:var(--accent);font-size:.95rem;">馬券の種類と説明（クリックで開閉）</summary>
     <div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:10px;font-size:.85rem;">
       <div style="padding:8px 10px;background:#fff;border-radius:8px;border-left:3px solid #c0392b;"><b>単勝</b>：1着になる馬を当てる（軸のみ）。<br><span style="color:var(--sub);font-size:.78rem;">配当：低〜中</span></div>
       <div style="padding:8px 10px;background:#fff;border-radius:8px;border-left:3px solid #1a9e6a;"><b>複勝</b>：3着以内に来る馬を当てる（軸のみ）。一番堅い。<br><span style="color:var(--sub);font-size:.78rem;">配当：超低</span></div>
@@ -942,9 +940,9 @@
     </div>
     <div id="betSlipList" class="bsList"></div>
     <div id="betSlipTotal" class="bsTotal"></div>
-    <p class="lead" style="margin-top:10px;">📉 <b>収支の結果は下の「展開シミュレーション」を実行すると表示されます</b>（この買い目＋着順分布から計算）。</p>
+    <p class="lead" style="margin-top:10px;"><b>収支の結果は下の「展開シミュレーション」を実行すると表示されます</b>（この買い目＋着順分布から計算）。</p>
     <details class="panel" style="margin:12px 0 0;background:var(--card);">
-      <summary style="cursor:pointer;font-weight:700;color:var(--accent);font-size:.9rem;">📋 参考：出走馬とオッズ一覧（印 / 枠 / 馬番 / 馬名 / 想定単勝オッズ）</summary>
+      <summary style="cursor:pointer;font-weight:700;color:var(--accent);font-size:.9rem;">参考：出走馬とオッズ一覧（印 / 枠 / 馬番 / 馬名 / 想定単勝オッズ）</summary>
       <div class="bsRef" id="betHorseRef" style="margin-top:10px;"></div>
     </details>
   </div>
@@ -954,7 +952,7 @@
   <!-- Anchored Scorecard 説明パネル（scorecard を持つ馬がいるときだけ表示） -->
   <details id="scExplain" style="display:none;background:#eff6ff;border:1px solid #bfdbfe;border-left:4px solid #5b8def;border-radius:10px;padding:10px 14px;margin:0 0 14px;font-size:.85rem;line-height:1.7;">
     <summary style="cursor:pointer;font-weight:700;color:#3b5fc7;font-size:.92rem;list-style:none;display:flex;justify-content:space-between;align-items:center;">
-      <span>📊 総合評価の内訳とは（クリックで展開）</span>
+      <span>総合評価の内訳とは（クリックで展開）</span>
     </summary>
     <div style="margin-top:10px;">
       <p style="margin:0 0 8px;"><b>ひと言で:</b> 印（◎○▲△☆）を直感や文章判断ではなく、<b>7 つの観点ごとに 0〜5 点で採点</b>し、点数の順位から印を機械的に決める仕組み。同じ情報を入れれば誰がやっても同じ点数になる＝再現性が高い。</p>
@@ -1027,7 +1025,7 @@
   <h2 class="sec" id="sim">展開シミュレーション</h2>
   <p class="lead">下の「今回の予測シナリオ」が初期値。条件を変えて再実行すれば「もし◯◯だったら」が試せます。</p>
   <div class="panel" id="predictionPanel" style="background:linear-gradient(180deg, #faf4dc, #f3ebc4);border:1px solid #e3cf86;margin-bottom:14px;">
-    <h3 style="margin:0 0 8px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:#7a5c12;font-weight:700;">📊 今回の予測シナリオ（天候＋脚質分布から自動推測）</h3>
+    <h3 style="margin:0 0 8px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:#7a5c12;font-weight:700;">今回の予測シナリオ（天候＋脚質分布から自動推測）</h3>
     <div id="predictionText" style="font-size:.92rem;line-height:1.75;color:#3d2f0a;"></div>
   </div>
   <div class="panel">
@@ -1062,19 +1060,19 @@
     </div>
     <button class="runBtn" onclick="runUserSim()">▶ 展開シミュ実行（着順分布＋収支）</button>
     <button class="runBtn ghost" onclick="runDefaultSim()">予測シナリオに戻す</button>
-    <button class="runBtn alt" onclick="runRandomSim()">🎲 ランダムな日（10種類自動）</button>
+    <button class="runBtn alt" onclick="runRandomSim()">ランダムな日（10種類自動）</button>
     <span class="runStat" id="runStat"></span>
     <!-- 収支（配分シミュ結果）を先に、馬個別の着順分布はその下 -->
     <div id="betResult" style="margin-top:16px;"></div>
-    <h3 class="simSubHd">🐎 馬ごとの着順分布（この条件）</h3>
+    <h3 class="simSubHd">馬ごとの着順分布（この条件）</h3>
     <div id="simBox" style="margin-top:10px;"></div>
     <div id="reason" style="margin-top:14px;"></div>
   </div>
   </div><!-- /dpage sim -->
 
-  <!-- 🎯 狙い目の参考（人気馬の危なさ＋逆転候補）。未適用/空のレースではセクションごと非表示にする -->
+  <!-- 狙い目の参考（人気馬の危なさ＋逆転候補）。未適用/空のレースではセクションごと非表示にする -->
   <section id="refpickSection">
-  <h2 class="sec" id="refpick">🎯 狙い目の参考（人気馬の危なさ・逆転候補）</h2>
+  <h2 class="sec" id="refpick">狙い目の参考（人気馬の危なさ・逆転候補）</h2>
   <p class="lead">過去のレース成績データから「人気ほど信用できない馬」と「人気馬が崩れた時に浮上しそうな馬」を整理した参考情報です。<b>買えば得する、という話ではありません</b>。堅い決着も多いレースでは、本命サイド中心が無難です。</p>
   <div id="referencePickBox"></div>
   </section>
@@ -1090,8 +1088,8 @@
   <div class="dTabPane" id="dTabPane-data" role="tabpanel" aria-labelledby="dTabBtn-data" data-page="detail" data-dtab="data">
 
   <div class="dpage">
-  <h2 class="sec" id="sortview">🔀 出走馬 並び替えビュー</h2>
-  <p class="lead">斤量・上がり・勝率・体重などをボタン1つで一気に並び替え。昇順/降順も切り替え可能です。結論ページ(1ページ目)と同じデータをその場で計算しているので、データが更新されればここも自動で反映されます。「MY印・コメント」列の＋で自分の印を、✎でコメント（自由記述メモ）をこの表からも付けられます。</p>
+  <h2 class="sec" id="sortview">出走馬 並び替えビュー</h2>
+  <p class="lead">斤量・上がり・勝率・体重などをボタン1つで一気に並び替え。昇順/降順も切り替え可能です。予想ページ(1ページ目)と同じデータをその場で計算しているので、データが更新されればここも自動で反映されます。「MY印・コメント」列の＋で自分の印を、✎でコメント（自由記述メモ）をこの表からも付けられます。</p>
   <div class="panel">
     <div class="hsChips" id="hsChips">
       <button type="button" class="hsChip on" data-mode="no" onclick="hsSetSort('no')">馬番順</button>
@@ -1116,7 +1114,7 @@
   <h2 class="sec" id="trend">過去10年の傾向（シミュにも組み込み済み）</h2>
   <div class="panel"><div class="trendBox" id="trendBox"></div></div>
   <div class="panel" id="cmpPanel" style="margin-top:12px;">
-    <h3 style="margin:0 0 4px;font-size:.86rem;color:var(--accent-deep);">🔍 今回の顔ぶれ vs 過去10年の傾向</h3>
+    <h3 style="margin:0 0 4px;font-size:.86rem;color:var(--accent-deep);">今回の顔ぶれ vs 過去10年の傾向</h3>
     <p class="lead" style="margin-bottom:8px;">「このレースは他と何が違うか」を、過去10年の傾向と今回の出走メンバー構成をカテゴリ別に見比べて確認できます。カテゴリは上の過去傾向と同じ4分類です。</p>
     <div class="cmpChips" id="cmpChips"></div>
     <div class="cmpGrid" id="cmpBox"></div>
@@ -1135,9 +1133,9 @@
 
   </div><!-- /dTabPane data -->
 
-  <!-- 💬 他者の見方（事前評価）：X / note / Web 記事の引用カードでバランスをとる -->
+  <!-- 他者の見方（事前評価）：X / note / Web 記事の引用カードでバランスをとる -->
 
-  <h2 class="sec" id="views">💬 他者の見方（事前評価）</h2>
+  <h2 class="sec" id="views">他者の見方（事前評価）</h2>
   <p class="lead">主要プロ予想家・メディア・関係者コメントの一次引用。情報源の重みを可視化して、自分の印付けを多角的に裏付ける／反証する。</p>
   <div class="viewsGrid" id="viewsBox"></div>
 
@@ -1342,7 +1340,7 @@ function memoModalEl(){
     el = document.createElement('div');
     el.id = 'memoModal';
     el.className = 'memoModalOverlay';
-    el.innerHTML = '<div class="memoModal"><div class="memoModalHd"><span class="mmTitle"></span>'
+    el.innerHTML = '<div class="memoModal" role="dialog" aria-modal="true" aria-labelledby="mmTitleMemo"><div class="memoModalHd"><span class="mmTitle" id="mmTitleMemo"></span>'
       + '<button type="button" aria-label="閉じる（未保存の内容は破棄）" onclick="cancelMemoModal()">×</button></div>'
       + '<div class="memoModalBody">'
       +   '<textarea placeholder="この馬についてのメモ（狙い・気になる点など）"></textarea>'
@@ -1424,7 +1422,7 @@ function prNoteModalEl(){
     el = document.createElement('div');
     el.id = 'prNoteModal';
     el.className = 'memoModalOverlay';
-    el.innerHTML = '<div class="memoModal"><div class="memoModalHd"><span class="mmTitle"></span>'
+    el.innerHTML = '<div class="memoModal" role="dialog" aria-modal="true" aria-labelledby="mmTitlePrNote"><div class="memoModalHd"><span class="mmTitle" id="mmTitlePrNote"></span>'
       + '<button type="button" aria-label="閉じる（未保存の内容は破棄）" onclick="cancelPrNoteModal()">×</button></div>'
       + '<div class="memoModalBody">'
       +   '<div class="prMarkRow"></div>'
@@ -1491,7 +1489,7 @@ function renderMyPicksInto(boxId, crossPage){
   picks.forEach(function(p){
     var h = p.h;
     var no = (h.no_provisional || !h.no || h.no===0) ? '想定' : h.no;
-    var photo = '<div class="pc-photoWrap"><div class="pc-ph0">🐎</div>'
+    var photo = '<div class="pc-photoWrap"><div class="pc-ph0"></div>'
       + (h.photo ? '<img class="pc-photo" src="'+h.photo+'" alt="'+h.name+'の馬体" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '')
       + '</div>';
     var memo = getMemo(h.name);
@@ -1502,8 +1500,8 @@ function renderMyPicksInto(boxId, crossPage){
       + '<div class="pc-body">'
       +   '<div class="pc-name">'+no+' '+h.name+'</div>'
       +   '<div class="pc-meta"><span class="pc-pop">公式印 '+(h.mark||'-')+'</span>'+favBtnHtml(h.name,'sm')+memoBtnHtml(h.name,'sm')+'</div>'
-      +   (memo ? '<div class="pc-memo">📝 '+escHtml(memo)+'</div>' : '')
-      +   '<a class="pc-jump" href="'+jumpHref+'">'+(crossPage ? '結論ページのカードへ →' : 'カード詳細 →')+'</a>'
+      +   (memo ? '<div class="pc-memo">'+escHtml(memo)+'</div>' : '')
+      +   '<a class="pc-jump" href="'+jumpHref+'">'+(crossPage ? '予想ページのカードへ →' : 'カード詳細 →')+'</a>'
       + '</div></div>';
   });
   html += '</div>';
@@ -1557,20 +1555,15 @@ document.getElementById("raceTitle").textContent = DATA.race.title;
     meta = meta.replace(/(?:特別)?登録\d+頭(\(フルゲート\d+頭\))?/, countTxt).replace(/確定\d+頭(?!（)/, countTxt);
     if(meta.indexOf(countTxt) < 0 && !/確定\d+頭/.test(meta)) meta += '・' + countTxt;
   }
-  document.getElementById("raceMeta").textContent = meta;
-
-  // 日付・競馬場・発走時刻はクランプで隠れてはいけない情報なので、別途チップで常時表示する
-  var chipBox = document.getElementById("raceMetaChips");
-  if(chipBox){
-    var chips = [];
-    var d = meta.match(/(\d{4})年(\d{1,2})月(\d{1,2})日(\([日月火水木金土]\))?/);
-    if(d) chips.push('📅 ' + d[2] + '/' + d[3] + (d[4] || ''));
-    var course = meta.match(/(札幌|函館|福島|新潟|東京|中山|中京|京都|阪神|小倉|門別|盛岡|水沢|浦和|船橋|大井|川崎|金沢|笠松|名古屋|園田|姫路|高知|佐賀)/);
-    if(course) chips.push('📍 ' + course[1]);
-    var t = meta.match(/(\d{1,2}:\d{2})\s*発走/);
-    if(t) chips.push('🕒 ' + t[1] + '発走');
-    chipBox.innerHTML = chips.map(function(c){ return '<span>' + c + '</span>'; }).join('');
+  // 発走時刻は meta 末尾にあるため、スマホの1行クランプで切れていた。以前は日付・競馬場・
+  // 発走時刻を下段のチップ列で二重に出していたが、日付と競馬場が meta 行と丸かぶりだった
+  // （2026-07-26指摘）。チップ列は廃止し、発走時刻だけを日付の直後へ前出しする。
+  var tm = meta.match(/[・\s]*(\d{1,2}:\d{2})\s*発走/);
+  var dateRe = /((?:\d{4}年)?\d{1,2}月\d{1,2}日(?:\([日月火水木金土]\))?)/;
+  if(tm && dateRe.test(meta)){
+    meta = meta.replace(tm[0], '').replace(dateRe, '$1 ' + tm[1] + '発走');
   }
+  document.getElementById("raceMeta").textContent = meta;
 })();
 // netkeiba確定出馬表リンク（SSOTアンカー兼ソース引用）。card.status に応じて出馬表/結果を出し分け
 (function(){
@@ -1653,7 +1646,7 @@ function pvRelTime(asof){
   for(var j=0;j<ORDER.length;j++){
     steps += '<div class="st'+(j<ci?' done':(j===ci?' cur':''))+'"><div class="dot"></div>'+LBL[ORDER[j]]+'</div>';
   }
-  var stepHd = '<div class="pv-steps-hd"><span class="ti">📅 予想の更新ステージ</span><span class="sub">レース当日へ情報が揃うほど右へ進む（サイトの現在地ではありません）</span></div>';
+  var stepHd = '<div class="pv-steps-hd"><span class="ti">予想の更新ステージ</span><span class="sub">レース当日へ情報が揃うほど右へ進む（サイトの現在地ではありません）</span></div>';
   var stepBlock = stepHd + '<div class="pv-steps">'+steps+'</div>';
   if(ci<0 && stage){
     // 自由文の段階は全文をここに出さない（下の「予想方針」カードで整形表示）。版だけ短く示す。
@@ -1681,7 +1674,7 @@ function pvRelTime(asof){
   if(inline) inline.textContent = (label||pv||'-') + (asof?' ('+asof+')':'');
 })();
 
-// 📝 予想方針・更新ログ（自由文 predict_stage を見出し+文単位の箇条書きに整形。追記ブロックは折りたたみ）
+// 予想方針・更新ログ（自由文 predict_stage を見出し+文単位の箇条書きに整形。追記ブロックは折りたたみ）
 (function(){
   var box = document.getElementById("predictStageBox");
   if(!box) return;
@@ -1696,7 +1689,7 @@ function pvRelTime(asof){
   // 見出し1行だけ常時表示。現行版の要点バレットも更新ログも全て折りたたみ(details)に格納
   // 「未取得だった」等の過去DRAFT履歴(【追記】ログ)は蓄積しても価値が薄いので表示しない。
   // 現行版の要点(本体の文)だけを畳んで見せる。
-  var html = '<div class="stageHead">📝 '+head+'</div>';
+  var html = '<div class="stageHead">'+head+'</div>';
   if(ms.length){
     html += '<details class="stageMore"><summary>予想方針の詳細</summary>';
     html += '<ul class="stageList">'+ms.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ul>';
@@ -1705,7 +1698,7 @@ function pvRelTime(asof){
   box.innerHTML = html;
 })();
 
-// 🎯 狙い目の参考（人気馬の危なさ＋逆転候補）。DATA.reference_pick を描画
+// 狙い目の参考（人気馬の危なさ＋逆転候補）。DATA.reference_pick を描画
 (function(){
   var box = document.getElementById("referencePickBox");
   if(!box) return;
@@ -1750,14 +1743,14 @@ function pvRelTime(asof){
   var html = '<div style="background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:.9rem;line-height:1.6;">'+(rp.note||'')+'</div>';
   // あぶない人気馬
   html += '<div style="border:1px solid #f0d6c0;border-radius:10px;overflow:hidden;margin-bottom:14px;">';
-  html += '<div style="background:#fdecea;color:#c0392b;font-weight:800;padding:9px 12px;">⚠️ あぶない人気馬（中心から外す候補）</div>';
+  html += '<div style="background:#fdecea;color:#c0392b;font-weight:800;padding:9px 12px;">⚠ あぶない人気馬（中心から外す候補）</div>';
   if(rp.danger_favorites && rp.danger_favorites.length) html += rp.danger_favorites.map(function(h){return row(h,true);}).join('');
   else html += '<div style="padding:9px 12px;color:var(--sub);font-size:.85rem;">該当なし（上位人気は手堅い顔ぶれ）</div>';
   html += why('▸ なぜ「あぶない」と言える？', whyDanger);
   html += '</div>';
   // 逆転候補
   html += '<div style="border:1px solid #cfe3d0;border-radius:10px;overflow:hidden;margin-bottom:12px;">';
-  html += '<div style="background:#eaf6ec;color:#27734a;font-weight:800;padding:9px 12px;">🎯 逆転候補（人気馬が崩れた時に狙う馬／参考）</div>';
+  html += '<div style="background:#eaf6ec;color:#27734a;font-weight:800;padding:9px 12px;">逆転候補（人気馬が崩れた時に狙う馬／参考）</div>';
   if(rp.reference_holes && rp.reference_holes.length) html += rp.reference_holes.map(function(h){return row(h,false);}).join('');
   else html += '<div style="padding:9px 12px;color:var(--sub);font-size:.85rem;">該当なし</div>';
   html += why('▸ どういう馬を選んでいる？', whyHole);
@@ -1766,7 +1759,7 @@ function pvRelTime(asof){
   if(rp.bet_suggestion){
     var bs = rp.bet_suggestion;
     html += '<div style="border:1px solid #cdd9ef;border-radius:10px;overflow:hidden;margin-bottom:12px;">';
-    html += '<div style="background:#eef2fb;color:#2c4a7c;font-weight:800;padding:9px 12px;">💰 逆転を買うなら（参考の買い目・'+bs.type+(bs.points?' '+bs.points+'点':'')+'）</div>';
+    html += '<div style="background:#eef2fb;color:#2c4a7c;font-weight:800;padding:9px 12px;">逆転を買うなら（参考の買い目・'+bs.type+(bs.points?' '+bs.points+'点':'')+'）</div>';
     html += '<div style="padding:10px 12px;">';
     if(bs.axis) html += '<div style="font-size:.85rem;margin-bottom:8px;">軸（中心）：<b>'+bs.axis.name+'</b>（'+bs.axis.pop+'番人気・手堅い上位人気）</div>';
     html += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;">'
@@ -1775,7 +1768,7 @@ function pvRelTime(asof){
     html += '<div style="color:var(--sub);font-size:.82rem;line-height:1.6;">'+(bs.note||'')+'</div>';
     html += '</div></div>';
   }
-  if(rp.evidence) html += '<div style="color:var(--sub);font-size:.78rem;line-height:1.6;">📊 '+rp.evidence+'</div>';
+  if(rp.evidence) html += '<div style="color:var(--sub);font-size:.78rem;line-height:1.6;">'+rp.evidence+'</div>';
   box.innerHTML = html;
 })();
 
@@ -1787,7 +1780,7 @@ function pvRelTime(asof){
   if(!list.length){ box.innerHTML = '<p style="color:var(--sub);font-size:.84rem;margin:0;">未確定情報の登録がありません。</p>'; return; }
   // 今後更新予定のチェックリスト（確定=☑ / 未確定=☐、進捗カウント付き）
   var done = list.filter(function(p){return p.done;}).length;
-  var head = '<div class="pendChkHead">📋 今後の更新チェック<span class="pcCount">'+done+' / '+list.length+' 確定</span></div>';
+  var head = '<div class="pendChkHead">今後の更新チェック<span class="pcCount">'+done+' / '+list.length+' 確定</span></div>';
   box.innerHTML = head + '<ul class="pendChk">' + list.map(function(p){
     return '<li class="'+(p.done?'done':'')+'"><span class="ck">'+(p.done?'☑':'☐')+'</span>'
          + '<div class="pcbody"><div class="pctop"><b>'+p.label+'</b>'+(p.when?'<span class="when">'+p.when+'</span>':'')+'</div>'
@@ -1795,7 +1788,7 @@ function pvRelTime(asof){
   }).join("") + '</ul>';
 })();
 
-// 💬 他者の見方（DATA.external_views: 配列）
+// 他者の見方（DATA.external_views: 配列）
 (function(){
   var box = document.getElementById("viewsBox");
   if(!box) return;
@@ -1907,15 +1900,6 @@ function chaosLabel(label){
   if(label === '中') return '少し荒れ';
   return '堅め';
 }
-// 馬場アイコンを going 値に連動（🌱固定をやめる）。良=新芽 / 稍重=薄曇 / 重=雨 / 不良=濁流
-function goingIcon(going){
-  going = String(going || '');
-  if(/不良/.test(going)) return '🌊';
-  if(/重/.test(going) && !/稍/.test(going)) return '🌧';
-  if(/稍/.test(going)) return '🌤';
-  if(/良/.test(going)) return '🌱';
-  return '🏇';
-}
 // 馬場が確定済みか（going_confirmed=true、または「馬場発表」系の未確定 pending が無い）
 function goingConfirmed(){
   var pred = DATA.predicted_scenario || {};
@@ -1953,20 +1937,18 @@ function impScore(sc){
   return (typeof sc.final_score === 'number' ? sc.final_score.toFixed(1) : sc.final_score) + '/5';
 }
 function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : '低')); }
+// data.json 側の文字列（天気メモ等）に混ざる絵文字は、表示直前に落とす。
+// UIから絵文字を排する方針のため、テンプレートを直しても過去レースのデータに残るのを防ぐ。
+function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u26FF\uFE0F]/gu,'').replace(/\s{2,}/g,' ').trim(); }
 
 // ファーストビューの視覚サマリ。天気/馬場/波乱/本命/買い目を文章より先に見せる。
 (function(){
   var box = document.getElementById('heroVisual');
   if(!box) return;
-  var wxText = ((DATA.race && DATA.race.wx) || []).join(' ');
+  var wxText = deEmoji(((DATA.race && DATA.race.wx) || []).join(' '));
   var pred = DATA.predicted_scenario || {};
   // pred.weather が確定済みならそれを最優先（wxTextは「梅雨シーズン」「雨なら〜警戒」等の
   // 条件文・注意書きを含み「雨」の字だけ拾うと誤判定するため、weather未確定時のフォールバックに留める）
-  var icon = /豪雨|雷/.test(pred.weather || wxText) ? '⛈'
-    : /雨/.test(pred.weather || wxText) ? '☔'
-    : /曇/.test(pred.weather || wxText) ? '☁'
-    : /晴/.test(pred.weather || wxText) ? '☀'
-    : '🌤';
   var weatherLabel = pred.weather || (wxText.match(/雨のち曇|雨|曇|晴/) || ['天気'])[0];
   var going = pred.going || (wxText.match(/不良|稍重|重|良/) || ['馬場'])[0];
   var goConf = goingConfirmed();
@@ -1994,31 +1976,33 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
   var cp = (DATA.race && DATA.race.course_profile) || null;
   var cpFit = '';
   if(cp && cp.fit_rule){
-    cpFit = Object.keys(cp.fit_rule).filter(function(k){return /[◎○]/.test(cp.fit_rule[k]);})
+    // ◎（このコースで最も恵まれる脚質）だけを出す。○まで並べると
+    // 「逃げ◎ 先行◎ 差し○」のように要点がぼやけるため（2026-07-26指摘）
+    cpFit = Object.keys(cp.fit_rule).filter(function(k){return /◎/.test(cp.fit_rule[k]);})
       .map(function(k){return k + cp.fit_rule[k].charAt(0);}).join(' ');
   }
   if(cp && !cpFit) cpFit = shortText(cp.bias_leg || cp.straight_note || '', 26);
   var courseCard = cp
-    ? '<div class="signalCard"><div class="icon">🏟</div><div><b>コース適性</b><strong>'+(cpFit || '-')+'</strong><small>'+shortText(cp.name || 'コース', 24)+'</small></div></div>'
+    ? '<div class="signalCard"><div><b>コース適性</b><strong>'+(cpFit || '-')+'</strong><small>'+shortText(cp.name || 'コース', 24)+'</small></div></div>'
     : '';
   // レース傾向(荒れ度)カードは過去傾向データから実際に算出できた(grounded)場合のみ表示。
   // 根拠が無いと「荒れそう」の当て推量バッジが毎回同じ文言で出るだけになり、ui-guidelines.mdの
   // 「根拠非表示のバッジ禁止」に反するため（ユーザー指摘・2026-07-18）。
   var chaosCard = ch.grounded
-    ? '<div class="signalCard '+scenarioTone(chaos)+'"><div class="icon">⚡</div><div><b>レース傾向</b><strong>'+chaosLabel(chaos)+'</strong><div class="riskDots" aria-hidden="true">'+dots+'</div><small class="chaosWhy">'+shortText(ch.reason, 34)+'</small></div></div>'
+    ? '<div class="signalCard '+scenarioTone(chaos)+'"><div><b>レース傾向</b><strong>'+chaosLabel(chaos)+'</strong><div class="riskDots" aria-hidden="true">'+dots+'</div><small class="chaosWhy">'+shortText(ch.reason, 34)+'</small></div></div>'
     : '';
   box.innerHTML =
     // signalHeadはheroVisualの1行目にフルスパンで置き、weatherOrb（天気専任）とsignalGridを
     // 2行目の同じ行の2カラムにする。馬場は下の要点グリッドの「馬場」カードに一本化し二重表現を排除。
-    '<div class="signalHead">📌 今日見るべき要点<span style="font-weight:600;opacity:.7;font-size:.72rem;">結論を先に</span></div>'
+    '<div class="signalHead">今日見るべき要点<span style="font-weight:600;opacity:.7;font-size:.72rem;">結論を先に</span></div>'
     + '<div class="weatherOrb">'
-      + '<div><div class="big">'+icon+'</div><b>'+weatherLabel+'</b><small class="wxMini">'+shortText(wxText, 40)+'</small></div>'
+      + '<div><b>'+weatherLabel+'</b><small class="wxMini">'+shortText(wxText, 40)+'</small></div>'
     + '</div>'
     + '<div class="signalGrid">'
-      + '<div class="signalCard '+scenarioTone(going)+(goConf?'':' prov')+'"><div class="icon">'+goingIcon(going)+'</div><div><b>馬場'+(goConf?'':'（想定）')+'</b><strong>'+going+'</strong><small>'+goingSub+'</small></div></div>'
+      + '<div class="signalCard '+scenarioTone(going)+(goConf?'':' prov')+'"><div><b>馬場'+(goConf?'':'（想定）')+'</b><strong>'+going+'</strong><small>'+goingSub+'</small></div></div>'
       + chaosCard
       + courseCard
-      + '<div class="signalCard"><div class="icon">◎</div><div><b>中心に見る馬</b><strong>'+shortText(honmei.name||'-', 9)+'</strong><small>'+score+'</small></div></div>'
+      + '<div class="signalCard"><div><b>中心に見る馬</b><strong>'+shortText(honmei.name||'-', 9)+'</strong><small>'+score+'</small></div></div>'
     + '</div>';
 })();
 
@@ -2045,11 +2029,11 @@ function confWord(c){ return c==null ? '' : (c>=3.5 ? '高' : (c>=2.5 ? '中' : 
   }
   var bias = '';
   if(cp.bias_leg||cp.bias_frame){
-    bias = '<div class="cp-bias"><b>📍 バイアス</b><br>'
+    bias = '<div class="cp-bias"><b>バイアス</b><br>'
       + (cp.bias_leg?'脚質: '+cp.bias_leg+'<br>':'')
       + (cp.bias_frame?'枠: '+cp.bias_frame:'') + '</div>' + fit;
   }
-  box.innerHTML = '<div class="courseprofile"><h3>🏟 コース特性 - '+(cp.name||'')+'</h3>'
+  box.innerHTML = '<div class="courseprofile"><h3>コース特性 - '+(cp.name||'')+'</h3>'
     + '<div class="cp-grid">'+grid+'</div>' + bias + '</div>';
 })();
 
@@ -2081,17 +2065,17 @@ function applyPickStripVisibility(){
   var marks = '◎○◯▲☆△';  // ◯(U+25EF)と○(U+25CB)はデータ生成側で表記揺れがあるため両方許容
   var picks = sortByMark(DATA.top_horses).filter(function(h){ return h.mark && marks.indexOf(h.mark)>=0; }).slice(0,6);
   if(!picks.length){ box.style.display='none'; return; }
-  var html = '<div class="pickHd">🎯 印付き注目馬<span style="font-weight:600;opacity:.7;">（横スワイプ）</span><span class="ln"></span>'
+  var html = '<div class="pickHd">印付き注目馬<span style="font-weight:600;opacity:.7;">（横スワイプ）</span><span class="ln"></span>'
     + '<button type="button" class="pickHideBtn" onclick="togglePickStrip()">非表示</button></div><div class="pickRow">';
   picks.forEach(function(h){
     var no = (h.no_provisional || !h.no || h.no===0) ? '想定' : h.no;
     var pop = h.pop ? ((h.pop_provisional===false?'':'想定')+h.pop+'番人気'+(h.odds!=null?'・'+h.odds+'倍':'')) : '人気想定';
     var catchTxt = h.oshi || ((h.oikiri && h.oikiri[0]) ? h.oikiri[0].text : '') || (h.bloodline||'');
-    var photo = '<div class="pc-photoWrap"><div class="pc-ph0">🐎</div>'
+    var photo = '<div class="pc-photoWrap"><div class="pc-ph0"></div>'
       + (h.photo ? '<img class="pc-photo" src="'+h.photo+'" alt="'+h.name+'の馬体" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '')
       + '</div>';
     var leg = h.leg ? '<span class="pc-leg legBadge leg-'+h.leg+'" style="font-size:.64rem;">'+h.leg+'</span>' : '';
-    html += '<div class="pickCard'+(isFav(h.name)?' isFav':'')+'" data-fav-card="'+escHtml(h.name)+'" style="--pc:'+(h.color||'#555')+';--ink:'+inkOn(h.color||'#555')+'">'
+    html += '<div class="pickCard'+(isFav(h.name)?' isFav':'')+'" data-fav-card="'+escHtml(h.name)+'" style="--pc:'+(h.color||'#555')+';--onc:'+inkOn(h.color||'#555')+'">'
       + photo
       + '<span class="pc-mark">'+h.mark+'</span>' + leg
       + '<div class="pc-body">'
@@ -2124,7 +2108,7 @@ function applyPickStripVisibility(){
       var hAvg=prAverages(h.past_races);
       var prows=h.past_races.map(function(r){ return prRowHtml(r,hAvg,h.name); }).join('');
       // 適性プロフィール（好走時条件差）は通常時のカードを縦長にしないよう、ここ（全戦績モーダル内）にのみ表示する
-      return '<details class="pastfull" data-horse="'+(h.name||'')+'" data-no="'+((h.no_provisional||!h.no||h.no===0)?'想定':h.no)+'" data-mark="'+(h.mark||'')+'" data-weight="'+(h.weight||'')+'" data-impost="'+(h.impost||'')+'" data-draw="'+(h.draw||'')+'"><summary>📋 全'+h.past_races.length+'走の記録（通過・ペース・馬場・斤量）</summary>'
+      return '<details class="pastfull" data-horse="'+(h.name||'')+'" data-no="'+((h.no_provisional||!h.no||h.no===0)?'想定':h.no)+'" data-mark="'+(h.mark||'')+'" data-weight="'+(h.weight||'')+'" data-impost="'+(h.impost||'')+'" data-draw="'+(h.draw||'')+'"><summary>全'+h.past_races.length+'走の記録（通過・ペース・馬場・斤量）</summary>'
         +prFitProfileHtml(h)
         +prTrendSvg(h.past_races)
         +'<div class="pastfull-wrap"><table class="prtab"><thead><tr>'
@@ -2136,7 +2120,8 @@ function applyPickStripVisibility(){
     var noDisp = (h.no_provisional || !h.no || h.no === 0) ? '想定' : h.no;
     var noTitle = (h.no_provisional || !h.no || h.no === 0) ? '枠順確定後に馬番が入る' : ('馬番 '+h.no);
     var hid = 'horse-' + h.name.replace(/\s+/g, '-');
-    html += '<div class="card'+(isFav(h.name)?' isFav':'')+'" id="'+hid+'" data-fav-card="'+escHtml(h.name)+'" style="--c:'+h.color+';--ink:'+inkOn(h.color)+'">'
+    html += '<div class="card'+(isFav(h.name)?' isFav':'')+'" id="'+hid+'" data-fav-card="'+escHtml(h.name)+'" style="--c:'+h.color+';--onc:'+inkOn(h.color)+'">'
+      + '<div class="cardActions">'+favBtnHtml(h.name)+memoBtnHtml(h.name)+'</div>'
       + '<div class="top"><span class="mark">'+h.mark+'</span>'
       + '<span class="num" title="'+noTitle+'">'+noDisp+'</span><span class="name">'+h.name+'</span>'
       + '<span class="pop">'+(h.pop?((h.pop_provisional===false?'':'想定')+h.pop+'番人気'+(h.odds!=null?'（'+h.odds+'倍）':'')):'人気想定')+'</span>'
@@ -2144,24 +2129,24 @@ function applyPickStripVisibility(){
       + (h.photo?'<div class="horsephoto"><img src="'+h.photo+'" alt="'+h.name+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"><span class="photocred">写真: netkeiba</span></div>':'')
       + (function(){
           var chips = [];
-          if(h.blinker_first) chips.push('<span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">🔰初ブリンカー</span>');
-          if(h.jockey) chips.push('<span class="factChip">🏇 '+h.jockey+'</span>');
+          if(h.blinker_first) chips.push('<span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">初ブリンカー</span>');
+          if(h.jockey) chips.push('<span class="factChip">'+h.jockey+'</span>');
           if(h.leg) chips.push('<span class="factChip good">↗ '+h.leg+'</span>');
           if(h.aptitude && h.aptitude.course_fit_tier){
             var atc={'◎好相性':'#0f8456','○相性可':'#2a72a3','△疑問符':'#b5640a','▲割引':'#c1432d'}[h.aptitude.course_fit_tier]||'#64748b';
-            chips.push('<span class="factChip" style="background:'+atc+'1f;color:'+atc+';border-color:'+atc+'55;">🎯 '+h.aptitude.course_fit_tier+'</span>');
+            chips.push('<span class="factChip" style="background:'+atc+'1f;color:'+atc+';border-color:'+atc+'55;">'+h.aptitude.course_fit_tier+'</span>');
           }
           if(h.weight) chips.push('<span class="factChip">'+h.weight+'kg</span>');
           if(h.scorecard && h.scorecard.final_score!==undefined){
             var s = impScore(h.scorecard);
             var cw2 = confWord(h.scorecard.confidence_avg);
-            chips.push('<span class="factChip warn" title="実力＝7-11軸の加重平均(0-5)。確信度は採点根拠の充実度">⭐ 実力 '+s+(cw2?' ・確信'+cw2:'')+'</span>');
+            chips.push('<span class="factChip warn" title="実力＝7-11軸の加重平均(0-5)。確信度は採点根拠の充実度">実力 '+s+(cw2?' ・確信'+cw2:'')+'</span>');
           }
           return chips.length ? '<div class="chipRow">'+chips.join('')+'</div>' : '';
         })()
       + (h.oshi?'<div class="oshi">★ 推し：'+h.oshi+'</div>':'')
       + pastSection
-      + (oik?'<details class="fold oikFold" open><summary><span>🏇 追い切り・関係者コメント</span><span class="factChip">'+(h.oikiri||[]).length+'件</span></summary><div class="foldBody">'+oik+'</div></details>':'')
+      + (oik?'<details class="fold oikFold" open><summary><span>追い切り・関係者コメント</span><span class="factChip">'+(h.oikiri||[]).length+'件</span></summary><div class="foldBody">'+oik+'</div></details>':'')
       + (function(){
           // 基本属性（性齢・厩舎）- 安田記念2026 振り返りで「これらが空欄のまま発走を迎えた」反省より必須化
           var bits = [];
@@ -2191,7 +2176,7 @@ function applyPickStripVisibility(){
           var ds=a.dist_summary||{};
           var drow=Object.keys(ds).sort().map(function(b){var v=ds[b];return '<span class="dchip'+(b==='2000'?' hot':'')+'">'+b+': '+v.n+'戦'+v.win+'勝複'+v.place+'</span>';}).join('');
           return '<div class="apt">'
-            +'<div class="apt-h"><b>🎯 コース適性（全戦績から判定）</b><span class="tier" style="background:'+tc+'">'+a.course_fit_tier+'</span></div>'
+            +'<div class="apt-h"><b>コース適性（全戦績から判定）</b><span class="tier" style="background:'+tc+'">'+a.course_fit_tier+'</span></div>'
             +'<div class="apt-v">'+a.verdict+'</div>'
             +(a.leg_evidence?'<div class="apt-e">脚質根拠: '+a.leg_evidence+'</div>':'')
             +(drow?'<div class="dchips">'+drow+'</div>':'')
@@ -2240,7 +2225,7 @@ function applyPickStripVisibility(){
           var adj = '';
           if(sc.adjustments && sc.adjustments.length){
             adj = '<div style="font-size:.7rem;color:#a06020;margin-top:6px;border-top:1px dashed #e5d5b8;padding-top:6px;">'
-                + '<div style="font-weight:700;margin-bottom:2px;">📝 補正（隠れ補正禁止・evidence 付き）</div>';
+                + '<div style="font-weight:700;margin-bottom:2px;">補正（隠れ補正禁止・evidence 付き）</div>';
             sc.adjustments.forEach(function(a){
               var sign = (a.delta>=0?'+':'');
               var axisJa = axisLabels[a.affected_axis] || a.affected_axis;
@@ -2253,14 +2238,14 @@ function applyPickStripVisibility(){
           if(sc.raw_score!==undefined) summary += '<span title="raw_score = 7軸スコアの加重平均（補正適用前）">加重合計 <b>'+(typeof sc.raw_score==='number'?sc.raw_score.toFixed(2):sc.raw_score)+'</b></span>';
           if(sc.final_score!==undefined && sc.adjustments && sc.adjustments.length) summary += '<span title="final_score = 加重合計 + adjustments の合計">補正後 <b>'+(typeof sc.final_score==='number'?sc.final_score.toFixed(2):sc.final_score)+'</b></span>';
           if(sc.confidence_avg!==undefined) summary += '<span title="各軸の情報量（採点根拠の充実度）の平均。0/5=ほぼ材料なし、5/5=一次情報まで揃った確信ベース">情報量 <b>'+(typeof sc.confidence_avg==='number'?sc.confidence_avg.toFixed(2):sc.confidence_avg)+'/5</b></span>';
-          if(sc.anchor_score!==undefined) summary += '<span style="background:rgba(91,141,239,.18);padding:2px 10px;border-radius:6px;font-weight:700;" title="総合スコア = 加重合計 × (情報量/5)。印選定に使う内部ランキング値。情報量(確信度)が低い段階(追切/枠順前)は低めに出る">⭐ 総合スコア（確信反映後） <b style="color:#3b5fc7;">'+(typeof sc.anchor_score==='number'?sc.anchor_score.toFixed(2):sc.anchor_score)+'</b></span>';
+          if(sc.anchor_score!==undefined) summary += '<span style="background:rgba(91,141,239,.18);padding:2px 10px;border-radius:6px;font-weight:700;" title="総合スコア = 加重合計 × (情報量/5)。印選定に使う内部ランキング値。情報量(確信度)が低い段階(追切/枠順前)は低めに出る">総合スコア（確信反映後） <b style="color:#3b5fc7;">'+(typeof sc.anchor_score==='number'?sc.anchor_score.toFixed(2):sc.anchor_score)+'</b></span>';
           summary += '</div>';
           // 用語ガイド（コンパクト）
           var legend = '<div style="font-size:.66rem;color:#7a8aa0;margin-top:6px;border-top:1px dotted #cdd5e1;padding-top:4px;">'
-                     + '💡 採点(0-5)＝10観点ごとのアンカー基準 / 情報量＝採点の根拠がどれだけ揃っているか / <b>総合スコア</b>＝補正後×(情報量/5)。この順位から印が機械的に決まる（<a href="#scExplain" style="color:#3b5fc7;" onclick="document.getElementById(\'scExplain\').open=true;">詳細</a>）'
+                     + '採点(0-5)＝10観点ごとのアンカー基準 / 情報量＝採点の根拠がどれだけ揃っているか / <b>総合スコア</b>＝補正後×(情報量/5)。この順位から印が機械的に決まる（<a href="#scExplain" style="color:#3b5fc7;" onclick="document.getElementById(\'scExplain\').open=true;">詳細</a>）'
                      + '</div>';
           return '<details class="fold scorecard">'
-               + '<summary><span>📊 総合評価の内訳</span><span class="factChip warn">実力 '+(impScore(sc)||'-')+'</span></summary>'
+               + '<summary><span>総合評価の内訳</span><span class="factChip warn">実力 '+(impScore(sc)||'-')+'</span></summary>'
                + '<div class="foldBody">'
                + '<div style="font-size:.78rem;font-weight:700;color:#3b5fc7;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:8px;">'
                +   '<span>10観点 0-5 採点</span>'
@@ -2272,9 +2257,8 @@ function applyPickStripVisibility(){
           // 連覇プレミアム表示（trend_config.same_race_repeat_bonus）
           var bonus = (DATA.trend_config && DATA.trend_config.same_race_repeat_bonus) || {};
           var v = bonus[h.name]; if(!v) return '';
-          return '<div style="margin-top:6px;padding:4px 10px;background:rgba(217,156,71,.16);border-left:3px solid #d99c47;border-radius:6px;font-size:.78rem;color:#7a5a1d;"><b>🏆 連覇プレミアム R12</b> course_dist 軸に +'+v+' 加点（trend_config.same_race_repeat_bonus）</div>';
+          return '<div style="margin-top:6px;padding:4px 10px;background:rgba(217,156,71,.16);border-left:3px solid #d99c47;border-radius:6px;font-size:.78rem;color:#7a5a1d;"><b>連覇プレミアム R12</b> course_dist 軸に +'+v+' 加点（trend_config.same_race_repeat_bonus）</div>';
         })()
-      + '<div class="cardActions">'+favBtnHtml(h.name)+memoBtnHtml(h.name)+'</div>'
       + '</div>';
   });
   document.getElementById("cardsBox").innerHTML = html;
@@ -2340,13 +2324,13 @@ function applyPickStripVisibility(){
         var src=o.url?'<a href="'+o.url+'" target="_blank">'+o.src+'</a>':o.src;
         return '<div><b>'+src+':</b> 「'+emphOikiri(o.text)+'」</div>';
       }).join('');
-      return '<details class="fold oikFold" open><summary><span>🏇 追い切り・関係者コメント</span><span class="factChip">'+m.oikiri.length+'件</span></summary><div class="foldBody">'+body+'</div></details>';
+      return '<details class="fold oikFold" open><summary><span>追い切り・関係者コメント</span><span class="factChip">'+m.oikiri.length+'件</span></summary><div class="foldBody">'+body+'</div></details>';
     })();
     var aptHtml = (function(){
       var a=m.aptitude; if(!a) return '';
       var tc={'◎好相性':'#0f8456','○相性可':'#2a72a3','△疑問符':'#b5640a','▲割引':'#c1432d'}[a.course_fit_tier]||'#64748b';
       return '<div class="apt" style="margin:5px 0;padding:6px 9px;">'
-        +'<div class="apt-h"><b>🎯 コース適性</b><span class="tier" style="background:'+tc+'">'+a.course_fit_tier+'</span></div>'
+        +'<div class="apt-h"><b>コース適性</b><span class="tier" style="background:'+tc+'">'+a.course_fit_tier+'</span></div>'
         +'<div class="apt-v" style="font-size:.76rem;">'+a.verdict+'</div></div>';
     })();
     // 全戦績テーブル（折りたたみ）
@@ -2354,11 +2338,12 @@ function applyPickStripVisibility(){
       if(!m.past_races||!m.past_races.length) return '';
       var mAvg=prAverages(m.past_races);
       var rows=m.past_races.map(function(r){ return prRowHtml(r,mAvg,m.name); }).join('');
-      return '<details class="pastfull" data-horse="'+(m.name||'')+'" data-no="'+((m.no_provisional||!m.no||m.no===0)?'想定':m.no)+'" data-mark="'+(m.mark||'')+'" data-weight="'+(m.weight||'')+'" data-impost="'+(m.impost||'')+'" data-draw="'+(m.draw||'')+'"><summary>📋 全'+m.past_races.length+'走の記録（通過・ペース・斤量）</summary>'+prTrendSvg(m.past_races)+'<div class="pastfull-wrap"><table class="prtab"><thead><tr>'+prHeadHtml()+'</tr></thead><tbody>'+rows+'</tbody></table></div></details>';
+      return '<details class="pastfull" data-horse="'+(m.name||'')+'" data-no="'+((m.no_provisional||!m.no||m.no===0)?'想定':m.no)+'" data-mark="'+(m.mark||'')+'" data-weight="'+(m.weight||'')+'" data-impost="'+(m.impost||'')+'" data-draw="'+(m.draw||'')+'"><summary>全'+m.past_races.length+'走の記録（通過・ペース・斤量）</summary>'+prTrendSvg(m.past_races)+'<div class="pastfull-wrap"><table class="prtab"><thead><tr>'+prHeadHtml()+'</tr></thead><tbody>'+rows+'</tbody></table></div></details>';
     })();
-    mhtml += '<div class="m'+(isFav(m.name)?' isFav':'')+'" id="mini-horse-'+m.name.replace(/\s+/g,'-')+'" data-fav-card="'+escHtml(m.name)+'" style="--c:'+m.color+';--ink:'+inkOn(m.color)+'">'
+    mhtml += '<div class="m'+(isFav(m.name)?' isFav':'')+'" id="mini-horse-'+m.name.replace(/\s+/g,'-')+'" data-fav-card="'+escHtml(m.name)+'" style="--c:'+m.color+';--onc:'+inkOn(m.color)+'">'
+      + '<div class="cardActions">'+favBtnHtml(m.name)+memoBtnHtml(m.name)+'</div>'
       + '<div class="hd"><span class="nm">'+mnoDisp+'</span>'+sexAge+m.name
-      + (m.blinker_first?' <span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">🔰初ブリンカー</span>':'')
+      + (m.blinker_first?' <span class="factChip warn" title="今回が初めてのブリンカー装着（人気薄の一変シグナル）">初ブリンカー</span>':'')
       + ' <span style="color:var(--sub);font-size:.74rem;">/ '+m.jockey+'</span>'
       + ' <span class="legBadge leg-'+(m.leg||'未確認')+'" style="margin-left:auto;">'+(m.leg||'-')+'</span></div>'
       + photoHtml
@@ -2370,9 +2355,8 @@ function applyPickStripVisibility(){
       + miniOik
       + aptHtml
       + pastFullHtml
-      + (hasMarks && m.pop && m.pop<=6 ? '<div class="factChip warn" style="margin:4px 0 0;">⚠️ 人気'+m.pop+'番なのに軽視した理由</div>' : '')
+      + (hasMarks && m.pop && m.pop<=6 ? '<div class="factChip warn" style="margin:4px 0 0;">⚠ 人気'+m.pop+'番なのに軽視した理由</div>' : '')
       + '<div class="why">'+m.why+'</div>'
-      + '<div class="cardActions">'+favBtnHtml(m.name)+memoBtnHtml(m.name)+'</div>'
       + '</div>';
   });
   document.getElementById("mini").innerHTML = mhtml;
@@ -2467,7 +2451,7 @@ function prFitProfileHtml(h){
   if(!rows) return '';
   var n = fp.isGoodOnly ? '好走['+fp.n+'走]' : '過去'+fp.n+'走';
   return '<div class="fitProfile">'
-    + '<div class="fitProfile-h">📐 好走時との条件差<span class="fitProfile-n" title="'+n+'の平均を基準に算出">（'+n+'平均比）</span></div>'
+    + '<div class="fitProfile-h">好走時との条件差<span class="fitProfile-n" title="'+n+'の平均を基準に算出">（'+n+'平均比）</span></div>'
     + rows
     + '</div>';
 }
@@ -2504,17 +2488,17 @@ function renderQuantRankings(){
 
   var html='<div class="qrGrid">';
   if(agariItems.length){
-    html += '<div class="qr"><h4>⚡ 上がり3ハロン（自己ベスト平均）</h4>'
+    html += '<div class="qr"><h4>上がり3ハロン（自己ベスト平均）</h4>'
       + qrRankListHtml(agariItems, function(v){ return v.toFixed(1)+'秒'; })
       + '<p class="qrNote">各馬の過去走の上がり3F上位3走を平均（小さいほど速い）。距離・馬場条件は揃えていない単純比較です。</p></div>';
   }
   if(impostItems.length){
-    html += '<div class="qr"><h4>⚖️ 平均斤量（過去走）</h4>'
+    html += '<div class="qr"><h4>⚖ 平均斤量（過去走）</h4>'
       + qrRankListHtml(impostItems, function(v){ return v.toFixed(1)+'kg'; })
       + '<p class="qrNote">過去走で背負った斤量の単純平均。重い斤量をこなしてきた実績の目安です。</p></div>';
   }
   if(staminaItems.length){
-    html += '<div class="qr"><h4>🏃 スタミナ指数（'+(rd?rd+'m以上':'距離不問')+'での平均着順）</h4>'
+    html += '<div class="qr"><h4>スタミナ指数（'+(rd?rd+'m以上':'距離不問')+'での平均着順）</h4>'
       + qrRankListHtml(staminaItems, function(v){ return v.toFixed(1)+'着'; })
       + '<p class="qrNote">今回と同等以上の距離を走った過去走に絞った平均着順（2走以上のデータがある馬のみ・小さいほど良好）。</p></div>';
   }
@@ -2748,8 +2732,8 @@ function renderCmp(){
   var cur = trends.filter(function(t){ return t.title===CMP_CAT; })[0];
   var nowFn = cmpNowFnForTitle(CMP_CAT);
   var nowTxt = nowFn ? nowFn() : 'このカテゴリの今回データは対象外です（脚質・枠・斤量・血統など定型カテゴリのみ対応）。';
-  box.innerHTML = '<div class="cmpCol"><h4>📚 過去10年の傾向</h4><p>'+(cur ? cur.text : '-')+'</p></div>'
-    + '<div class="cmpCol now"><h4>🐎 今回の顔ぶれ</h4><p>'+nowTxt+'</p></div>';
+  box.innerHTML = '<div class="cmpCol"><h4>過去10年の傾向</h4><p>'+(cur ? cur.text : '-')+'</p></div>'
+    + '<div class="cmpCol now"><h4>今回の顔ぶれ</h4><p>'+nowTxt+'</p></div>';
 }
 renderCmp();
 
@@ -3104,7 +3088,7 @@ function prTrendSvg(rows){
     + dots
     + '</svg>';
   return '<div class="prTrendWrap">'
-    + '<div class="prTrendHd"><span>📈 着順の推移（タップで詳細）</span>'
+    + '<div class="prTrendHd"><span>着順の推移（タップで詳細）</span>'
     +   '<span class="prTrendLegend"><span style="color:#d4af37;">●G1</span><span style="color:#8a8a8a;">●G2</span><span style="color:#b87333;">●G3</span><span style="color:#6b6ecf;">●L/OP</span></span></div>'
     + '<div class="prTrendBox">' + svg + rankLabels + dateLabels + '</div>'
     + '<div class="prTrendInfo" style="display:none;"></div>'
@@ -3132,7 +3116,7 @@ function prRowHtml(r, avg, horseName){
   var bwVal = prBwNum(r.bw);
   var bwAbove = avg.bw!=null && bwVal!=null && bwVal>avg.bw;
   var bwHtml = !r.bw ? '-' : ('<span'+(bwAbove?' style="color:#b5640a;font-weight:700;"':'')+'>'+r.bw+'</span>');
-  var raceHtml = (r.race||'')+(hcap?' <span class="hcapTag" title="ハンデ戦">⚖️ハンデ</span>':'');
+  var raceHtml = (r.race||'')+(hcap?' <span class="hcapTag" title="ハンデ戦">⚖ハンデ</span>':'');
   return '<tr>'
     +'<td data-th="日付" class="pr-date">'+(r.date||'')+'</td>'
     +'<td data-th="レース" class="pr-race" title="'+(r.race||'')+'">'+raceHtml+'</td>'
@@ -3212,7 +3196,7 @@ function renderSimResult(targetId, result, scen, field){
   document.getElementById(targetId).innerHTML=html;
   var top3names = rows.slice(0,3).map(function(o){return (o.h.mark||"-")+" "+o.h.name;}).join(" / ");
   var summary = '<div class="panel" style="background:var(--card);border-left:4px solid var(--accent);">'
-    + '<h3 style="margin:0 0 8px;font-size:1rem;">📋 この条件のまとめ</h3>'
+    + '<h3 style="margin:0 0 8px;font-size:1rem;">この条件のまとめ</h3>'
     + '<div style="font-size:.86rem;">条件：<b>'+scen.weather+'／'+scen.going+'／'+scen.pace+'／'+scen.bias+'／混戦度'+scen.chaos+'</b></div>'
     + '<div style="font-size:.86rem;margin-top:6px;">上位3頭：<b>'+top3names+'</b></div>'
     + '<div style="font-size:.78rem;margin-top:6px;color:var(--sub);">試行回数：<b>'+T.toLocaleString()+'回</b>（モンテカルロ・各条件で毎回再抽選）</div>'
@@ -3309,7 +3293,7 @@ function runDefaultSim(){
 }
 function runRandomSim(){
   var weathers=["晴","曇","雨","豪雨"], goings=["良","稍重","重","不良"], paces=["スロー","平均","ハイ"], biases=["フラット","内有利","外伸び"], chaoses=["低","中","高"];
-  var html="<h3 style='font-size:1rem;'>🎲 ランダム10種の結果（上位3頭のみ）</h3>";
+  var html="<h3 style='font-size:1rem;'>ランダム10種の結果（上位3頭のみ）</h3>";
   for(var i=0;i<10;i++){
     var scen={weather:weathers[Math.floor(Math.random()*weathers.length)],
               going:goings[Math.floor(Math.random()*goings.length)],
@@ -3556,7 +3540,7 @@ function runBetSim(silent){
   var over=budget>0&&totalCost>budget;
   var scen=(typeof getScenario==='function')?getScenario():null;
   var html='<div class="panel betResultPanel">';
-  html+='<h3 style="margin:0 0 4px;">🎫 この買い目の収支シミュ</h3>';
+  html+='<h3 style="margin:0 0 4px;">この買い目の収支シミュ</h3>';
   html+='<div style="font-size:.76rem;color:var(--sub);margin-bottom:10px;">'+N.toLocaleString()+'回試行'+(scen?'（条件: '+scen.weather+'／'+scen.going+'／'+scen.pace+'／'+scen.bias+'）':'')+'</div>';
   html+='<div class="bsKpis">';
   html+=bsKpi('総投資', '¥'+totalCost.toLocaleString()+(over?' ⚠超過':''), over?'bad':'');
@@ -3604,7 +3588,7 @@ function renderPredictionText(raw){
   if(!bullets.length) bullets = [text];
   box.innerHTML =
     '<div class="scenarioDigest">'
-      + '<div class="scenarioLead"><span class="ico">📊</span><div><b>'+emphScenario(lead)+'</b><small>'+emphScenario(shortText(leadSub, 54))+'</small></div></div>'
+      + '<div class="scenarioLead"><div><b>'+emphScenario(lead)+'</b><small>'+emphScenario(shortText(leadSub, 54))+'</small></div></div>'
       + '<ul class="scenarioBullets">' + bullets.map(function(s){return '<li>'+emphScenario(shortText(s, 62))+'</li>';}).join('') + '</ul>'
       + '<details class="scenarioMore"><summary>全文を読む</summary><p class="scenarioFull">'+emphScenario(text)+'</p></details>'
     + '</div>';
@@ -3664,7 +3648,7 @@ function verdictBetLean(winPct, tier, score){
       + SIM_EXCLUDED.length + '頭を含まない値です。');
   }
   var warn = diffs.length
-    ? '<div class="verdictWarn"><b>⚠️ 見方が割れています</b><ul>'
+    ? '<div class="verdictWarn"><b>⚠ 見方が割れています</b><ul>'
         + diffs.map(function(d){ return '<li>' + d + '</li>'; }).join('')
         + '</ul><small>印・市場人気・シミュレーションが一致していません。一つの結論に絞らず差異のまま示します。'
         + 'どの見方を採るかを決めてから買ってください。</small></div>'
@@ -3754,9 +3738,14 @@ function doApplyBetPlan(planIdx){
         planTotal += comp.total;
         ln += '<div class="ln"><b>'+comp.label+'</b><br><span class="nm">'+comp.names+'</span></div>';
       } else {
-        var names = line.numbers ? line.numbers.map(betPlanHorseName).join(", ") : "";
+        // prefix は「軸馬名＋つなぎ記号」、numbers は「相手の馬番」が本来の役割だが、
+        // prefix 側にも相手を含む馬名を書いたデータがあり「ドンインザムードドンインザムード」の
+        // ように二重表示されていた（2026-07-26指摘）。prefix に既出の馬名は落として繋ぐ。
+        var raw = line.numbers ? line.numbers.map(betPlanHorseName) : [];
+        var pfx = line.prefix || '';
+        var names = raw.filter(function(n){ return n && pfx.indexOf(n) < 0; }).join(", ");
         ln += '<div class="ln">'+line.text;
-        if(names) ln += '<br><span class="nm">'+(line.prefix||'')+names+'</span>';
+        if(raw.length) ln += '<br><span class="nm">'+pfx+names+'</span>';
         ln += '</div>';
       }
     });
@@ -3809,16 +3798,31 @@ function doApplyBetPlan(planIdx){
 (function(){
   var ov=document.createElement('div');
   ov.className='cardModalOverlay';
-  ov.innerHTML='<div class="cardModal"><div class="cardModalHd"><span class="cmTitle"></span><button type="button" aria-label="閉じる">×</button></div><div class="cardModalBody"></div></div>';
+  // 支援技術向け: ダイアログとして認識させ、開いたらフォーカスを×へ移し、Tabはモーダル内で
+  // 循環させ、閉じたら開いた要素へ返す。これが無いとVoiceOver/キーボードでは背面の
+  // summary にフォーカスが残ったままで、モーダルが開いたことが伝わらなかった（2026-07-26指摘）。
+  ov.innerHTML='<div class="cardModal" role="dialog" aria-modal="true" aria-labelledby="cmTitleId" tabindex="-1"><div class="cardModalHd"><span class="cmTitle" id="cmTitleId"></span><button type="button" aria-label="閉じる">×</button></div><div class="cardModalBody"></div></div>';
   document.body.appendChild(ov);
   var titleEl=ov.querySelector('.cmTitle'), bodyEl=ov.querySelector('.cardModalBody');
+  var dlg=ov.querySelector('.cardModal'), closeBtn=ov.querySelector('.cardModalHd button'), lastFocus=null;
   function close(){
     if(!ov.classList.contains('open')) return;
     ov.classList.remove('open'); bodyEl.innerHTML=''; kbUnlockScroll();
+    if(lastFocus && lastFocus.focus){ try{ lastFocus.focus(); }catch(e){} }
+    lastFocus=null;
   }
   ov.addEventListener('click',function(e){ if(e.target===ov) close(); });
-  ov.querySelector('.cardModalHd button').addEventListener('click',close);
+  closeBtn.addEventListener('click',close);
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  // フォーカストラップ（開いている間だけ）
+  dlg.addEventListener('keydown',function(e){
+    if(e.key!=='Tab') return;
+    var f=dlg.querySelectorAll('a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if(!f.length) return;
+    var first=f[0], last=f[f.length-1];
+    if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+  });
   // 今回のレース条件（距離・回り・馬場）は全馬共通なので1回だけ算出し、全戦績モーダルの
   // ヘッダーで使い回す（過去走を見ながら「今回はどういう条件か」を見失わないため）。
   var raceCtx = (function(){
@@ -3829,7 +3833,7 @@ function doApplyBetPlan(planIdx){
     var turn = (r.course_profile && r.course_profile.turn) || '';
     var dir = (turn.match(/^[右左]/) || [''])[0];
     var pred = DATA.predicted_scenario || {};
-    var wxText = (r.wx || []).join(' ');
+    var wxText = deEmoji((r.wx || []).join(' '));
     var going = pred.going || (wxText.match(/不良|稍重|重|良/) || [''])[0];
     var goConf = (typeof goingConfirmed === 'function') && goingConfirmed();
     return { dist: dist, dir: dir, going: going ? ((goConf?'':'想定')+going) : '' };
@@ -3865,6 +3869,8 @@ function doApplyBetPlan(planIdx){
       bodyEl.scrollTop=0;  // 前に開いた別の馬のスクロール位置が残らないよう、開くたびに先頭へ戻す
       ov.classList.add('open');
       kbLockScroll();
+      lastFocus=document.activeElement;
+      closeBtn.focus();
     });
   });
 })();
