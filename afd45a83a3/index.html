@@ -241,9 +241,18 @@
   h2.sec::after{display:none;}
   .lead{color:var(--sub);font-size:.92rem;margin:0 0 16px;max-width:68ch;text-wrap:pretty;}
   .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow-card);}
-  .trendBox{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:10px;}
+  .trendBox{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:10px;align-items:start;}
   .trendBox .t{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:11px 14px;font-size:.86rem;border-left:3px solid var(--accent);transition:transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);}
   .trendBox .t:hover{transform:translateY(-1px);box-shadow:var(--shadow-1);}
+  /* 標本数など、主張を支えるが主張そのものではない数字 */
+  .nsm{color:var(--sub);font-size:.86em;font-weight:400;}
+  .tMore{margin-top:5px;}
+  .tMore>summary{cursor:pointer;font-size:.7rem;color:var(--sub);list-style:none;}
+  .tMore>summary::-webkit-details-marker{display:none;}
+  .tMore>summary::before{content:"＋ ";}
+  .tMore[open]>summary::before{content:"− ";}
+  .tMore>div{margin-top:4px;font-size:.8rem;line-height:1.6;}
+  .tMore>.viewsGrid{font-size:inherit;}
   /* タイトルのみブロック見出し（本文中のインライン太字を巻き込まないよう :first-child に限定） */
   .trendBox .t > b:first-child{display:block;color:var(--accent-deep);font-size:.74rem;margin-bottom:3px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;}
   /* 本文中で太字化した馬名・キーワード（他者の見方・過去傾向）はインライン強調 */
@@ -422,6 +431,16 @@
   .apt-h .tier{margin-left:auto;color:#fff;font-weight:700;font-size:.72rem;padding:2px 9px;border-radius:6px;}
   .apt-v{font-size:.8rem;color:#2e4260;line-height:1.55;}
   .apt-e{font-size:.68rem;color:var(--sub);margin-top:3px;}
+  /* 条件相性の内訳2行（実績 / 枠・脚質）。合成tierだけだと「実績◎なのに総合△」が
+     矛盾に見えるため、必ず2成分を並べて出す */
+  .aptSplit{display:flex;flex-direction:column;gap:3px;}
+  .aptRow{display:flex;align-items:baseline;gap:7px;font-size:.78rem;color:#2e4260;line-height:1.5;}
+  .aptRow .aptLbl{min-width:4.2em;color:var(--sub);font-weight:700;font-size:.72rem;flex:none;}
+  .aptRow .aptSym{font-weight:700;flex:none;width:1.2em;text-align:center;}
+  .aptWhy{margin-top:5px;font-size:.72rem;color:#7a5a12;background:rgba(191,148,32,.11);border-radius:6px;padding:4px 8px;line-height:1.5;}
+  .aptMore{margin-top:5px;}
+  .aptMore>summary{cursor:pointer;font-size:.7rem;color:var(--sub);}
+  .aptMore .apt-v{margin-top:4px;}
   .dchips{margin-top:5px;display:flex;flex-wrap:wrap;gap:4px;}
   .dchip{font-size:.66rem;padding:1px 7px;border-radius:5px;background:var(--accent-soft);color:var(--sub);}
   .dchip.hot{background:rgba(138,112,32,.14);color:#5a4510;font-weight:700;}
@@ -540,6 +559,7 @@
   .verdictCard .vNm{font-size:.95rem;}
   .verdictCard .vBits{font-size:.74rem;color:var(--sub);margin-top:3px;}
   .verdictCard .vReason{font-size:.76rem;color:var(--ink);margin-top:3px;}
+  .verdictCard .vSplit{font-size:.72rem;color:#7a5a12;background:rgba(191,148,32,.11);border-radius:6px;padding:4px 8px;margin-top:5px;line-height:1.5;}
   .verdictCard .vConcl{font-size:.82rem;font-weight:700;margin-top:6px;color:var(--accent-deep);}
   /* 印・市場人気・シミュが割れたときの警告。結論を1つに丸めず差異のまま提示する */
   .verdictWarn{background:#fff8e6;border:1px solid #e0c265;border-left:4px solid #c8901a;border-radius:var(--radius-md);padding:11px 14px;box-shadow:var(--shadow-1);}
@@ -800,7 +820,7 @@
 
   <!-- 最終判断: 印・評価・適性・シミュ結果を1頭1枚に統合。下の詳細指標を読む前に結論だけ分かるようにする -->
   <h2 class="sec" id="verdict">最終判断</h2>
-  <p class="lead">印・総合評価・コース適性・展開シミュを1頭1行に要約。詳しい内訳は下の各セクションを参照。</p>
+  <p class="lead">印・総合評価・条件相性・展開シミュを1頭1行に要約。条件相性は「コース実績」と「枠・脚質」の合成で、割れている馬は内訳を併記します。</p>
   <div id="verdictBox" class="verdictList"></div>
 
   <!-- 買い目（馬名付き）: 結論を先に。ファーストビュー直下へ配置 -->
@@ -1090,7 +1110,7 @@
   <!-- 実データには note 等の二次情報(T2)も並ぶため、全部を「一次引用」と説明しない
        （2026-07-30 指摘: 情報階層の表示と説明が矛盾していた） -->
   <p class="lead">主要プロ予想家・メディア・関係者コメントの引用。一次情報と二次情報が混在するため、各カードの情報源表示（集計／一次／二次）で重みを確かめたうえで、自分の印付けを裏付ける／反証する材料に使う。</p>
-  <div class="viewsGrid" id="viewsBox"></div>
+  <div id="viewsBox"></div>
 
   <h2 class="sec" id="pending">⏳ 今後の更新予定（チェックリスト）</h2>
   <div class="panel">
@@ -1792,7 +1812,7 @@ function pvRelTime(asof){
     var s = String(u||'').trim();
     return /^https?:\/\//i.test(s) ? escHtml(s) : '';
   }
-  box.innerHTML = list.map(function(v){
+  function viewCardHtml(v){
     var stance = /^[a-z]+$/.test(String(v.stance||'')) ? ' stance-'+v.stance : '';  // bull / bear / data
     var target = v.target ? '<span class="target">対象：'+escHtml(v.target)+'</span>' : '';
     var href = safeUrl(v.url);
@@ -1801,13 +1821,133 @@ function pvRelTime(asof){
          + '<div class="vcTop"><span class="src">'+friendlySrc(v.src)+'</span>'+target+'</div>'
          + '<p class="vcText">「'+emphText(v.text || v.title)+'」</p>'
          + link + '</div>';
-  }).join("");
+  }
+  // 版を重ねるごとに30件超まで増えて一覧できない（2026-08-01 指摘）。
+  // 出典台帳としての値は残したいので削除はせず、同一本文を1件に畳んだうえで
+  // 新しい EV_SHOW 件だけを既定表示にし、残りは畳む。
+  var EV_SHOW = 8;
+  var seen = {}, uniq = [];
+  list.forEach(function(v){
+    var k = String(v.src||'')+'|'+String(v.text||v.title||'');
+    if(seen[k]) return; seen[k]=1; uniq.push(v);
+  });
+  var newest = uniq.slice(-EV_SHOW).reverse();
+  var rest   = uniq.slice(0, Math.max(0, uniq.length-EV_SHOW)).reverse();
+  box.innerHTML = '<div class="viewsGrid">'+newest.map(viewCardHtml).join('')+'</div>'
+    + (rest.length
+        ? '<details class="tMore"><summary>以前の見解 '+rest.length+'件を表示（全'+uniq.length+'件）</summary>'
+          + '<div class="viewsGrid" style="margin-top:8px;">'+rest.map(viewCardHtml).join('')+'</div></details>'
+        : '');
 })();
 
 // ========== 過去傾向 ==========
+// 傾向カードは1枚あたり4〜5節が1段落に詰まって走査できないため、
+// 先頭の1文だけを本文に出し、残りと出典メタは折りたたむ（2026-08-01 指摘）
+function trendDeco(s){
+  // (n=29) のような標本数は判断に効くので残すが、主張より弱く見せる
+  return s.replace(/[（(]n=(\d+)[）)]/g,'<span class="nsm">(n=$1)</span>');
+}
 document.getElementById("trendBox").innerHTML = DATA.trends.map(function(t){
-  return '<div class="t"><b>'+t.title+'</b>'+emphText(t.text)+'</div>';
+  var txt=String(t.text||''), meta='';
+  txt=txt.replace(/[（(][^（()）]*(?:yosou_trends\.json|race_count=|runs=)[^（()）]*[）)]/g,function(m){
+    meta=m.replace(/^[（(]|[）)]$/g,''); return '';
+  }).trim();
+  var i=txt.indexOf('。');
+  var head=(i>0 && i<txt.length-1)?txt.slice(0,i+1):txt;
+  var tail=(i>0 && i<txt.length-1)?txt.slice(i+1).trim():'';
+  return '<div class="t"><b>'+t.title+'</b>'+trendDeco(emphText(head))
+    + ((tail||meta)?'<details class="tMore"><summary>もっと見る</summary>'
+        +(tail?'<div>'+trendDeco(emphText(tail))+'</div>':'')
+        +(meta?'<div class="nsm" style="margin-top:3px;">出典: '+meta+'</div>':'')
+      +'</details>':'')
+    +'</div>';
 }).join("");
+
+// ========== 追い切り・関係者コメント ==========
+// 版を重ねるごとに1頭7件まで積み上がり読めなくなる（2026-08-01 指摘）。
+// 採点根拠なので data.json からは消さず、新しい2件だけを本文に出して残りは畳む。
+var OIK_SHOW = 2;
+function oikItemHtml(o){
+  var src = o.url ? '<a href="'+o.url+'" target="_blank">'+o.src+'</a>' : o.src;
+  return '<div><b>'+src+':</b> 「'+emphOikiri(o.text)+'」</div>';
+}
+function oikBlock(list){
+  list = list || [];
+  if(!list.length) return '';
+  // 配列は追記順なので末尾が新しい。新しい順に並べ替えて上位 OIK_SHOW 件だけ出す
+  var newest = list.slice(-OIK_SHOW).reverse();
+  var rest   = list.slice(0, Math.max(0, list.length-OIK_SHOW)).reverse();
+  var body = newest.map(oikItemHtml).join('');
+  if(rest.length){
+    var names = rest.map(function(o){ return String(o.src||'').replace(/<[^>]*>/g,'').slice(0,12); }).join('・');
+    body += '<details class="tMore"><summary>以前の評価 '+rest.length+'件（'+names+'）</summary><div>'
+          + rest.map(oikItemHtml).join('') + '</div></details>';
+  }
+  return '<details class="fold oikFold" open><summary><span>追い切り・関係者コメント</span>'
+       + '<span class="factChip">新しい'+newest.length+'件'+(rest.length?'／全'+list.length+'件':'')+'</span></summary>'
+       + '<div class="foldBody">'+body+'</div></details>';
+}
+
+// ========== 条件相性（実績 × 枠・脚質）==========
+// course_fit_tier は enrich_race.py で 0.6*frame_pace + 0.4*track_fit の合成値。
+// 合成後の記号だけを「コース適性」として出すと、コース実績が満点でも脚質が減点されて
+// △になり、同じカード内の「当該コース7走3勝」と矛盾して見える（2026-08-01 指摘）。
+// そこで必ず2成分に分解して並べ、食い違う場合は理由を1行で添える。
+var APT_TC={'◎好相性':'#0f8456','○相性可':'#2a72a3','△疑問符':'#b5640a','▲割引':'#c1432d'};
+function aptSym(s){
+  if(s==null) return '-';
+  return s>=4.3?'◎':(s>=3.3?'○':(s>=2.3?'△':'▲'));
+}
+function aptSymColor(sym){
+  return {'◎':'#0f8456','○':'#2a72a3','△':'#b5640a','▲':'#c1432d'}[sym]||'#64748b';
+}
+// 「実績」行の中身：同コース成績を最短で。無ければ距離実績にフォールバック
+function aptRecordText(a){
+  var sc=a.same_course;
+  if(sc && sc.n) return sc.course+(sc.n)+'走 '+(sc.win||0)+'勝・複勝'+(sc.place||0);
+  var ds=a.dist_summary||{}, ks=Object.keys(ds);
+  if(ks.length){ var k=ks.sort()[0], v=ds[k]; return k+' '+v.n+'戦'+v.win+'勝・複勝'+v.place; }
+  return '実績データ少';
+}
+function aptLegText(a,h){
+  var bits=[];
+  if(h && h.waku) bits.push(h.waku+'枠');
+  bits.push(a.leg_derived||(h&&h.leg)||'脚質不明');
+  return bits.join(' / ');
+}
+// 2成分が2段階以上ずれたときだけ表示する「なぜ食い違うか」の1行
+function aptWhy(a){
+  var f=a.track_fit_score, p=a.frame_pace_score;
+  if(f==null||p==null) return '';
+  var d=f-p;
+  if(d>=1.8) return 'このコースでの実績は最上位だが、'+(a.leg_derived||'脚質')+'と枠の並びが不利なぶん総合では割り引いている。実績を採るか隊形を採るかで評価が割れる馬。';
+  if(d<=-1.8) return '枠と脚質の並びは恵まれているが、このコース自体の実績が薄い。位置取りの利を実績が裏づけていない点に注意。';
+  return '';
+}
+function aptBlock(a,h,compact){
+  if(!a) return '';
+  var tc=APT_TC[a.course_fit_tier]||'#64748b';
+  var fs=aptSym(a.track_fit_score), ps=aptSym(a.frame_pace_score);
+  var why=aptWhy(a);
+  var ds=a.dist_summary||{};
+  var drow=compact?'':Object.keys(ds).sort().map(function(b){var v=ds[b];
+    return '<span class="dchip">'+b+': '+v.n+'戦'+v.win+'勝複'+v.place+'</span>';}).join('');
+  return '<div class="apt"'+(compact?' style="margin:5px 0;padding:6px 9px;"':'')+'>'
+    +'<div class="apt-h"><b>条件相性</b><span class="tier" style="background:'+tc+'">'+a.course_fit_tier+'</span></div>'
+    +'<div class="aptSplit">'
+      +'<div class="aptRow"><span class="aptLbl">実績</span>'
+        +'<span class="aptSym" style="color:'+aptSymColor(fs)+'">'+fs+'</span>'
+        +'<span>'+aptRecordText(a)+'</span></div>'
+      +'<div class="aptRow"><span class="aptLbl">枠・脚質</span>'
+        +'<span class="aptSym" style="color:'+aptSymColor(ps)+'">'+ps+'</span>'
+        +'<span>'+aptLegText(a,h)+'</span></div>'
+    +'</div>'
+    +(why?'<div class="aptWhy">'+why+'</div>':'')
+    +(a.verdict?'<details class="aptMore"><summary>判定の内訳を見る</summary><div class="apt-v">'+a.verdict+'</div>'
+       +(a.leg_evidence?'<div class="apt-e">脚質根拠: '+a.leg_evidence+'</div>':'')
+       +(drow?'<div class="dchips">'+drow+'</div>':'')+'</details>':'')
+    +'</div>';
+}
 
 // ========== 上位カード ==========
 function weightComment(w){
@@ -1975,7 +2115,7 @@ function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u
   }
   if(cp && !cpFit) cpFit = shortText(cp.bias_leg || cp.straight_note || '', 26);
   var courseCard = cp
-    ? '<div class="signalCard"><div><b>コース適性</b><strong>'+(cpFit || '-')+'</strong><small>'+shortText(cp.name || 'コース', 24)+'</small></div></div>'
+    ? '<div class="signalCard"><div><b>有利な脚質</b><strong>'+(cpFit || '-')+'</strong><small>'+shortText(cp.name || 'コース', 24)+'</small></div></div>'
     : '';
   // レース傾向(荒れ度)カードは過去傾向データから実際に算出できた(grounded)場合のみ表示。
   // 根拠が無いと「荒れそう」の当て推量バッジが毎回同じ文言で出るだけになり、ui-guidelines.mdの
@@ -2089,11 +2229,7 @@ function applyPickStripVisibility(){
     var tags = (h.tags_strong||[]).map(function(t){return '<span class="tag s">'+t+'</span>';}).join("")
              + (h.tags_weak||[]).map(function(t){return '<span class="tag w">'+t+'</span>';}).join("");
     var past = pastBlockHtml(h.last3);
-    var oik = '';
-    (h.oikiri||[]).forEach(function(o){
-      var src = o.url ? '<a href="'+o.url+'" target="_blank">'+o.src+'</a>' : o.src;
-      oik += '<div><b>'+src+':</b> 「'+emphOikiri(o.text)+'」</div>';
-    });
+    var oik = oikBlock(h.oikiri);
     // 前走（直近3走＋全10走の記録）: 推しコメント直下に置くためのブロック（カード下部から移設）
     var pastFullBtn = (function(){
       if(!h.past_races||!h.past_races.length) return '';
@@ -2126,7 +2262,12 @@ function applyPickStripVisibility(){
           if(h.leg) chips.push('<span class="factChip good">↗ '+h.leg+'</span>');
           if(h.aptitude && h.aptitude.course_fit_tier){
             var atc={'◎好相性':'#0f8456','○相性可':'#2a72a3','△疑問符':'#b5640a','▲割引':'#c1432d'}[h.aptitude.course_fit_tier]||'#64748b';
-            chips.push('<span class="factChip" style="background:'+atc+'1f;color:'+atc+';border-color:'+atc+'55;">'+h.aptitude.course_fit_tier+'</span>');
+            // 合成ラベル単体だと「実績◎なのに△」が読み解けないため、内訳を併記＋tooltip
+            var ap=h.aptitude;
+            var sub=(ap.track_fit_score!=null&&ap.frame_pace_score!=null)
+              ? ' <span style="opacity:.75;">実績'+aptSym(ap.track_fit_score)+'/枠脚質'+aptSym(ap.frame_pace_score)+'</span>' : '';
+            chips.push('<span class="factChip" title="条件相性＝コース実績(4割)と枠・脚質(6割)の合成"'
+              +' style="background:'+atc+'1f;color:'+atc+';border-color:'+atc+'55;">条件相性'+ap.course_fit_tier.charAt(0)+sub+'</span>');
           }
           if(h.weight) chips.push('<span class="factChip">'+h.weight+'kg</span>');
           if(h.scorecard && h.scorecard.final_score!==undefined){
@@ -2138,7 +2279,7 @@ function applyPickStripVisibility(){
         })()
       + (h.oshi?'<div class="oshi">★ 推し：'+h.oshi+'</div>':'')
       + pastSection
-      + (oik?'<details class="fold oikFold" open><summary><span>追い切り・関係者コメント</span><span class="factChip">'+(h.oikiri||[]).length+'件</span></summary><div class="foldBody">'+oik+'</div></details>':'')
+      + oik
       + (function(){
           // 基本属性（性齢・厩舎）- 安田記念2026 振り返りで「これらが空欄のまま発走を迎えた」反省より必須化
           var bits = [];
@@ -2162,18 +2303,7 @@ function applyPickStripVisibility(){
           return out;
         })()
       + '<div class="row"><b>枠：</b>'+(h.draw||'-')+' / <b>脚質：</b><span class="legBadge leg-'+(h.leg||'未確認')+'">'+(h.leg||'-')+'</span> / <b>距離：</b>'+(h.dist||'-')+'</div>'
-      + (function(){
-          var a=h.aptitude; if(!a) return '';
-          var tc={'◎好相性':'#0f8456','○相性可':'#2a72a3','△疑問符':'#b5640a','▲割引':'#c1432d'}[a.course_fit_tier]||'#64748b';
-          var ds=a.dist_summary||{};
-          var drow=Object.keys(ds).sort().map(function(b){var v=ds[b];return '<span class="dchip'+(b==='2000'?' hot':'')+'">'+b+': '+v.n+'戦'+v.win+'勝複'+v.place+'</span>';}).join('');
-          return '<div class="apt">'
-            +'<div class="apt-h"><b>コース適性（全戦績から判定）</b><span class="tier" style="background:'+tc+'">'+a.course_fit_tier+'</span></div>'
-            +'<div class="apt-v">'+a.verdict+'</div>'
-            +(a.leg_evidence?'<div class="apt-e">脚質根拠: '+a.leg_evidence+'</div>':'')
-            +(drow?'<div class="dchips">'+drow+'</div>':'')
-            +'</div>';
-        })()
+      + aptBlock(h.aptitude, h, false)
       + (h.weight?'<div class="row"><b>馬体重：</b>'+h.weight+'kg（'+(h.weight_trend||'')+'） - '+weightComment(h.weight)+'</div>':'')
       + (h.temper?'<div class="row"><b>気性：</b>'+h.temper+'</div>':'')
       + (tags?'<div class="tags">'+tags+'</div>':'')
@@ -2310,21 +2440,8 @@ function applyPickStripVisibility(){
     var photoHtml = m.photo ? '<div class="horsephoto" style="width:80px;margin:0 0 4px 8px;"><img src="'+m.photo+'" alt="'+m.name+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'" style="width:80px;height:60px;object-fit:cover;border-radius:7px;border:1px solid #d7e0ea;"><span class="photocred">写真: netkeiba</span></div>' : '';
     // コース適性（全戦績判定）
     // 非印馬の追い切り・関係者コメント（データがあれば印馬同様に良い/悪い語を色分け表示）
-    var miniOik = (function(){
-      if(!m.oikiri || !m.oikiri.length) return '';
-      var body=m.oikiri.map(function(o){
-        var src=o.url?'<a href="'+o.url+'" target="_blank">'+o.src+'</a>':o.src;
-        return '<div><b>'+src+':</b> 「'+emphOikiri(o.text)+'」</div>';
-      }).join('');
-      return '<details class="fold oikFold" open><summary><span>追い切り・関係者コメント</span><span class="factChip">'+m.oikiri.length+'件</span></summary><div class="foldBody">'+body+'</div></details>';
-    })();
-    var aptHtml = (function(){
-      var a=m.aptitude; if(!a) return '';
-      var tc={'◎好相性':'#0f8456','○相性可':'#2a72a3','△疑問符':'#b5640a','▲割引':'#c1432d'}[a.course_fit_tier]||'#64748b';
-      return '<div class="apt" style="margin:5px 0;padding:6px 9px;">'
-        +'<div class="apt-h"><b>コース適性</b><span class="tier" style="background:'+tc+'">'+a.course_fit_tier+'</span></div>'
-        +'<div class="apt-v" style="font-size:.76rem;">'+a.verdict+'</div></div>';
-    })();
+    var miniOik = oikBlock(m.oikiri);
+    var aptHtml = aptBlock(m.aptitude, m, true);
     // 全戦績テーブル（折りたたみ）
     var pastFullHtml = (function(){
       if(!m.past_races||!m.past_races.length) return '';
@@ -3665,13 +3782,19 @@ function verdictBetLean(winPct, tier, score, hasOdds, fullField){
     var lean = verdictBetLean(winPct, tier, score, hasOdds, fullField);
     var bits = [];
     if(score!=null) bits.push('総合評価'+score.toFixed(1)+'/5');
-    if(tier) bits.push('コース適性'+tier);
+    // 合成tierだけでは「実績◎なのに総合△」が矛盾に見えるため、割れている馬は内訳も出す
+    var apt = h.aptitude||{};
+    var aptSplitTxt = (apt.track_fit_score!=null && apt.frame_pace_score!=null
+        && Math.abs(apt.track_fit_score-apt.frame_pace_score)>=1.8)
+      ? '（実績'+aptSym(apt.track_fit_score)+'／枠・脚質'+aptSym(apt.frame_pace_score)+'）' : '';
+    if(tier) bits.push('条件相性'+tier.charAt(0)+aptSplitTxt);
     if(winPct!=null) bits.push('シミュ勝率'+winPct+'%');
     else if(excluded[h.no]) bits.push('シミュ対象外（能力データ未整備）');
     return '<div class="verdictCard" style="--c:'+(h.color||'#888')+'">'
       + '<div class="vHd"><b class="vMk">'+(h.mark||'-')+'</b><b class="vNm">'+h.no+' '+h.name+'</b></div>'
       + (bits.length?'<div class="vBits">'+bits.join(' ・ ')+'</div>':'')
       + (reasonBits.length?'<div class="vReason">'+reasonBits.join('／')+'</div>':'')
+      + (aptSplitTxt?'<div class="vSplit">'+aptWhy(apt)+'</div>':'')
       + '<div class="vConcl">結論：'+lean+(conf?'（情報信頼度'+conf+'）':'')+'</div>'
       + '</div>';
   }).join('');
@@ -3755,7 +3878,15 @@ function doApplyBetPlan(planIdx){
       html += '<button type="button" class="runBtn" style="margin-top:8px;font-size:.78rem;padding:6px 12px;" onclick="applyBetPlanToSimulator('+planIdx+')">▶ この買い目で配分を試す</button>';
     }
     // buy_assumptions（odds_asof/EV/tier 等の内部メタ）はユーザーには意味不明なので非表示。
-    if(plan.note) html += '<div class="ln" style="color:var(--sub);font-size:.78rem;margin-top:6px;">'+plan.note+'</div>';
+    // 買い目の根拠は長文になりがちなので、1文を超える分は折りたたむ
+    if(plan.note){
+      var nt=String(plan.note), ni=nt.indexOf('。');
+      var nh=(ni>0 && ni<nt.length-1)?nt.slice(0,ni+1):nt;
+      var nr=(ni>0 && ni<nt.length-1)?nt.slice(ni+1).trim():'';
+      html += '<div class="ln" style="color:var(--sub);font-size:.78rem;margin-top:6px;">'+nh
+        + (nr?'<details class="tMore"><summary>根拠をもっと見る</summary><div>'+nr+'</div></details>':'')
+        + '</div>';
+    }
     html += '</div>';
   });
   document.getElementById("picksBox").innerHTML = html;
