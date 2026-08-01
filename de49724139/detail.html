@@ -1905,9 +1905,13 @@ function aptSymColor(sym){
 function aptRecordText(a){
   var sc=a.same_course;
   if(sc && sc.n) return sc.course+(sc.n)+'走 '+(sc.win||0)+'勝・複勝'+(sc.place||0);
-  var ds=a.dist_summary||{}, ks=Object.keys(ds);
-  if(ks.length){ var k=ks.sort()[0], v=ds[k]; return k+' '+v.n+'戦'+v.win+'勝・複勝'+v.place; }
-  return '実績データ少';
+  // 当コース未経験なら距離実績で代替する。キーの辞書順だと "1600" が "~1400" より
+  // 前に来て1戦だけの帯を拾ってしまうため、必ず走数が最多の帯を選ぶ
+  var ds=a.dist_summary||{}, best=null, bk='';
+  Object.keys(ds).forEach(function(k){ if(!best || ds[k].n>best.n){ best=ds[k]; bk=k; } });
+  var head=(sc && sc.course) ? sc.course+'実績なし／' : '';
+  if(best) return head+bk+' '+best.n+'戦'+best.win+'勝・複勝'+best.place;
+  return head || '実績データ少';
 }
 function aptLegText(a,h){
   var bits=[];
@@ -2424,10 +2428,7 @@ function applyPickStripVisibility(){
       + '</div>' : '';
     // 直近3走：past_races先頭3件を6頭カードと同じ区切りブロックで表示（過去走の手書き禁止方針に沿い、
     // 生文字列の正規表現分割はしない。past_races未接地の馬のみ旧last2/last文字列にフォールバック）。
-    var miniLast3 = (m.past_races||[]).slice(0,3).map(function(r){
-      return {race:r.race, date:r.date, order:r.finish, jockey:r.jockey, dist:r.dist, agari:r.agari, leg:r.style};
-    });
-    var pastBlockM = pastBlockHtml(miniLast3);
+    var pastBlockM = pastBlockHtml(last3Rows(m));
     var recHtml = '';
     if(!pastBlockM){
       if(m.last2 && m.last2.length){
@@ -2460,13 +2461,15 @@ function applyPickStripVisibility(){
       + '<div class="cardActions" style="margin-left:6px;">'+favBtnHtml(m.name)+memoBtnHtml(m.name)+'</div></div>'
       + photoHtml
       + pastBlockM
+      // 全戦績は直近3走の直下に置く（印あり馬の pastSection と同じ並び。
+      // 従来は追い切り・条件相性の後ろにあり、直近3走から離れて見つからなかった）
+      + pastFullHtml
       + recHtml
       + profHtml
       + oddsHtml
       + weightHtml
       + miniOik
       + aptHtml
-      + pastFullHtml
       + (hasMarks && m.pop && m.pop<=6 ? '<div class="factChip warn" style="margin:4px 0 0;">⚠ 人気'+m.pop+'番なのに軽視した理由</div>' : '')
       + '<div class="why">'+m.why+'</div>'
       + '</div>';
