@@ -2228,7 +2228,10 @@ function applyPickStripVisibility(){
   sortedTop.forEach(function(h){
     var tags = (h.tags_strong||[]).map(function(t){return '<span class="tag s">'+t+'</span>';}).join("")
              + (h.tags_weak||[]).map(function(t){return '<span class="tag w">'+t+'</span>';}).join("");
-    var past = pastBlockHtml(h.last3);
+    // last3 は sync_last3.py が past_races から導出した要約で、距離と通過(位置)を持たない。
+    // 直近3走カードから位置が丸ごと落ちていたため、past_races があればそちらを正本にする
+    // （mini_horses 側は元々この作り。2026-08-01 指摘）
+    var past = pastBlockHtml(last3Rows(h));
     var oik = oikBlock(h.oikiri);
     // 前走（直近3走＋全10走の記録）: 推しコメント直下に置くためのブロック（カード下部から移設）
     var pastFullBtn = (function(){
@@ -3124,6 +3127,17 @@ function prGradeColor(g){
 // 人気薄カードでも同じ見え方にできるよう切り出した。r.order は数値/数値文字列/'-' いずれも許容。
 // r.agari は「上がり」接頭辞の有無が呼び出し元によって異なる（sync_last3済みは接頭辞あり・
 // past_races直参照は接頭辞なし）ため、二重表記(「上がり 上がり34.2」)にならないよう吸収する）。
+/* 直近3走の行データを past_races（機械接地の正本）から作る。
+   past_races が無い馬だけ last3 にフォールバックする。 */
+function last3Rows(h){
+  if(h.past_races && h.past_races.length){
+    return h.past_races.slice(0,3).map(function(r){
+      return {race:r.race, date:r.date, order:r.finish, jockey:r.jockey,
+              dist:r.dist, pass:r.pass, agari:r.agari, leg:r.style};
+    });
+  }
+  return h.last3 || [];
+}
 function pastBlockHtml(races){
   if(!races || !races.length) return '';
   var html = '<div class="past">';
@@ -3136,11 +3150,15 @@ function pastBlockHtml(races){
     if(r.jockey && r.jockey !== '-') meta.push(r.jockey);
     var metaStr = meta.length ? '<span class="meta">'+meta.join(' / ')+'</span>' : '';
     var distStr = r.dist ? '<span class="r">'+r.dist+'</span>' : '';
+    // 通過（位置取り）。全戦績表と同じ配色規則で、前めほど濃く出す
+    var passStr = (r.pass && r.pass!=='-')
+      ? '<span class="r">位置 <b style="'+prNum('pass', r.pass)+'">'+r.pass+'</b></span>' : '';
     var agariTxt = (r.agari && r.agari!=='-' && r.agari!=='不明') ? r.agari : '-';
     var agariLabel = /^上が/.test(agariTxt) ? agariTxt : ('上がり '+agariTxt);
     html += '<div class="'+cls+'"><span class="ord">'+ord+'</span><span class="r">'+(r.race||'')+'</span>'
       + metaStr
       + distStr
+      + passStr
       + '<span class="r">'+agariLabel+'</span>'
       + '<span class="legBadge leg-'+(r.leg||'未確認')+'" style="font-size:.62rem;margin-top:2px;">'+(r.leg||'-')+'</span></div>';
   });
