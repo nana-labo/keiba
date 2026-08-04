@@ -126,6 +126,10 @@
   .mk .bar{flex:1;height:8px;border-radius:5px;background:#e3ebf3;overflow:hidden;}
   .mk .bar>i{display:block;height:100%;border-radius:5px;}
   .mk .num{width:96px;text-align:right;font-size:.68rem;color:var(--sub);font-feature-settings:"tnum" 1;}
+  /* 回収率。100%以上（＝賭けた分より戻っている）だけ色を変えて、的中率と取り違えないようにする */
+  .mk .mkroi{width:64px;text-align:right;font-size:.68rem;color:var(--sub);font-feature-settings:"tnum" 1;}
+  .mk .mkroi.pos{color:#1a7f4b;font-weight:700;}
+  .mknote{font-size:.68rem;color:var(--sub);line-height:1.5;margin:0 0 8px;}
   .btp{font-size:.75rem;line-height:1.55;color:var(--ink);margin:0;}
   .btp b{color:var(--accent-deep);}
   .btp .mut{color:var(--sub);display:block;margin-top:6px;}
@@ -164,7 +168,6 @@
           <dt>複勝圏内率</dt><dd>その印の馬が<b>3着以内</b>に入った割合。</dd>
           <dt>印（◎○▲△☆）</dt><dd><b>◎</b>本命（最有力）／<b>○</b>対抗／<b>▲</b>単穴（一発あれば）／<b>△</b>連下（馬券圏内候補）／<b>☆</b>穴（人気より走りそうな妙味馬）。</dd>
           <dt>券種</dt><dd><b>単勝</b>＝1着を当てる／<b>複勝</b>＝3着以内に入れば的中／<b>馬連</b>＝1・2着の2頭を順不同で当てる／<b>ワイド</b>＝3着以内に入る2頭を当てる／<b>三連複</b>＝1〜3着の3頭を順不同で当てる／<b>三連単</b>＝1〜3着を着順通りに当てる（一番難しく高配当）。</dd>
-          <dt>バックテスト（BT）</dt><dd>過去のレースデータに実際に賭けたと仮定して、後から回収率などを検証すること。</dd>
           <dt>混戦度</dt><dd>能力差が僅差でどの馬にもチャンスがありそうか（人気薄が来やすそうか）の目安。</dd>
         </dl>
       </details>
@@ -174,10 +177,10 @@
 <div class="kpi"><b style="color:var(--accent-deep)">6/15</b><span>◎ 複勝圏内率</span><small>勝ち 3（複勝圏=3着内）</small></div>
 <div class="kpi"><b style="color:var(--accent-deep)">16</b><span>結果あり</span><small>2026年 重賞・特別</small></div>
       </div>
-      <p class="bnote">⚠ n=16 の少数サンプルにつき回収率は参考値。<b>検証済</b>＝レース前に印・買い目が確定保存されていた証跡ありのレース。印はレース結果を一切参照せず判定（後付け禁止）。</p>
+      <p class="bnote">⚠ 16レースだけの集計なので回収率は参考値です。「検証済」はレース前に印と買い目を保存していたレースだけを数えています。</p>
       <div class="sub2">
-        <div class="mini"><h3>印別的中（複勝圏内率）</h3><div class="mk"><span class="lab" style="color:#c1432d">◎</span><span class="bar"><i style="width:40%;background:#c1432d"></i></span><span class="num">6/15・40%・3勝</span></div><div class="mk"><span class="lab" style="color:#2a72a3">○</span><span class="bar"><i style="width:33%;background:#2a72a3"></i></span><span class="num">4/12・33%</span></div><div class="mk"><span class="lab" style="color:#a8862f">▲</span><span class="bar"><i style="width:33%;background:#a8862f"></i></span><span class="num">5/15・33%・2勝</span></div><div class="mk"><span class="lab" style="color:#0d7a4f">△</span><span class="bar"><i style="width:19%;background:#0d7a4f"></i></span><span class="num">6/32・19%・2勝</span></div><div class="mk"><span class="lab" style="color:#6e3895">☆</span><span class="bar"><i style="width:27%;background:#6e3895"></i></span><span class="num">6/22・27%・2勝</span></div></div>
-        <div class="mini"><h3>バックテスト vs 実戦</h3><p class="btp">BT（11年walk-forward・リーク検証済）で<b>採用</b>の穴ロジックは<b>1件</b>：<b>道悪芝・ワイド</b> ROI <b>1.46</b>（最良年除外 1.10）。<span class="mut">実戦は全て良馬場でこの道悪ロジックは出番ゼロ＝offline優位はまだforward未検証。</span></p></div>
+        <div class="mini"><h3>印別の成績</h3><p class="mknote">バーは3着以内に入った割合。右の回収率は、その印の馬を1頭100円ずつ複勝で買った場合。100%を超えると黒字。</p><div class="mk"><span class="lab" style="color:#c1432d">◎</span><span class="bar"><i style="width:40%;background:#c1432d"></i></span><span class="num">6/15・40%・3勝</span><span class="mkroi">回収69%</span></div><div class="mk"><span class="lab" style="color:#2a72a3">○</span><span class="bar"><i style="width:33%;background:#2a72a3"></i></span><span class="num">4/12・33%</span><span class="mkroi">回収71%</span></div><div class="mk"><span class="lab" style="color:#a8862f">▲</span><span class="bar"><i style="width:33%;background:#a8862f"></i></span><span class="num">5/15・33%・2勝</span><span class="mkroi">回収81%</span></div><div class="mk"><span class="lab" style="color:#0d7a4f">△</span><span class="bar"><i style="width:19%;background:#0d7a4f"></i></span><span class="num">6/32・19%・2勝</span><span class="mkroi">回収64%</span></div><div class="mk"><span class="lab" style="color:#6e3895">☆</span><span class="bar"><i style="width:27%;background:#6e3895"></i></span><span class="num">6/22・27%・2勝</span><span class="mkroi pos">回収118%</span></div></div>
+        <div class="mini"><h3>検証で採用した狙い</h3><p class="btp"><b>道悪芝・ワイド</b>で回収率<b>1.46倍</b>。<span class="mut">過去11年の検証で使えると判断した狙いは1件だけで、実戦ではまだ出番が来ていません。</span></p></div>
       </div>
     </section>
     <script>
