@@ -558,9 +558,14 @@
   .verdictCard .vMk{font-size:1.1rem;color:var(--c,#888);}
   .verdictCard .vNm{font-size:.95rem;}
   .verdictCard .vBits{font-size:.74rem;color:var(--sub);margin-top:3px;}
+  /* 情報の信頼度は「（情報信頼度高）」のような括弧書きにせず、結論行の右に小さなバッジで出す
+     （括弧の但し書きはスマホで文が伸びて読みにくいだけ・2026-08-03 指摘）。 */
+  .verdictCard .vConf{font-size:.66rem;font-weight:700;padding:1px 6px;border-radius:999px;
+    background:rgba(19,52,79,.08);color:var(--sub);vertical-align:middle;margin-left:6px;}
   .verdictCard .vReason{font-size:.76rem;color:var(--ink);margin-top:3px;}
   .verdictCard .vSplit{font-size:.72rem;color:#7a5a12;background:rgba(191,148,32,.11);border-radius:6px;padding:4px 8px;margin-top:5px;line-height:1.5;}
-  .verdictCard .vConcl{font-size:.82rem;font-weight:700;margin-top:6px;color:var(--accent-deep);}
+  /* 結論はカードの1行目（馬名の直下）。根拠の数値はその下に置く＝結論先行（2026-08-03 指摘） */
+  .verdictCard .vConcl{font-size:.86rem;font-weight:700;margin-top:4px;color:var(--accent-deep);line-height:1.45;}
   /* 印・市場人気・シミュが割れたときの警告。結論を1つに丸めず差異のまま提示する */
   .verdictWarn{background:#fff8e6;border:1px solid #e0c265;border-left:4px solid #c8901a;border-radius:var(--radius-md);padding:11px 14px;box-shadow:var(--shadow-1);}
   .verdictWarn b{display:block;font-size:.9rem;color:#8a5c05;margin-bottom:6px;}
@@ -622,12 +627,12 @@
   .note{font-size:.78rem;color:var(--sub);margin-top:18px;border-top:1px solid var(--line);padding-top:12px;}
   /* === スマホ最適化（<=600px）。PC デザインは不変、狭幅での可読性のみ調整 === */
   @media(max-width:600px){
-    /* 下余白は固定ボタン3つ（左下=アーカイブ / 右下=トップへ戻る / その上=要望）の
+    /* 下余白は固定ボタン（左下=アーカイブ / 右下=要望 / その上=トップへ戻る）の
        占有分を確保する。56pxでは最下部までスクロールしたときに本文（最終判断カードの
-       文章）が実際に隠れていた（2026-07-25指摘）。128pxでも一番高い要望ボタン
-       （bottom:126px・高さ40px＝下端から166px）に免責文が被っていたため、
-       166px＋余白14pxの180pxまで広げる（390px実測・2026-07-26指摘）。 */
-    .wrap{padding:16px 12px 180px;padding-bottom:calc(180px + env(safe-area-inset-bottom));}
+       文章）が実際に隠れていた（2026-07-25指摘）。
+       要望ボタンを右下隅（bottom:16px）へ下ろしたため、最上段は .toTop の
+       bottom:74px＋高さ44px＝118px。余白14pxを足した132pxで足りる（2026-08-03指摘）。 */
+    .wrap{padding:16px 12px 132px;padding-bottom:calc(132px + env(safe-area-inset-bottom));}
     header.hero{padding:18px 16px 17px;border-radius:14px;}
     header.hero h1{font-size:1.24rem;line-height:1.22;margin-bottom:5px;}
     header.hero .meta{font-size:.78rem;line-height:1.45;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
@@ -820,7 +825,6 @@
 
   <!-- 最終判断: 印・評価・適性・シミュ結果を1頭1枚に統合。下の詳細指標を読む前に結論だけ分かるようにする -->
   <h2 class="sec" id="verdict">最終判断</h2>
-  <p class="lead">印・総合評価・条件相性・展開シミュを1頭1行に要約。条件相性は「コース実績」と「枠・脚質」の合成で、割れている馬は内訳を併記します。</p>
   <div id="verdictBox" class="verdictList"></div>
 
   <!-- 買い目（馬名付き）: 結論を先に。ファーストビュー直下へ配置 -->
@@ -845,7 +849,7 @@
   <div id="scExplainMount"></div>
 
   <h2 class="sec" id="minisec">印をつけなかった馬（全頭・その理由）</h2>
-  <p class="lead">能力評価のデータが薄い馬は数値推定を出していません（信頼度の偽装を避けるため）。</p>
+  <p class="lead">データが薄い馬は数値推定を出していません。</p>
   <div class="mini" id="mini"></div>
 
   <a class="pageJump toMain" data-page="detail" href="index.html">◀ 予想ページに戻る<small>（印・買い目・全頭の評価）</small></a>
@@ -865,7 +869,7 @@
 
   <div class="dpage">
   <h2 class="sec" id="bet">配分シミュレーター（買い目を組む）</h2>
-  <p class="lead">①（任意）総予算を決める → ② 買い方と馬を選んで金額を入れ「買い目に追加」→ ③ 下の<b>展開シミュレーション</b>を実行すると、この買い目の<b>収支・的中率・破産（元割れ）率</b>が出ます。オッズは想定（sim由来）です。</p>
+  <p class="lead">買い方と馬を選んで金額を入れ「買い目に追加」。下の<b>展開シミュレーション</b>を実行すると<b>収支・的中率・元割れ率</b>が出ます。オッズは想定値です。</p>
   <details class="panel" style="margin-bottom:14px;background:var(--card);">
     <summary style="cursor:pointer;font-weight:700;color:var(--accent);font-size:.95rem;">馬券の種類と説明（クリックで開閉）</summary>
     <div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:10px;font-size:.85rem;">
@@ -911,7 +915,7 @@
     </div>
     <div id="betSlipList" class="bsList"></div>
     <div id="betSlipTotal" class="bsTotal"></div>
-    <p class="lead" style="margin-top:10px;"><b>収支の結果は下の「展開シミュレーション」を実行すると表示されます</b>（この買い目＋着順分布から計算）。</p>
+    <p class="lead" style="margin-top:10px;"><b>収支は下の「展開シミュレーション」を実行すると出ます。</b></p>
     <details class="panel" style="margin:12px 0 0;background:var(--card);">
       <summary style="cursor:pointer;font-weight:700;color:var(--accent);font-size:.9rem;">参考：出走馬とオッズ一覧（印 / 枠 / 馬番 / 馬名 / 想定単勝オッズ）</summary>
       <div class="bsRef" id="betHorseRef" style="margin-top:10px;"></div>
@@ -986,7 +990,7 @@
         </tbody>
       </table>
       <p style="margin:0;font-size:.78rem;color:#5b6b7d;">
-        <b>なぜこれが効くか:</b> 「近2走大敗だから△に下げる」のような文章判断は再現性が低く、近走軸のスコア低下と他軸スコア維持の合成で十分に近い結果が出る。印を動かすときは必ずこの採点を先に機械的に計算し、その結果表から印を決める運用を徹底しているため、直感だけで印が動くことはない。
+        <b>なぜこれが効くか:</b> 印は必ずこの採点を先に計算してから決めるので、直感だけで動くことがない。
       </p>
     </div>
   </details>
@@ -1044,13 +1048,13 @@
   <!-- 狙い目の参考（人気馬の危なさ＋逆転候補）。未適用/空のレースではセクションごと非表示にする -->
   <section id="refpickSection">
   <h2 class="sec" id="refpick">狙い目の参考（人気馬の危なさ・逆転候補）</h2>
-  <p class="lead">過去のレース成績データから「人気ほど信用できない馬」と「人気馬が崩れた時に浮上しそうな馬」を整理した参考情報です。<b>買えば得する、という話ではありません</b>。堅い決着も多いレースでは、本命サイド中心が無難です。</p>
+  <p class="lead">「人気ほど信用できない馬」と「その馬が崩れた時に浮上しそうな馬」の一覧。<b>買えば得する話ではありません。</b></p>
   <div id="referencePickBox"></div>
   </section>
 
   <div class="dpage">
   <h2 class="sec" id="abil">能力比較（上位馬のみ・5項目並列）</h2>
-  <p class="lead">中位以下はデータ不足のため対象外。誰が何で勝っているかを項目別に確認できます。</p>
+  <p class="lead">中位以下はデータ不足のため対象外です。</p>
   <div class="panel"><div class="axisBars" id="abilBox"></div></div>
   </div>
 
@@ -1060,7 +1064,7 @@
 
   <div class="dpage">
   <h2 class="sec" id="sortview">出走馬 並び替えビュー</h2>
-  <p class="lead">斤量・上がり・勝率・体重などをボタン1つで一気に並び替え。昇順/降順も切り替え可能です。予想ページ(1ページ目)と同じデータをその場で計算しているので、データが更新されればここも自動で反映されます。「MY印・コメント」列の＋で自分の印を、✎でコメント（自由記述メモ）をこの表からも付けられます。</p>
+  <p class="lead">列の見出しをタップで並び替え。＋で自分の印、✎でメモを付けられます。</p>
   <div class="panel">
     <div class="hsChips" id="hsChips">
       <button type="button" class="hsChip on" data-mode="no" onclick="hsSetSort('no')">馬番順</button>
@@ -1077,7 +1081,7 @@
       <button type="button" class="hsChip hsDirChip" data-dir="desc" onclick="hsSetDir('desc')">▼ 降順（重い/遅い/高い が先）</button>
     </div>
     <div class="hsTableWrap"><div id="hsTableBox"></div></div>
-    <p class="qrNote" style="margin-top:8px;">斤量は確定前は「-」表示（確定次第この表にも反映）。体重は当日馬体重が発表前のため過去走の平均。上がりは過去走上位3走の自己ベスト平均。勝率・複勝率は全過去走からの通算成績。得意距離は距離別成績(2走以上のデータがある距離のみ)から複勝率最良の距離を選出、n=経験走数です。並び順（昇順/降順）は基準ごとに独立して覚えているわけではなく、基準を切り替えるとその基準の既定の並び順に戻ります。</p>
+    <p class="qrNote" style="margin-top:8px;">斤量は確定前「-」。体重は過去走の平均、上がりは自己ベスト3走の平均です。</p>
   </div>
   </div>
 
@@ -1086,7 +1090,7 @@
   <div class="panel"><div class="trendBox" id="trendBox"></div></div>
   <div class="panel" id="cmpPanel" style="margin-top:12px;">
     <h3 style="margin:0 0 4px;font-size:.86rem;color:var(--accent-deep);">今回の顔ぶれ vs 過去10年の傾向</h3>
-    <p class="lead" style="margin-bottom:8px;">「このレースは他と何が違うか」を、過去10年の傾向と今回の出走メンバー構成をカテゴリ別に見比べて確認できます。カテゴリは上の過去傾向と同じ4分類です。</p>
+    <p class="lead" style="margin-bottom:8px;">過去10年の傾向と今回のメンバー構成をカテゴリ別に見比べます。</p>
     <div class="cmpChips" id="cmpChips"></div>
     <div class="cmpGrid" id="cmpBox"></div>
   </div>
@@ -1096,7 +1100,7 @@
   <details class="fold" id="quantRank">
     <summary><span class="sec" style="display:inline;">定量ランキング（過去走の実測値から算出）</span></summary>
     <div class="foldBody">
-    <p class="lead">上の能力比較は評価スコアですが、こちらは過去走データそのものから機械的に計算した数値です（上がり3ハロン・斤量・距離別の着順など）。</p>
+    <p class="lead">こちらは評価スコアではなく、過去走データから機械的に計算した数値です。</p>
     <div class="panel" id="quantRankBox"></div>
     </div>
   </details>
@@ -1109,7 +1113,7 @@
   <h2 class="sec" id="views">他者の見方（事前評価）</h2>
   <!-- 実データには note 等の二次情報(T2)も並ぶため、全部を「一次引用」と説明しない
        （2026-07-30 指摘: 情報階層の表示と説明が矛盾していた） -->
-  <p class="lead">主要プロ予想家・メディア・関係者コメントの引用。一次情報と二次情報が混在するため、各カードの情報源表示（集計／一次／二次）で重みを確かめたうえで、自分の印付けを裏付ける／反証する材料に使う。</p>
+  <p class="lead">プロ予想家・メディア・関係者コメントの引用。各カードの情報源表示で重みを確かめてから使ってください。</p>
   <div id="viewsBox"></div>
 
   <h2 class="sec" id="pending">⏳ 今後の更新予定（チェックリスト）</h2>
@@ -1127,6 +1131,52 @@
 var DATA = {"race":{"title":"第74回 府中牝馬ステークス GⅢ","meta":"2026年6月21日(日) 東京・芝1800m・16頭立て・15:45発走","wx":["🌥️ 6/21想定: 曇り","降水確率 30%","馬場想定：良（前週の雨予報は緩和・tenki.jp 6/19時点）"],"predict_version":"v4 枠順確定反映","predict_revision":4,"predict_stage":"v4（6/19・枠順確定反映）。6/19の枠順確定（netkeiba）を全頭に反映し16頭立てで確定（特別登録19頭→キーパフォーマー・ユキワリザクラ除外、タガノエルピーダはしらさぎSへ）。印6頭の枠は ◎コガネノソラ6枠12番／◯ヴァルキリーバース3枠6番／▲ルージュソリテール8枠15番(大外)／△ニシノティアモ4枠8番／△エストゥペンダ3枠5番／☆パラディレーヌ7枠14番。東京1800mは枠の有利不利が小さく差し中心の本レースでは大きな減点材料なし、frame_pace軸は枠確定で確度(confidence)のみ引き上げ score据置、base rate二重計上を避け印・anchor順位は不変。天候は前週段階の雨予報がtenki.jp 6/19時点で曇り・降水確率30%へ緩和、良馬場想定（外差し前提のシナリオは維持しつつ高速馬場寄りに留意）。◯ヴァルキリーバースの大外回避(3枠)はプラス、▲ルージュソリテール大外8枠15番は差し脚質ゆえ致命傷ではないがロス警戒。 【以下v3までの記録】v3（6/18時点・最終追い切り反映）。6/18最終追い切りが各社で出揃い、印付き6頭すべてのcondition軸を最終実態に整合。◎コガネノソラ=美浦坂路800m54.2-終い12.6馬なり、菊沢師「リラックス・時計も予定通り」で順調(score4/信頼2->3)。◯ヴァルキリーバース=美浦ウッド重6F84.4-終い11.7馬なりと重馬場併せで終い優秀「前走より状態でいける」(score4/信頼2->3)。▲ルージュソリテール=栗東坂路最終は軽め(13.5)だが1週前の好内容を維持(score4/信頼2->3)。△ニシノティアモ(W重6F86.7-12.2「動き良い・舞台もいい」)・△エストゥペンダ(W良6F82.4-終い11.3「状態キープ」)は好内容でscore3->4・信頼2->3。☆パラディレーヌは意図的に軽めのCW3F(終い11.1)でscore据え置き・信頼2->3。全頭final_score/confidence_avg/anchor_scoreを再計算。枠順確定(6/19 16:30)・馬場発表(6/21 9:30)は未確定で次版(v4)へ。印（◎コガネノソラ・◯ヴァルキリーバース・▲ルージュソリテール 他）はv1から不変。 【v4・追記(6/19)】keiba-gasの10年データ基盤(2015-25・府中牝馬S 12回)を一次参照し、trends[]を人気別/脚質別/前走着順別の実複勝率(n・欠損率併記)で接地し直した。スコアカードを機械再計算(R14)した結果、枠順未確定下でレース全体のベースレートを個別馬の軸に足すと人気の二重計上になるため印・anchor_score順位は不変。印6頭が全て差し脚質で『差し追込有利(勝ち馬9/12)』傾向と整合する点、◎コガネノソラ(5番人気)は1番人気複勝58.3%の堅い舞台での人気薄ねらい=妙味とリスクの両面である点を可視化。trend_config.prev_bonusは前走レース名キーで前走着順別10年集計とは軸が異なるため不変。 【追記(6/19)】最終追い切り(6/18)はoikiri[]・condition軸に反映済だったが、info_check.final_oikiriが⏳『未公表』のまま残る整合漏れを是正(全6頭✅へ)。印・スコアは不変。 【ハンデ斤量・追記(6/19)】本レースは牝馬限定ハンデ重賞。確定斤量(netkeiba)は ◎コガネノソラ56.5kg＝トップハンデ／△ニシノティアモ56.0／☆パラディレーヌ56.0／◯ヴァルキリーバース55.5／▲ルージュソリテール55.0／△エストゥペンダ54.0(印馬最軽量)。◎コガネノソラの重賞連勝に対するトップハンデ(最軽量マカナ50.0kgと6.5kg差)はハンデ戦の構造的な向かい風で、人気でもリスク要因として明示(複数メディアもコガネノソラのトップハンデ不安を指摘)。ただし斤量はハンデキャッパーが地力を相殺する重りであり、本モデルのclass_ceiling/recent_form等が示す地力評価とは別軸。専用の斤量スコア軸を持たないため、現時点ではスコアの機械加点減点はせず(地力との二重計上回避)、◎の取りこぼしリスク／△エストゥペンダの軽ハンデの上振れ余地という形で文脈反映に留める。印・anchor順位は不変。斤量を評価軸として織り込むか(◎↔◯の入替可能性含む)はユーザー判断に委ねる。 【斤量を評価軸に計上・追記(6/20)】ユーザー指示によりハンデ斤量を専用impost軸(weight0.08、既存10軸は×0.92、score=clamp(3.0-(斤量-場平均54.4)×0.4,1,5)、信頼4=斤量確定)としてスコアカードに織り込み全頭再計算。結果、anchor上位2頭が ◯ヴァルキリーバース2.577 ＞ ◎コガネノソラ2.574 とごく僅差で逆転（差0.003＝事実上の同着）。要因は◎が56.5kgトップハンデ・◯が55.5kgで1kg軽い点。0.003差は計算ノイズ域のため印(◎コガネ/◯ヴァルキリー)は現時点で据え置き、本命入替の是非はユーザー判断に委ねる。impost軸はハンデ戦のみ適用、別定/定量戦は別途。 【前日情報・追記(6/20)】前日オッズ(yahoo/netkeiba 6/20)確定: ◯ヴァルキリーバース2.9倍(1番人気)／◎コガネノソラ6.5倍(2番人気)／△ニシノティアモ7.0倍(3番人気)／△エストゥペンダ7.7倍(4番人気)。市場が◯>◎としており、v4でハンデ斤量(impost軸)を計上した際にanchorが◯ヴァルキリーバース>◎コガネノソラへ僅差逆転した評価と整合(◎56.5kgトップハンデ・◯55.5kgの1kg差)。印は据え置き(◎コガネノソラ不変)、本命入替の是非はユーザー判断。天候は東京6/21が雨のち曇・降水80%・最高30℃(tenki.jp 6/20)で、前週v4時の降水30%緩和・良馬場想定から再悪化、当日は道悪(稍重〜重含み)濃厚。時計を要する馬場は印6頭が全て差し脚質である本線の外差しシナリオと方向性は合致するが、確定馬場発表(6/21 9:30)前のためスコアの機械再計算は次サイクルに留め、condition/track_fit軸のscore/confidenceは据え置き(base rate二重計上回避)。出走16頭・取消なし。 【当日情報・追記(6/21 13:00)】馬場確定: 東京6/21は天候曇・芝稍重(netkeiba当日)で発走。v4時の道悪(稍重〜重含み)想定に対し稍重で確定し想定範囲内。印6頭が全て差し脚質の外差し本線シナリオは維持(重ほどの極端さはなし)。各馬の稍重実績の新規裏取りは本サイクル未収集のため、track_fit軸のscore/confidenceは推測加点を避け据え置き(馬場は想定通りで再計算の必要なし)、印・anchor順位は不変。当日13時単勝オッズ(yahoo): ◯ヴァルキリーバース2.9倍(1人気)/△ニシノティアモ6.0倍(2人気)/◎コガネノソラ7.8倍(3人気)/△エストゥペンダ8.6倍(4人気)/セキトバイースト10.6倍(5人気)/▲ルージュソリテール11.7倍(6人気)。前日比で△ニシノティアモが人気上昇、◎コガネノソラは3番人気へ後退。市場の◯>◎はimpost軸計上後のanchor評価(◯僅差上位)と整合。馬場発表pending=done。パドック気配・14:45雨雲レーダーは発走前のため次サイクル確認。","predict_label":"v4・枠順/斤量計上","predict_asof":"2026-06-21 (日) 13:00 JST","fact_integrity_status":"PROVISIONAL","correction_of":1,"fact_correction_log":[{"horse":"コガネノソラ","field":"mark","before":"◯","after":"◎","mark_delta":"1段昇格（本命に）","ability_delta":"なし","bet_delta":"馬連BOX軸が ◎コガネノソラ-◯ヴァルキリーバース 構成に","note":"R14 active 適用：10軸版（血統・ローテ・度外視を追加）で総合スコア 2.381 が首位。ヴァルキリーバース 2.368 との差 0.013、tie-break で course_dist 5 vs 3 によりコガネノソラ優位。東京1800で2-2連対率100%が決定要因。","rule_applied":"R14_mark_revision_must_run_scorecard"},{"horse":"ヴァルキリーバース","field":"mark","before":"◎","after":"◯","mark_delta":"1段降格","ability_delta":"なし","bet_delta":"本命 → 対抗","note":"10軸化でコガネノソラに逆転される。jockey 5点（ルメール継続）は強いが、course_dist 3 vs コガネノソラ 5 で tie-break 負け。R14 active 適用結果。","rule_applied":"R14_mark_revision_must_run_scorecard"}],"race_id":"202605030611","odds_source":"netkeiba 想定オッズ 2026-06-14"},"pending_info":[{"label":"斤量確定（ハンデ）","when":"6/16(火)頃","memo":"recent_form/class軸の最終調整（6/16確定・反映済）","done":true},{"label":"最終追い切り","when":"6/17(水)〜6/18(木)","memo":"condition軸の確定／6/17-18確定: 印6頭すべて最終追い切りを反映済(condition score/信頼・info_check✅更新済)","done":true},{"label":"枠順確定","when":"6/19(金) 16:30","memo":"✅ 6/20枠順確定（16頭立て）。frame_pace軸を確度反映済（枠確定でconfidence+1）。◎コガネノソラ6枠12番ほか","done":true},{"label":"馬場発表","when":"6/21(日) 9:30","memo":"✅ 6/21 東京・芝稍重で確定(天候曇)。v4の道悪(稍重〜重)想定内のため軸の再計算は不要(track_fit score/confidence据置)、想定通りで確定。","done":true},{"label":"パドック気配・当日馬体重","when":"発走30〜60分前","memo":"confidence_avg補正","done":false},{"label":"【R10 active】発走60分前 雨雲レーダー再確認","when":"6/21(日) 14:45","memo":"tenki.jp / Yahoo!天気","done":false}],"external_views":[{"src":"netkeiba 出馬表 (T0)","stance":"data","target":"全頭","text":"19頭想定・牝(特指)ハンデ。ヴァルキリーバース 1番人気想定。","url":"https://race.netkeiba.com/race/shutuba.html?race_id=202605030611"},{"src":"競馬ヘッドライン (T2)","stance":"data","target":"コガネノソラ","text":"福島牝馬S重賞初勝利。東京1800で2-2連対率100%。脚部不安で間隔。","url":"https://keiba-headline.com/briefing-fuchu-hinba-stakes-runners-2026-400923"},{"src":"競馬ヘッドライン (T2)","stance":"bear","target":"ニシノティアモ","text":"今年3走目で疲労蓄積の懸念。","url":"https://keiba-headline.com/briefing-fuchu-hinba-stakes-runners-2026-400923"},{"src":"netkeiba 想定馬記事 (T1)","stance":"data","target":"全頭","text":"19頭想定。ヴァルキリーバース東風S勝ち、コガネノソラ福島牝馬S勝ち。","url":"https://news.netkeiba.com/?pid=news_view&no=334039"},{"src":"競馬の魅力 想定オッズ(Web)","stance":"data","target":"全頭","text":"想定人気: ヴァルキリーバース3.5/ニシノティアモ4.5/コガネノソラ6.5/パラディレーヌ8.0/ルージュソリテール9.5/エストゥペンダ11.0。上位5頭一桁オッズ想定。","url":"https://www.keibanomiryoku.com/%E5%BA%9C%E4%B8%AD%E7%89%9D%E9%A6%AC%E3%82%B9%E3%83%86%E3%83%BC%E3%82%AF%E3%82%B9"},{"src":"競馬予想のホネ(Web)","stance":"bull","target":"ルージュソリテール","text":"本命視。府中1800替わりで前進。最終追い切り評価は当日追記とのこと。","url":"https://www.yosounohone.com/entry/fuchuhinba-s-2026"},{"src":"ウマニティ 出走予定(Web)","stance":"data","target":"全頭","text":"傑出馬不在の一戦。前年覇者セキトバイースト(本予想では印外)が連覇狙い登録。19頭立て想定。","url":"https://umanity.jp/racedata/race_newsdet.php?nid=11872007"},{"src":"umanity（1週前追い切りウォッチ）","stance":"事前","text":"ルージュソリテールは一杯で併走相手を突き放す好内容で状態良好、ヴァルキリーバースは馬なりで終い好時計、ニシノティアモは東京コース替わりで注目","url":"https://umanity.jp/racedata/race_newsdet.php?nid=11872162"},{"src":"競馬の魅力 最終追い切り(Web 6/18)","stance":"data","target":"全頭","text":"全頭最終追い切り掲載。コガネノソラ坂路54.2-終い12.6馬なりで順調、ヴァルキリーバースW6F84.4-終い11.7馬なり「前走より状態でいける」、エストゥペンダW6F82.4-終い11.3、ニシノティアモW6F86.7-終い12.2。","url":"https://www.keibanomiryoku.com/article/fuchu-himba-stakes-2026-work-out.html"},{"src":"競馬ヘッドライン 追い切りベスト3(Web 6/18)","stance":"positive","target":"ヴァルキリーバース","text":"ヴァルキリーバース最終6F84.4-終い11.7、重い馬場ながらスムーズな脚取りで反応良好・一戦使われ順調に良化。エストゥペンダ6F82.4-終い11.3で成長を感じる。","url":"https://keiba-headline.com/best-work-out-horses-of-fuchu-hinba-stakes-2026-401056"},{"src":"netkeiba 枠順確定 (T0)","stance":"data","target":"全頭","text":"6/19枠順確定・16頭立て。◎コガネノソラ6枠12番/◯ヴァルキリーバース3枠6番/▲ルージュソリテール8枠15番/△ニシノティアモ4枠8番/△エストゥペンダ3枠5番/☆パラディレーヌ7枠14番。","url":"https://news.netkeiba.com/?no=334697&pid=news_view"},{"src":"tenki.jp 東京競馬場 (Web 6/19)","stance":"data","target":"馬場","text":"6/21(日)東京は曇り・降水確率30%・気温25℃前後。前週の雨予報は緩和、良馬場想定。","url":"https://tenki.jp/leisure/horse/3/16/32005/1hour.html"},{"src":"netkeiba 出馬表 斤量 (T0 6/19)","stance":"data","target":"全頭","text":"確定ハンデ斤量: コガネノソラ56.5(トップ)/ニシノティアモ56.0/パラディレーヌ56.0/ヴァルキリーバース55.5/ルージュソリテール55.0/エストゥペンダ54.0、最軽量マカナ50.0。","url":"https://race.netkeiba.com/race/shutuba.html?race_id=202605030611"},{"src":"yahoo/netkeiba 前日オッズ (T-1 6/20)","stance":"data","target":"全頭","text":"前日単勝オッズ: ヴァルキリーバース2.9倍(1人気)/コガネノソラ6.5倍(2人気)/ニシノティアモ7.0倍(3人気)/エストゥペンダ7.7倍(4人気)。市場は◯>◎で斤量込みのimpost軸評価と整合。","url":"https://sports.yahoo.co.jp/keiba/race/denma/2605030611"},{"src":"tenki.jp 天気 (T-1 6/20)","stance":"data","target":"馬場","text":"東京6/21は雨のち曇・降水80%・最高30℃。前週の降水30%緩和想定から再悪化し当日は道悪(稍重〜重含み)濃厚。確定発表は6/21 9:30。","url":"https://tenki.jp/leisure/3/16/102/6699/10days.html"},{"src":"netkeiba 当日馬場 (6/21)","stance":"data","target":"馬場","text":"東京6/21 天候曇・芝稍重で発走確定。v4の道悪想定内(稍重〜重→稍重)。外差し本線シナリオは維持。","url":"https://race.netkeiba.com/race/shutuba.html?race_id=202605030611"},{"src":"yahoo 当日オッズ (6/21 13:00)","stance":"data","target":"全頭","text":"当日単勝(13時): ◯ヴァルキリーバース2.9(1人気)/△ニシノティアモ6.0(2)/◎コガネノソラ7.8(3)/△エストゥペンダ8.6(4)/セキトバイースト10.6(5)/▲ルージュソリテール11.7(6)。前日比で△ニシノティアモ上昇・◎コガネ3番人気へ。","url":"https://sports.yahoo.co.jp/keiba/race/odds/tfw/2605030611"}],"trends":[{"title":"コース","text":"東京芝1800m。3コーナー過ぎから直線、最後の坂が決め手。"},{"title":"人気傾向(10年実集計)","text":"1番人気の複勝率58.3%と堅め。人気別複勝率は1-3番44.4%(n36)/4-6番31.4%(n35)/7-9番14.3%(n35)/10番人気以下6.5%(n62)、全体base21.4%。出典: keiba-gas 2015-25・府中牝馬S 12回の確定結果集計。"},{"title":"脚質傾向(10年実集計)","text":"差し25.0%(n56)・追込20.8%(n53)が先行19.1%(n47)・逃げ16.7%(n12)を上回り、勝ち馬は差し5/追込4で後半型が過半。印6頭は全て差し脚質で傾向と整合。"},{"title":"前走着順傾向(10年実集計)","text":"前走1着32.0%(n25)→2-3着28.6%(n35)→4-5着22.7%→6-9着18.2%→10着以下8.3%(n36)。前走好走が素直に効く。"},{"title":"血統メモ","text":"複勝好走の父はディープインパクト/ハーツクライ系が目立つが、sire欠損率12.9%のため断定は避ける(quality_10year.md)。"}],"trend_config":{"prev_bonus":{"ヴィクトリアマイル":2.0,"東風S":1.0,"福島牝馬S":1.5,"阪神牝馬S":0.5},"same_race_repeat_bonus":{}},"predicted_scenario":{"weather":"晴","going":"良","pace":"平均","bias":"フラット","chaos":"中"},"predicted_scenario_comment":"v2 R14 適用(2026-06-15 00:30 JST)。**10軸化 + Anchored Scorecard 機械実行で印逆転**。10軸版（血統・ローテ・度外視 追加）で総合スコア順位 (コガネノソラ 2.381 / ヴァルキリーバース 2.368 / ルージュ 1.841 / ニシノティアモ 1.769 / パラディレーヌ 1.518 / エストゥペンダ 1.408) が出た。コガネノソラの東京1800 2-2 連対率100% が course_dist 軸 5点で tie-break 勝ち、◎本命に昇格。ヴァルキリーバースはルメール継続騎乗の jockey 軸 5点が強いが course_dist 3点 で総合 2位に。差 0.013 という僅差なので、◎○は実質拮抗（馬連BOX軸で対応推奨）。**【R10 active】発走60分前に馬場再確認、雨で重馬場に振れたら差し型の◎○に有利→印維持**。fact_correction_log に詳細記録、旧 v1 不変保持。","top_horses":[{"no":6,"name":"ヴァルキリーバース","mark":"◯","pop":1,"color":"#c0392b","sex_age":"牝4","trainer":"美浦・田中博康","sire":"Roaring Lion","dam_sire":"Deep Impact","jockey":"C.ルメール","jockey_stat":"東京巧者・継続騎乗","leg":"差し","temper":"完成型","bloodline":"Roaring Lion×Deep Impact・東京中距離型","draw":"3枠6番","dist":"1800m最適","weight":null,"weight_trend":null,"oshi":"東風S勝ちの地力。ルメール継続騎乗+東京1800適性で本命級。","oikiri":[{"src":"競馬の魅力 想定オッズ(Web 6/16)","text":"想定1番人気3.5倍。「長期休養明け初戦の東風Sを能力だけで勝ち切った。前走の反動さえなければ力は上位」","url":"https://www.keibanomiryoku.com/%E5%BA%9C%E4%B8%AD%E7%89%9D%E9%A6%AC%E3%82%B9%E3%83%86%E3%83%BC%E3%82%AF%E3%82%B9"},{"src":"umanity 1週前追い切りウォッチ(Web)","text":"1週前: 馬なりで終い好時計をマーク。無理せずとも動ける状態にある点は好印象（最終6/18は各社未公表）","url":"https://umanity.jp/racedata/race_newsdet.php?nid=11872162"},{"src":"競馬の魅力 最終追い切り(Web 6/18)","text":"最終追い切り(6/18) 美浦ウッド・重 6F84.4-68.1-53.1-38.5-ラスト11.7(馬なり)。重い馬場ながらスムーズで反応良好、終い11.7は優秀。陣営「前走より状態でいける」。","url":"https://www.keibanomiryoku.com/article/fuchu-himba-stakes-2026-work-out.html"}],"last3":[{"race":"東風S(L)","date":"2026-04","jockey":"C.ルメール","agari":"33.4","order":1,"dist":"芝1600m"},{"race":"中山牝馬S(G3)","date":"2026-03","jockey":"C.ルメール","agari":"33.6","order":2,"dist":"芝1800m"},{"race":"クイーンS(G3)","date":"2025-07","jockey":"C.ルメール","agari":"34.0","order":3,"dist":"芝1800m"}],"info_check":{"final_oikiri":"✅ 最終(6/18)ウッド・反映済(condition軸score4/conf3)","jockey_change":"✅ ルメール継続","blinker_change":"❌","team_comment":"❌"},"tags_strong":["ルメール東京巧者","東風S勝ち","良血"],"tags_weak":["G3初勝ちならG2/G1相当の地力？"],"prev":"東風S(L)","prev_pop":2,"cont_jockey":true,"ability":[80,78,82,85,80],"base":81,"vol":1.0,"odds":5.6,"scorecard":{"axes":{"recent_form":{"score":4,"confidence":4,"evidence_ids":[],"anchor_note":"東風S勝ち"},"class_ceiling":{"score":4,"confidence":3,"evidence_ids":[]},"course_dist":{"score":3,"confidence":3,"evidence_ids":[]},"condition":{"score":4,"confidence":3,"evidence_ids":[],"anchor_note":"最終(6/18)美浦ウッド重6F84.4-終い11.7馬なり、重馬場併せで終い優秀。陣営「前走より状態でいける」。最終確定で信頼度2->3"},"jockey":{"score":5,"confidence":5,"evidence_ids":[],"anchor_note":"ルメール継続・東京巧者"},"track_fit":{"score":4,"confidence":4,"evidence_ids":[]},"frame_pace":{"score":3,"confidence":3,"evidence_ids":[]},"pedigree":{"score":4,"confidence":3,"evidence_ids":[],"anchor_note":"Roaring Lion×Deep Impact・東京中距離型"},"schedule":{"score":4,"confidence":4,"evidence_ids":[],"anchor_note":"東風S→2ヶ月・万全の間隔"},"trip_diff":{"score":2,"confidence":2,"evidence_ids":[],"anchor_note":"近走順当好走"},"impost":{"score":2.58,"confidence":4,"anchor_note":"ハンデ斤量55.5kg(場平均54.4比+1.1)。軽いほど高評価・k=0.4/kg。"}},"weights":{"recent_form":0.184,"class_ceiling":0.138,"course_dist":0.138,"condition":0.1196,"jockey":0.0736,"track_fit":0.0736,"frame_pace":0.0552,"pedigree":0.0736,"schedule":0.046,"trip_diff":0.0184,"impost":0.08},"raw_score":3.73,"adjustments":[],"final_score":3.73,"confidence_avg":3.4545,"anchor_score":2.5771},"impost":55.5},{"no":12,"name":"コガネノソラ","mark":"◎","pop":5,"color":"#2c7fb8","sex_age":"牝5","trainer":"美浦・菊沢隆徳","sire":"ルーラーシップ","dam_sire":"Sunday Silence","jockey":"菊沢一樹","jockey_stat":"厩舎の若手","leg":"差し","temper":"成長型","bloodline":"ルーラーシップ産駒・中距離型","draw":"6枠12番","dist":"1800m最適","weight":null,"weight_trend":null,"oshi":"東京1800で2-2の連対率100%。同条件での実績で◯候補。","oikiri":[{"src":"ウマニティ 1週前追い切り(Web)","text":"1週前の動き申し分なし。菊沢「前走以上にリラックスしていた」","url":"https://umanity.jp/racedata/race_newsdet.php?nid=11872007"},{"src":"競馬の魅力 想定オッズ(Web 6/16)","text":"想定3番人気6.5倍。「福島牝馬Sを9番人気で差し切り重賞2勝目。東京芝1800は2戦2勝」","url":"https://www.keibanomiryoku.com/%E5%BA%9C%E4%B8%AD%E7%89%9D%E9%A6%AC%E3%82%B9%E3%83%86%E3%83%BC%E3%82%AF%E3%82%B9"},{"src":"競馬の魅力 最終追い切り(Web 6/18)","text":"最終追い切り(6/18) 美浦坂路・良 800m 54.2-39.5-25.8-ラスト12.6(馬なり)。菊沢師「いい感じにリラックスしていたし、動きも時計も予定通りで良かった」。状態良好確定。","url":"https://www.keibanomiryoku.com/article/fuchu-himba-stakes-2026-work-out.html"}],"last3":[{"race":"福島牝馬S(G3)","date":"2026-04","jockey":"菊沢一樹","agari":"34.5","order":1,"dist":"芝1800m"},{"race":"中山牝馬S(G3)","date":"2026-03","jockey":"菊沢一樹","agari":"34.6","order":4,"dist":"芝1800m"},{"race":"OP特別 東京1800","date":"2025-10","jockey":"菊沢一樹","agari":"33.9","order":1,"dist":"芝1800m"}],"info_check":{"final_oikiri":"✅ 最終(6/18)坂路・反映済(condition軸score4/conf3)","jockey_change":"✅ 継続","team_comment":"⚠️ 脚部不安"},"tags_strong":["東京1800 2-2 連対率100%","重賞勝ち実績"],"tags_weak":["脚部不安","間隔あけ"],"prev":"福島牝馬S(G3)","prev_pop":9,"cont_jockey":true,"ability":[78,80,78,88,80],"base":81,"vol":1.1,"odds":10.3,"scorecard":{"axes":{"recent_form":{"score":4,"confidence":4,"evidence_ids":[],"anchor_note":"福島牝馬S 1着"},"class_ceiling":{"score":4,"confidence":3,"evidence_ids":[]},"course_dist":{"score":5,"confidence":5,"evidence_ids":[],"anchor_note":"東京1800 2-2 連対率100%"},"condition":{"score":4,"confidence":3,"evidence_ids":[],"anchor_note":"最終(6/18)美浦坂路800m54.2-終い12.6馬なり、菊沢師「いい感じにリラックス、動きも時計も予定通り」。最終確定で信頼度2->3"},"jockey":{"score":3,"confidence":3,"evidence_ids":[]},"track_fit":{"score":4,"confidence":3,"evidence_ids":[]},"frame_pace":{"score":3,"confidence":3,"evidence_ids":[]},"pedigree":{"score":4,"confidence":3,"evidence_ids":[],"anchor_note":"ルーラーシップ産駒・東京中距離型"},"schedule":{"score":4,"confidence":3,"evidence_ids":[],"anchor_note":"脚部不安で間隔開けて参戦"},"trip_diff":{"score":2,"confidence":3,"evidence_ids":[],"anchor_note":"中山牝馬S4着は道悪で度外視可"},"impost":{"score":2.17,"confidence":4,"anchor_note":"ハンデ斤量56.5kg(場平均54.4比+2.1)。軽いほど高評価・k=0.4/kg。トップハンデで構造的に減点。"}},"weights":{"recent_form":0.184,"class_ceiling":0.138,"course_dist":0.138,"condition":0.1196,"jockey":0.0736,"track_fit":0.0736,"frame_pace":0.0552,"pedigree":0.0736,"schedule":0.046,"trip_diff":0.0184,"impost":0.08},"raw_score":3.826,"adjustments":[],"final_score":3.826,"confidence_avg":3.3636,"anchor_score":2.5739},"impost":56.5,"impost_note":"トップハンデ"},{"no":15,"name":"ルージュソリテール","mark":"▲","pop":2,"color":"#e67e22","sex_age":"牝4","trainer":"栗東・藤原英昭","sire":"Maurice","dam_sire":"Galileo","jockey":"西塚洸二","jockey_stat":"関西若手","leg":"好位差し","temper":"完成型","bloodline":"Maurice産駒・中距離マイラー","draw":"8枠15番","dist":"1800m対応","weight":null,"weight_trend":null,"oshi":"阪神牝馬S 3着の地力。東京1800好走実績あり。","oikiri":[{"src":"競馬予想のホネ 本命評(Web)","text":"「ルージュソリテールでいくより他ない。右回りでモタれる点含め府中1800でこそ。前走3着は府中向き」。最終追い切り評価は当日追記予定","url":"https://www.yosounohone.com/entry/fuchuhinba-s-2026"},{"src":"競馬の魅力 想定オッズ(Web 6/16)","text":"想定5番人気9.5倍。「阪神牝馬SでG1馬2頭と0.2秒差3着、今年に入り成績が安定」","url":"https://www.keibanomiryoku.com/%E5%BA%9C%E4%B8%AD%E7%89%9D%E9%A6%AC%E3%82%B9%E3%83%86%E3%83%BC%E3%82%AF%E3%82%B9"},{"src":"umanity 1週前追い切りウォッチ(Web)","text":"1週前: 一杯に追われ併走相手を突き放して先着する好内容。重心の低い力強い走りで状態面はかなり良好（最終6/18は各社未公表）","url":"https://umanity.jp/racedata/race_newsdet.php?nid=11872162"},{"src":"競馬の魅力 最終追い切り(Web 6/18)","text":"最終追い切り(6/18) 栗東坂路・良 800m 54.9-40.2-26.9-ラスト13.5(馬なり)。最終は軽めに整える内容で、状態は1週前の好仕上がりを維持。","url":"https://www.keibanomiryoku.com/article/fuchu-himba-stakes-2026-work-out.html"}],"last3":[{"race":"阪神牝馬S(G2)","date":"2026-04","jockey":"西塚洸二","agari":"33.8","order":3,"dist":"芝1600m"},{"race":"中山牝馬S(G3)","date":"2026-03","jockey":"西塚洸二","agari":"34.1","order":5,"dist":"芝1800m"},{"race":"OP特別","date":"2025-12","jockey":"西塚洸二","agari":"33.5","order":2,"dist":"-"}],"info_check":{"final_oikiri":"✅ 最終(6/18)坂路・反映済(condition軸score4/conf3)","jockey_change":"✅ 継続"},"tags_strong":["G2 3着","東京1800適性"],"tags_weak":["決め手の限界"],"prev":"阪神牝馬S(G2)","prev_pop":4,"cont_jockey":true,"ability":[78,78,80,82,78],"base":79,"vol":1.0,"odds":5.7,"scorecard":{"axes":{"recent_form":{"score":4,"confidence":4,"evidence_ids":[],"anchor_note":"阪神牝馬S 3着"},"class_ceiling":{"score":3,"confidence":3,"evidence_ids":[]},"course_dist":{"score":4,"confidence":3,"evidence_ids":[]},"condition":{"score":4,"confidence":3,"evidence_ids":[],"anchor_note":"最終(6/18)栗東坂路800m54.9-終い13.5馬なり。最終は軽め整える程度だが1週前の好内容(一杯で併走相手突き放す)を維持。最終確定で信頼度2->3"},"jockey":{"score":3,"confidence":3,"evidence_ids":[]},"track_fit":{"score":3,"confidence":3,"evidence_ids":[]},"frame_pace":{"score":3,"confidence":3,"evidence_ids":[]},"pedigree":{"score":4,"confidence":3,"evidence_ids":[],"anchor_note":"Maurice×Galileo・中距離マイラー"},"schedule":{"score":3,"confidence":2,"evidence_ids":[],"anchor_note":"適正間隔"},"trip_diff":{"score":2,"confidence":2,"evidence_ids":[],"anchor_note":"順当"},"impost":{"score":2.77,"confidence":4,"anchor_note":"ハンデ斤量55.0kg(場平均54.4比+0.6)。軽いほど高評価・k=0.4/kg。"}},"weights":{"recent_form":0.184,"class_ceiling":0.138,"course_dist":0.138,"condition":0.1196,"jockey":0.0736,"track_fit":0.0736,"frame_pace":0.0552,"pedigree":0.0736,"schedule":0.046,"trip_diff":0.0184,"impost":0.08},"raw_score":3.4784,"adjustments":[],"final_score":3.4784,"confidence_avg":3.0,"anchor_score":2.087},"impost":55.0},{"no":8,"name":"ニシノティアモ","mark":"△","pop":3,"color":"#27ae60","sex_age":"牝5","trainer":"美浦・上原佑紀","sire":"Heart's Cry","dam_sire":"Singspiel","jockey":"津村明秀","jockey_stat":"関東中堅","leg":"差し","temper":"完成型","bloodline":"Heart's Cry産駒・中距離型","draw":"4枠8番","dist":"1800m対応","weight":null,"weight_trend":null,"oshi":"昨年福島記念勝ち。距離延長プラス。","oikiri":[{"src":"競馬の魅力 想定オッズ(Web 6/16)","text":"想定2番人気4.5倍。「VM6着、距離を延ばしさらに本領発揮できるはず」","url":"https://www.keibanomiryoku.com/%E5%BA%9C%E4%B8%AD%E7%89%9D%E9%A6%AC%E3%82%B9%E3%83%86%E3%83%BC%E3%82%AF%E3%82%B9"},{"src":"競馬の魅力 最終追い切り(Web 6/18)","text":"最終追い切り(6/18) 美浦ウッド・重 6F86.7-69.8-53.6-38.7-ラスト12.2(馬なり)。陣営「動きは良かったし、今回の舞台もいい」。","url":"https://www.keibanomiryoku.com/article/fuchu-himba-stakes-2026-work-out.html"}],"last3":[{"race":"ヴィクトリアマイル(G1)","date":"2026-05","jockey":"津村明秀","agari":"33.5","order":6,"dist":"芝1600m"},{"race":"中山牝馬S(G3)","date":"2026-03","jockey":"津村明秀","agari":"33.8","order":3,"dist":"芝1800m"},{"race":"福島記念(G3)","date":"2025-11","jockey":"津村明秀","agari":"34.3","order":1,"dist":"芝2000m"}],"info_check":{"final_oikiri":"✅ 最終(6/18)ウッド・反映済(condition軸score4/conf3)","jockey_change":"✅ 継続","team_comment":"⚠️ 今年3走目"},"tags_strong":["G3勝ち実績","VM 6着"],"tags_weak":["今年3走目で疲労","重賞勝ちは福島限定"],"prev":"ヴィクトリアマイル(G1)","prev_pop":6,"cont_jockey":true,"ability":[76,78,78,80,76],"base":78,"vol":1.1,"odds":6.9,"scorecard":{"axes":{"recent_form":{"score":3,"confidence":3,"evidence_ids":[],"anchor_note":"VM 6着・今年3走目で疲労懸念"},"class_ceiling":{"score":4,"confidence":3,"evidence_ids":[]},"course_dist":{"score":3,"confidence":3,"evidence_ids":[]},"condition":{"score":4,"confidence":3,"evidence_ids":[],"anchor_note":"最終(6/18)美浦ウッド重6F86.7-終い12.2馬なり、陣営「動きは良かった、今回の舞台もいい」。最終確定+好内容でscore3->4・信頼度2->3"},"jockey":{"score":3,"confidence":3,"evidence_ids":[]},"track_fit":{"score":3,"confidence":3,"evidence_ids":[]},"frame_pace":{"score":3,"confidence":3,"evidence_ids":[]},"pedigree":{"score":3,"confidence":3,"evidence_ids":[],"anchor_note":"Heart's Cry産駒・中距離"},"schedule":{"score":1,"confidence":4,"evidence_ids":[],"anchor_note":"今年3走目で疲労蓄積懸念"},"trip_diff":{"score":3,"confidence":3,"evidence_ids":[],"anchor_note":"VM6着は前傾ペースで度外視余地"},"impost":{"score":2.38,"confidence":4,"anchor_note":"ハンデ斤量56.0kg(場平均54.4比+1.6)。軽いほど高評価・k=0.4/kg。"}},"weights":{"recent_form":0.184,"class_ceiling":0.138,"course_dist":0.138,"condition":0.1196,"jockey":0.0736,"track_fit":0.0736,"frame_pace":0.0552,"pedigree":0.0736,"schedule":0.046,"trip_diff":0.0184,"impost":0.08},"raw_score":3.116,"adjustments":[],"final_score":3.116,"confidence_avg":3.1818,"anchor_score":1.9829},"impost":56.0},{"no":5,"name":"エストゥペンダ","mark":"△","pop":6,"color":"#16a085","sex_age":"牝4","trainer":"美浦・高柳瑞樹","sire":"ロードカナロア","dam_sire":"ハーツクライ","jockey":"荻野極","jockey_stat":"関東若手","leg":"差し","temper":"成長期","bloodline":"ロードカナロア×ハーツクライ","draw":"3枠5番","dist":"1800m対応","weight":null,"weight_trend":null,"oshi":"4歳の上り目。","oikiri":[{"src":"競馬の魅力 想定オッズ(Web 6/16)","text":"想定6番人気11.0倍","url":"https://www.keibanomiryoku.com/%E5%BA%9C%E4%B8%AD%E7%89%9D%E9%A6%AC%E3%82%B9%E3%83%86%E3%83%BC%E3%82%AF%E3%82%B9"},{"src":"競馬の魅力 最終追い切り(Web 6/18)","text":"最終追い切り(6/18) 美浦ウッド・良 6F82.4-65.5-50.4-36.3-ラスト11.3(G前仕掛け)。陣営「動きは良かったと思います。状態はキープしています」。終い11.3は優秀。","url":"https://www.keibanomiryoku.com/article/fuchu-himba-stakes-2026-work-out.html"}],"last3":[{"race":"OP特別","date":"2026-05","jockey":"荻野極","agari":"33.6","order":2,"dist":"-"},{"race":"3勝クラス","date":"2026-03","jockey":"荻野極","agari":"33.8","order":1,"dist":"-"},{"race":"OP特別","date":"2026-01","jockey":"荻野極","agari":"34.0","order":3,"dist":"-"}],"info_check":{"final_oikiri":"✅ 最終(6/18)ウッド・反映済(condition軸score4/conf3)","jockey_change":"✅ 継続"},"tags_strong":["4歳上り目","良血"],"tags_weak":["重賞未経験"],"prev":"OP特別","prev_pop":4,"cont_jockey":true,"ability":[74,74,76,76,78],"base":76,"vol":1.1,"odds":10.5,"scorecard":{"axes":{"recent_form":{"score":3,"confidence":3,"evidence_ids":[]},"class_ceiling":{"score":3,"confidence":2,"evidence_ids":[]},"course_dist":{"score":3,"confidence":2,"evidence_ids":[]},"condition":{"score":4,"confidence":3,"evidence_ids":[],"anchor_note":"最終(6/18)美浦ウッド良6F82.4-終い11.3(G前仕掛け)、陣営「動きは良かった、状態キープ」。終い11.3は good、score3->4・信頼度2->3"},"jockey":{"score":3,"confidence":3,"evidence_ids":[]},"track_fit":{"score":3,"confidence":2,"evidence_ids":[]},"frame_pace":{"score":3,"confidence":3,"evidence_ids":[]},"pedigree":{"score":4,"confidence":3,"evidence_ids":[],"anchor_note":"ロードカナロア×ハーツクライ・良血"},"schedule":{"score":3,"confidence":2,"evidence_ids":[],"anchor_note":"適正間隔"},"trip_diff":{"score":2,"confidence":2,"evidence_ids":[],"anchor_note":"順当"},"impost":{"score":3.17,"confidence":4,"anchor_note":"ハンデ斤量54.0kg(場平均54.4比-0.4)。軽いほど高評価・k=0.4/kg。"}},"weights":{"recent_form":0.184,"class_ceiling":0.138,"course_dist":0.138,"condition":0.1196,"jockey":0.0736,"track_fit":0.0736,"frame_pace":0.0552,"pedigree":0.0736,"schedule":0.046,"trip_diff":0.0184,"impost":0.08},"raw_score":3.1884,"adjustments":[],"final_score":3.1884,"confidence_avg":2.6364,"anchor_score":1.6812},"impost":54.0},{"no":14,"name":"パラディレーヌ","mark":"☆","pop":4,"color":"#9b59b6","sex_age":"牝4","trainer":"栗東・千田輝彦","sire":"Lord Kanaloa","dam_sire":"King Kamehameha","jockey":"原優介","jockey_stat":"関西若手","leg":"差し","temper":"立て直し期待","bloodline":"Lord Kanaloa×King Kamehameha","draw":"7枠14番","dist":"1800m対応","weight":null,"weight_trend":null,"oshi":"VM 12着の度外視可能性。千田厩舎の立て直し期待。","oikiri":[{"src":"競馬の魅力 想定オッズ(Web 6/16)","text":"想定4番人気8.0倍","url":"https://www.keibanomiryoku.com/%E5%BA%9C%E4%B8%AD%E7%89%9D%E9%A6%AC%E3%82%B9%E3%83%86%E3%83%BC%E3%82%AF%E3%82%B9"},{"src":"競馬の魅力 最終追い切り(Web 6/18)","text":"最終追い切り(6/18) 栗東CW・良 3F37.9-ラスト11.1(馬なり)。陣営「ストレスがかからないように広いコースで伸び伸びと」。意図的に軽め。","url":"https://www.keibanomiryoku.com/article/fuchu-himba-stakes-2026-work-out.html"}],"last3":[{"race":"ヴィクトリアマイル(G1)","date":"2026-05","jockey":"原優介","agari":"35.2","order":12,"dist":"芝1600m"},{"race":"中山牝馬S(G3)","date":"2026-03","jockey":"原優介","agari":"33.7","order":2,"dist":"芝1800m"},{"race":"OP特別","date":"2025-12","jockey":"原優介","agari":"33.5","order":1,"dist":"-"}],"info_check":{"final_oikiri":"✅ 最終(6/18)CW・反映済(condition軸score4/conf3)","jockey_change":"✅ 継続"},"tags_strong":["中山牝馬S 2着","立て直し期待"],"tags_weak":["VM 12着大敗"],"prev":"ヴィクトリアマイル(G1)","prev_pop":5,"cont_jockey":true,"ability":[74,75,78,74,76],"base":75,"vol":1.2,"odds":10.0,"scorecard":{"axes":{"recent_form":{"score":2,"confidence":2,"evidence_ids":[],"anchor_note":"VM 12着大敗・度外視可能性"},"class_ceiling":{"score":3,"confidence":3,"evidence_ids":[]},"course_dist":{"score":3,"confidence":3,"evidence_ids":[]},"condition":{"score":3,"confidence":3,"evidence_ids":[],"anchor_note":"最終(6/18)栗東CW良3F37.9-終い11.1馬なり、陣営「ストレスかからないよう広いコースで伸び伸びと」。最終確定で信頼度2->3(意図的に軽めのためscore据え置き)"},"jockey":{"score":3,"confidence":3,"evidence_ids":[]},"track_fit":{"score":3,"confidence":2,"evidence_ids":[]},"frame_pace":{"score":3,"confidence":3,"evidence_ids":[]},"pedigree":{"score":4,"confidence":3,"evidence_ids":[],"anchor_note":"Lord Kanaloa×King Kamehameha"},"schedule":{"score":3,"confidence":2,"evidence_ids":[],"anchor_note":"VMからの立て直し"},"trip_diff":{"score":4,"confidence":4,"evidence_ids":[],"anchor_note":"VM 12着は前傾ハイペース被害で明確な不利。落鉄レベルではないが度外視余地あり"},"impost":{"score":2.38,"confidence":4,"anchor_note":"ハンデ斤量56.0kg(場平均54.4比+1.6)。軽いほど高評価・k=0.4/kg。"}},"weights":{"recent_form":0.184,"class_ceiling":0.138,"course_dist":0.138,"condition":0.1196,"jockey":0.0736,"track_fit":0.0736,"frame_pace":0.0552,"pedigree":0.0736,"schedule":0.046,"trip_diff":0.0184,"impost":0.08},"raw_score":2.8584,"adjustments":[],"final_score":2.8584,"confidence_avg":2.9091,"anchor_score":1.6631},"impost":56.0}],"mini_horses":[{"no":1,"name":"マカナ","jockey":"未定","sex_age":"牝4","trainer":"美浦・伊藤大士","leg":"差し","last":"OP特別","why":"4歳・OP級","sim_base":65,"sim_vol":1.2,"color":"#a55eea","sire":"-","_check":"-","odds":28.0,"pop":13,"last2":[{"race":"OP特別","order":"-"}],"weight":null,"impost":50.0},{"no":2,"name":"ウイントワイライト","jockey":"横山典弘","sex_age":"牝4","trainer":"栗東・西園翔太","leg":"差し","last":"OP特別","why":"重賞級の力不足","sim_base":70,"sim_vol":1.1,"color":"#a55eea","sire":"-","_check":"-","odds":17.2,"pop":9,"last2":[{"race":"OP特別","order":"-"}],"weight":null,"impost":53.0},{"no":3,"name":"ブラウンラチェット","jockey":"未定","sex_age":"牝4","trainer":"美浦・手塚久雄","leg":"差し","last":"OP特別","why":"重賞挑戦","sim_base":62,"sim_vol":1.3,"color":"#a55eea","sire":"-","_check":"-","odds":66.8,"pop":16,"last2":[{"race":"OP特別","order":"-"}],"weight":null,"impost":54.0},{"no":4,"name":"ミアネーロ","jockey":"大野拓弥","sex_age":"牝5","trainer":"美浦・林徹","leg":"差し","last":"OP特別","why":"5歳・OP級","sim_base":60,"sim_vol":1.3,"color":"#a55eea","sire":"-","_check":"-","odds":76.6,"pop":17,"last2":[{"race":"OP特別","order":"-"}],"weight":null,"impost":55.0},{"no":7,"name":"セキトバイースト","jockey":"浜中俊","sex_age":"牝5","trainer":"栗東・四位洋文","leg":"差し","last":"OP特別","why":"5歳・OP級","sim_base":68,"sim_vol":1.2,"color":"#a55eea","sire":"-","_check":"-","odds":23.5,"pop":11,"last2":[{"race":"OP特別","order":"-"}],"weight":null,"impost":56.0},{"no":9,"name":"テリオスララ","jockey":"未定","sex_age":"牝4","trainer":"美浦・田島俊明","leg":"差し","last":"OP特別","why":"4歳・OP級","sim_base":65,"sim_vol":1.2,"color":"#a55eea","sire":"ハーツクライ","_check":"-","odds":31.2,"pop":14,"last2":[{"race":"OP特別","order":"-"}],"weight":null,"impost":54.0},{"no":10,"name":"ホールネス","jockey":"未定","sex_age":"牝6","trainer":"栗東・藤原英昭","leg":"差し","last":"OP特別","why":"6歳・OP級","sim_base":62,"sim_vol":1.3,"color":"#a55eea","sire":"-","_check":"-","odds":41.6,"pop":15,"last2":[{"race":"OP特別","order":"-"}],"weight":null,"impost":55.0},{"no":11,"name":"テレサ","jockey":"戸崎圭太","sex_age":"牝4","trainer":"栗東・杉山晴紀","leg":"差し","last":"OP特別","why":"4歳・重賞挑戦","sim_base":72,"sim_vol":1.1,"color":"#a55eea","sire":"-","_check":"-","odds":15.2,"pop":8,"last2":[{"race":"OP特別","order":"-"}],"weight":null,"impost":55.0},{"no":13,"name":"ビップデイジー","jockey":"西村淳也","sex_age":"牝4","trainer":"栗東・松下武士","leg":"差し","last":"OP特別","why":"4歳・差し","sim_base":70,"sim_vol":1.1,"color":"#a55eea","sire":"-","_check":"-","odds":20.1,"pop":10,"last2":[{"race":"OP特別","order":"-"}],"weight":null,"impost":54.0},{"no":16,"name":"セントメモリーズ","jockey":"木幡巧也","sex_age":"牝5","trainer":"美浦・松尾汎人","leg":"差し","last":"OP特別","why":"5歳・OP級","sim_base":58,"sim_vol":1.4,"color":"#a55eea","sire":"-","_check":"-","odds":173.6,"pop":18,"last2":[{"race":"OP特別","order":"-"}],"weight":null,"impost":52.0}],"scenario_weights":{"weather":{"晴":0.5,"曇":0.4,"雨":0.1},"going":{"良":0.7,"稍重":0.2,"重":0.1},"pace":{"平均":0.6,"やや前傾":0.2,"ハイ":0.2},"bias":{"フラット":0.6,"内有利":0.2,"外伸び":0.2}},"outlier_events":[{"label":"出遅れ","prob":0.02},{"label":"進路不利","prob":0.03},{"label":"落鉄","prob":0.005}],"bet_plans":[{"title":"本線（◎○2頭軸・馬連BOX+ワイド+3連複）- v2 R14 適用後","lines":[{"text":"馬連 ◎コガネノソラ × ◯ヴァルキリーバース (1点)","prefix":"本線","numbers":[]},{"text":"ワイド ◎-○-▲△△☆ (5点)","prefix":"保険","numbers":[]},{"text":"3連複 ◎○-▲△△☆ フォーメ (8点)","prefix":"本線","numbers":[]}],"buy_assumptions":{"odds_asof":"2026-06-14T14:00:00+09:00","odds_source":"netkeiba 想定オッズ（前週段階）","scenario_stability":"中（ハンデ・枠順・斤量未確定）","expected_value_note":null,"tier_required":["T0","T1"]},"note":"v2 で ◎○差 0.013 と実質拮抗。前週想定オッズベースなので EV/妙味の断定禁止。ハンデ確定（6/16頃）後に再評価必須。3連単は◎○差0.013 で見送り（差0.7未満基準）。"}],"source_ledger":[{"source_id":"keibagas_trends10y_2026-06-19_001","source_tier":"T0","origin_event_id":"single","url":"local:keiba-gas/data/yosou_trends.json","published_at":"2026-06-19T01:30:00+09:00","observed_at":"2026-06-19T01:30:00+09:00","fact_or_opinion":"fact","horse":"全頭","claim":"2015-25 重賞10年集計を一次参照(府中牝馬S=race_trends 12回 / しらさぎ=阪神芝マイルG3 course_profile 30R)。人気別・枠別・前走着順別・脚質別の複勝率と n・欠損率。リーク境界: 過去確定結果のベースレートで個別馬の未来情報には混ぜない。","status":"applied"}],"slug":"fuchu_himba_2026"};
 
 var AX = ["速さ","スタミナ","瞬発力","コース適性","仕上がり"];
+
+// data.json の src は収集経路つきの内部表記（"web:tospo-keiba.jp / umanity.jp"）。
+// 読者に見せるのは媒体名だけにする（内部の接頭辞・ドメインをUIに出さない・2026-08-03 指摘）。
+var SRC_MEDIA = {
+  'tospo-keiba.jp':'東スポ競馬', 'umanity.jp':'ウマニティ', 'nar.umanity.jp':'ウマニティ',
+  'daily.co.jp':'デイリースポーツ', 'nikkansports.com':'日刊スポーツ', 'sanspo.com':'サンスポ',
+  'hochi.news':'スポーツ報知', 'keibalab.jp':'競馬ラボ', 'winsight.jp':'ウインサイト',
+  'keiba-headline.com':'競馬ヘッドライン', 'tenki.jp':'tenki.jp', 'note.com':'note',
+  'netkeiba.com':'netkeiba', 'race.netkeiba.com':'netkeiba', 'news.netkeiba.com':'netkeiba',
+  'db.netkeiba.com':'netkeiba', 'nar.netkeiba.com':'netkeiba', 'netkeiba':'netkeiba',
+  'jra.go.jp':'JRA公式', 'jra.jp':'JRA公式', 'nankankeiba.com':'南関東公式',
+  'tokyocitykeiba.com':'東京シティ競馬', 'x.com':'X', 'youtube.com':'YouTube'
+};
+function srcLabel(src){
+  var s = String(src == null ? '' : src).trim();
+  if(!s) return '';
+  // 複数媒体は「A / B」「A／B」で並ぶ。URL 内の / と混ざらないよう、
+  // 半角スラッシュは前後に空白がある場合だけ区切りとして扱う。
+  return s.split(/\s*／\s*|\s+\/\s+|\s*・\s*/).map(function(part){
+    var d = part.replace(/^(web|url|src)\s*:\s*/i, '')
+                .replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0].trim();
+    return SRC_MEDIA[d] || SRC_MEDIA[d.replace(/^[a-z0-9-]+\./, '')] || d;
+  }).filter(function(v, i, a){ return v && a.indexOf(v) === i; }).join('・');
+}
+function emphScenario(txt){
+  return escHtml(txt).replace(/(雨|豪雨|曇|重|稍重|不良|良|道悪|内有利|外伸び|前残り|先行力|差し|逃げ|斤量|枠順|追い切り|当日馬場|波乱|荒れ|高|低|本命|信頼度|リスク|上方修正)/g, '<b>$1</b>');
+}
+// 出走馬名リスト（長い名前優先で部分マッチの取りこぼしを防ぐ）
+var _HORSE_NAMES = null;
+function horseNames(){
+  if(_HORSE_NAMES) return _HORSE_NAMES;
+  var names = [];
+  (DATA.top_horses||[]).concat(DATA.mini_horses||[]).forEach(function(h){ if(h && h.name) names.push(h.name); });
+  names.sort(function(a,b){ return b.length - a.length; });
+  _HORSE_NAMES = names;
+  return names;
+}
+// 内部の識別子（データ源キー・フィールド名）が本文に混ざった版を描画時に落とす最後の防波堤。
+// 本来は data.json に書かない側で守る（references/writing-rules.md）。2026-08-03 指摘。
+var JARGON_RE = /^(?:yosou_trends(?:\.json)?|freshness_warning|trend_config(?:\.[A-Za-z0-9_]+)*|scenario_stability|odds_asof|predict_stage|predict_revision|source_tier|origin_event_id|sim_base|anchor_score|final_score|confidence_avg|pop_provisional|fact_integrity_status|cross_category_review|walk-forward|race_count|runs)(?:\s*=\s*[A-Za-z0-9_.\-]+)?$/;
+function deJargon(txt){
+  return String(txt == null ? '' : txt).replace(/[（(]([^（()）]*)[）)]/g, function(m, inner){
+    var parts = inner.split(/\s*[・,、\/／]\s*/).filter(Boolean);
+    return (parts.length && parts.every(function(p){ return JARGON_RE.test(p.trim()); })) ? '' : m;
+  }).replace(/[ 　]{2,}/g, ' ').trim();
+}
 
 // ========== 馬色バッジの文字色を自動判定 ==========
 // 馬ごとの色(data.json の color)を背景に白文字を乗せていたため、淡い色では
@@ -1788,7 +1838,7 @@ function pvRelTime(asof){
   box.innerHTML = head + '<ul class="pendChk">' + list.map(function(p){
     return '<li class="'+(p.done?'done':'')+'"><span class="ck">'+(p.done?'☑':'☐')+'</span>'
          + '<div class="pcbody"><div class="pctop"><b>'+p.label+'</b>'+(p.when?'<span class="when">'+p.when+'</span>':'')+'</div>'
-         + (p.memo?'<div class="pcmemo">'+p.memo+'</div>':'')+'</div></li>';
+         + (p.memo?'<div class="pcmemo">'+deJargon(p.memo)+'</div>':'')+'</div></li>';
   }).join("") + '</ul>';
 })();
 
@@ -1803,7 +1853,7 @@ function pvRelTime(asof){
   var TIER_LABEL = {T0:'集計情報', T1:'一次情報', T2:'二次情報'};
   function friendlySrc(src){
     var m = String(src||'').match(/^(T[0-2]):(.*)$/);
-    return escHtml(m ? (TIER_LABEL[m[1]]||m[1])+'：'+m[2] : src);
+    return escHtml(m ? (TIER_LABEL[m[1]]||m[1])+'：'+srcLabel(m[2]) : srcLabel(src));
   }
   // 外部記事から機械取得した値をそのまま innerHTML に入れると、取得元にHTMLが混ざった時点で
   // 公開サイト上で任意スクリプトが動く（2026-07-30 指摘）。文字列は escHtml、URLは
@@ -1845,7 +1895,7 @@ function pvRelTime(asof){
 // 先頭の1文だけを本文に出し、残りと出典メタは折りたたむ（2026-08-01 指摘）
 function trendDeco(s){
   // (n=29) のような標本数は判断に効くので残すが、主張より弱く見せる
-  return s.replace(/[（(]n=(\d+)[）)]/g,'<span class="nsm">(n=$1)</span>');
+  return deJargon(s).replace(/[（(]n=(\d+)[）)]/g,'<span class="nsm">(n=$1)</span>');
 }
 document.getElementById("trendBox").innerHTML = DATA.trends.map(function(t){
   var txt=String(t.text||''), meta='';
@@ -1868,7 +1918,8 @@ document.getElementById("trendBox").innerHTML = DATA.trends.map(function(t){
 // 採点根拠なので data.json からは消さず、新しい2件だけを本文に出して残りは畳む。
 var OIK_SHOW = 2;
 function oikItemHtml(o){
-  var src = o.url ? '<a href="'+o.url+'" target="_blank">'+o.src+'</a>' : o.src;
+  var label = escHtml(srcLabel(o.src));
+  var src = o.url ? '<a href="'+o.url+'" target="_blank">'+label+'</a>' : label;
   return '<div><b>'+src+':</b> 「'+emphOikiri(o.text)+'」</div>';
 }
 function oikBlock(list){
@@ -1879,7 +1930,7 @@ function oikBlock(list){
   var rest   = list.slice(0, Math.max(0, list.length-OIK_SHOW)).reverse();
   var body = newest.map(oikItemHtml).join('');
   if(rest.length){
-    var names = rest.map(function(o){ return String(o.src||'').replace(/<[^>]*>/g,'').slice(0,12); }).join('・');
+    var names = rest.map(function(o){ return srcLabel(o.src).replace(/<[^>]*>/g,'').slice(0,12); }).join('・');
     body += '<details class="tMore"><summary>以前の評価 '+rest.length+'件（'+names+'）</summary><div>'
           + rest.map(oikItemHtml).join('') + '</div></details>';
   }
@@ -1989,22 +2040,9 @@ function escHtml(txt){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
   });
 }
-function emphScenario(txt){
-  return escHtml(txt).replace(/(雨|豪雨|曇|重|稍重|不良|良|道悪|内有利|外伸び|前残り|先行力|差し|逃げ|斤量|枠順|追い切り|当日馬場|波乱|荒れ|高|低|本命|信頼度|リスク|上方修正)/g, '<b>$1</b>');
-}
-// 出走馬名リスト（長い名前優先で部分マッチの取りこぼしを防ぐ）
-var _HORSE_NAMES = null;
-function horseNames(){
-  if(_HORSE_NAMES) return _HORSE_NAMES;
-  var names = [];
-  (DATA.top_horses||[]).concat(DATA.mini_horses||[]).forEach(function(h){ if(h && h.name) names.push(h.name); });
-  names.sort(function(a,b){ return b.length - a.length; });
-  _HORSE_NAMES = names;
-  return names;
-}
 // 他者の見方・過去傾向テキスト用: HTMLエスケープ後、馬名と要点キーワードを太字化。
 function emphText(txt){
-  var s = escHtml(txt);
+  var s = escHtml(deJargon(txt));
   horseNames().forEach(function(n){
     var e = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     if(e) s = s.replace(new RegExp(e, 'g'), '<b class="hn">'+escHtml(n)+'</b>');
@@ -2117,7 +2155,7 @@ function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u
     cpFit = Object.keys(cp.fit_rule).filter(function(k){return /◎/.test(cp.fit_rule[k]);})
       .map(function(k){return k + cp.fit_rule[k].charAt(0);}).join(' ');
   }
-  if(cp && !cpFit) cpFit = shortText(cp.bias_leg || cp.straight_note || '', 26);
+  if(cp && !cpFit) cpFit = shortText(deJargon(cp.bias_leg || cp.straight_note || ''), 26);
   var courseCard = cp
     ? '<div class="signalCard"><div><b>有利な脚質</b><strong>'+(cpFit || '-')+'</strong><small>'+shortText(cp.name || 'コース', 24)+'</small></div></div>'
     : '';
@@ -2166,8 +2204,8 @@ function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u
   var bias = '';
   if(cp.bias_leg||cp.bias_frame){
     bias = '<div class="cp-bias"><b>バイアス</b><br>'
-      + (cp.bias_leg?'脚質: '+cp.bias_leg+'<br>':'')
-      + (cp.bias_frame?'枠: '+cp.bias_frame:'') + '</div>' + fit;
+      + (cp.bias_leg?'脚質: '+deJargon(cp.bias_leg)+'<br>':'')
+      + (cp.bias_frame?'枠: '+deJargon(cp.bias_frame):'') + '</div>' + fit;
   }
   box.innerHTML = '<div class="courseprofile"><h3>コース特性 - '+(cp.name||'')+'</h3>'
     + '<div class="cp-grid">'+grid+'</div>' + bias + '</div>';
@@ -2216,7 +2254,7 @@ function applyPickStripVisibility(){
       + '<span class="pc-mark">'+h.mark+'</span>' + leg
       + '<div class="pc-body">'
       +   '<div class="pc-name">'+no+' '+h.name+'</div>'
-      +   '<div class="pc-meta"><span class="pc-pop">'+pop+'</span>'+(h.sex_age?'<span>'+h.sex_age+'</span>':'')+favBtnHtml(h.name,'sm')+'</div>'
+      +   '<div class="pc-meta"><span class="pc-pop">'+pop+'</span>'+(h.sex_age?'<span>'+h.sex_age+'</span>':'')+favBtnHtml(h.name,'sm')+memoBtnHtml(h.name,'sm')+'</div>'
       +   (catchTxt ? '<div class="pc-catch">'+catchTxt+'</div>' : '')
       +   '<a class="pc-jump" href="#horse-'+h.name.replace(/\s+/g,'-')+'">カード詳細 →</a>'
       + '</div></div>';
@@ -2365,7 +2403,7 @@ function applyPickStripVisibility(){
           // サマリ（日本語ラベル）
           var summary = '<div style="font-size:.74rem;margin-top:8px;padding-top:6px;border-top:1px solid #e5e7eb;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">';
           if(sc.raw_score!==undefined) summary += '<span title="raw_score = 7軸スコアの加重平均（補正適用前）">加重合計 <b>'+(typeof sc.raw_score==='number'?sc.raw_score.toFixed(2):sc.raw_score)+'</b></span>';
-          if(sc.final_score!==undefined && sc.adjustments && sc.adjustments.length) summary += '<span title="final_score = 加重合計 + adjustments の合計">補正後 <b>'+(typeof sc.final_score==='number'?sc.final_score.toFixed(2):sc.final_score)+'</b></span>';
+          if(sc.final_score!==undefined && sc.adjustments && sc.adjustments.length) summary += '<span title="10観点の加重合計に、加点・減点を反映した点数">補正後 <b>'+(typeof sc.final_score==='number'?sc.final_score.toFixed(2):sc.final_score)+'</b></span>';
           if(sc.confidence_avg!==undefined) summary += '<span title="各軸の情報量（採点根拠の充実度）の平均。0/5=ほぼ材料なし、5/5=一次情報まで揃った確信ベース">情報量 <b>'+(typeof sc.confidence_avg==='number'?sc.confidence_avg.toFixed(2):sc.confidence_avg)+'/5</b></span>';
           if(sc.anchor_score!==undefined) summary += '<span style="background:rgba(91,141,239,.18);padding:2px 10px;border-radius:6px;font-weight:700;" title="総合スコア = 加重合計 × (情報量/5)。印選定に使う内部ランキング値。情報量(確信度)が低い段階(追切/枠順前)は低めに出る">総合スコア（確信反映後） <b style="color:#3b5fc7;">'+(typeof sc.anchor_score==='number'?sc.anchor_score.toFixed(2):sc.anchor_score)+'</b></span>';
           summary += '</div>';
@@ -2383,10 +2421,10 @@ function applyPickStripVisibility(){
                + rows + adj + summary + legend + '</div></details>';
         })()
       + (function(){
-          // 連覇プレミアム表示（trend_config.same_race_repeat_bonus）
+          // 連覇プレミアム表示（内部ルール番号・フィールド名は読者面に出さない）
           var bonus = (DATA.trend_config && DATA.trend_config.same_race_repeat_bonus) || {};
           var v = bonus[h.name]; if(!v) return '';
-          return '<div style="margin-top:6px;padding:4px 10px;background:rgba(217,156,71,.16);border-left:3px solid #d99c47;border-radius:6px;font-size:.78rem;color:#7a5a1d;"><b>連覇プレミアム R12</b> course_dist 軸に +'+v+' 加点（trend_config.same_race_repeat_bonus）</div>';
+          return '<div style="margin-top:6px;padding:4px 10px;background:rgba(217,156,71,.16);border-left:3px solid #d99c47;border-radius:6px;font-size:.78rem;color:#7a5a1d;"><b>連覇プレミアム</b> このレースを勝った実績を評価し、コース距離に +'+v+' 加点しています</div>';
         })()
       + '</div>';
   });
@@ -2471,7 +2509,7 @@ function applyPickStripVisibility(){
       + miniOik
       + aptHtml
       + (hasMarks && m.pop && m.pop<=6 ? '<div class="factChip warn" style="margin:4px 0 0;">⚠ 人気'+m.pop+'番なのに軽視した理由</div>' : '')
-      + '<div class="why">'+m.why+'</div>'
+      + '<div class="why">'+deJargon(m.why)+'</div>'
       + '</div>';
   });
   document.getElementById("mini").innerHTML = mhtml;
@@ -3737,7 +3775,7 @@ initBetSlip();
 function verdictBetLean(winPct, tier, score, hasOdds, fullField){
   // winPct が null = シミュ対象外(能力データ未整備)。勝率0%として扱うと「押さえ程度」等の
   // 断定が出てしまうため、判定に入れず未算出であることを明示する。
-  if(winPct==null) return 'シミュ未算出（能力データ未整備）。印と採点で判断';
+  if(winPct==null) return 'データ不足でシミュ未算出。印と採点で判断';
   if(winPct>=20) return (hasOdds && fullField)
       ? '軸候補。単勝も面白い'
       : '軸候補。単勝の妙味はオッズ確定後に判断';
@@ -3786,8 +3824,7 @@ function verdictBetLean(winPct, tier, score, hasOdds, fullField){
   var warn = diffs.length
     ? '<div class="verdictWarn"><b>⚠ 見方が割れています</b><ul>'
         + diffs.map(function(d){ return '<li>' + d + '</li>'; }).join('')
-        + '</ul><small>印・市場人気・シミュレーションが一致していません。一つの結論に絞らず差異のまま示します。'
-        + 'どの見方を採るかを決めてから買ってください。</small></div>'
+        + '</ul><small>どの見方を採るかを決めてから買ってください。</small></div>'
     : '';
 
   var marked = sortByMark(DATA.top_horses||[]);
@@ -3810,13 +3847,15 @@ function verdictBetLean(winPct, tier, score, hasOdds, fullField){
       ? '（実績'+aptSym(apt.track_fit_score)+'／枠・脚質'+aptSym(apt.frame_pace_score)+'）' : '';
     if(tier) bits.push('条件相性'+tier.charAt(0)+aptSplitTxt);
     if(winPct!=null) bits.push('シミュ勝率'+winPct+'%');
-    else if(excluded[h.no]) bits.push('シミュ対象外（能力データ未整備）');
+    else if(excluded[h.no]) bits.push('シミュ対象外');
+    // 結論 → 数値 → 根拠 の順。以前は数値を先に並べて最後に結論を置いていたが、
+    // スマホでは1行目しか読まれない前提で「どう買うか」を先頭に出す（2026-08-03 指摘）。
     return '<div class="verdictCard" style="--c:'+(h.color||'#888')+'">'
       + '<div class="vHd"><b class="vMk">'+(h.mark||'-')+'</b><b class="vNm">'+h.no+' '+h.name+'</b></div>'
+      + '<div class="vConcl">'+lean+(conf?'<span class="vConf">信頼度'+conf+'</span>':'')+'</div>'
       + (bits.length?'<div class="vBits">'+bits.join(' ・ ')+'</div>':'')
       + (reasonBits.length?'<div class="vReason">'+reasonBits.join('／')+'</div>':'')
       + (aptSplitTxt?'<div class="vSplit">'+aptWhy(apt)+'</div>':'')
-      + '<div class="vConcl">結論：'+lean+(conf?'（情報信頼度'+conf+'）':'')+'</div>'
       + '</div>';
   }).join('');
 })();

@@ -558,9 +558,14 @@
   .verdictCard .vMk{font-size:1.1rem;color:var(--c,#888);}
   .verdictCard .vNm{font-size:.95rem;}
   .verdictCard .vBits{font-size:.74rem;color:var(--sub);margin-top:3px;}
+  /* 情報の信頼度は「（情報信頼度高）」のような括弧書きにせず、結論行の右に小さなバッジで出す
+     （括弧の但し書きはスマホで文が伸びて読みにくいだけ・2026-08-03 指摘）。 */
+  .verdictCard .vConf{font-size:.66rem;font-weight:700;padding:1px 6px;border-radius:999px;
+    background:rgba(19,52,79,.08);color:var(--sub);vertical-align:middle;margin-left:6px;}
   .verdictCard .vReason{font-size:.76rem;color:var(--ink);margin-top:3px;}
   .verdictCard .vSplit{font-size:.72rem;color:#7a5a12;background:rgba(191,148,32,.11);border-radius:6px;padding:4px 8px;margin-top:5px;line-height:1.5;}
-  .verdictCard .vConcl{font-size:.82rem;font-weight:700;margin-top:6px;color:var(--accent-deep);}
+  /* 結論はカードの1行目（馬名の直下）。根拠の数値はその下に置く＝結論先行（2026-08-03 指摘） */
+  .verdictCard .vConcl{font-size:.86rem;font-weight:700;margin-top:4px;color:var(--accent-deep);line-height:1.45;}
   /* 印・市場人気・シミュが割れたときの警告。結論を1つに丸めず差異のまま提示する */
   .verdictWarn{background:#fff8e6;border:1px solid #e0c265;border-left:4px solid #c8901a;border-radius:var(--radius-md);padding:11px 14px;box-shadow:var(--shadow-1);}
   .verdictWarn b{display:block;font-size:.9rem;color:#8a5c05;margin-bottom:6px;}
@@ -622,12 +627,12 @@
   .note{font-size:.78rem;color:var(--sub);margin-top:18px;border-top:1px solid var(--line);padding-top:12px;}
   /* === スマホ最適化（<=600px）。PC デザインは不変、狭幅での可読性のみ調整 === */
   @media(max-width:600px){
-    /* 下余白は固定ボタン3つ（左下=アーカイブ / 右下=トップへ戻る / その上=要望）の
+    /* 下余白は固定ボタン（左下=アーカイブ / 右下=要望 / その上=トップへ戻る）の
        占有分を確保する。56pxでは最下部までスクロールしたときに本文（最終判断カードの
-       文章）が実際に隠れていた（2026-07-25指摘）。128pxでも一番高い要望ボタン
-       （bottom:126px・高さ40px＝下端から166px）に免責文が被っていたため、
-       166px＋余白14pxの180pxまで広げる（390px実測・2026-07-26指摘）。 */
-    .wrap{padding:16px 12px 180px;padding-bottom:calc(180px + env(safe-area-inset-bottom));}
+       文章）が実際に隠れていた（2026-07-25指摘）。
+       要望ボタンを右下隅（bottom:16px）へ下ろしたため、最上段は .toTop の
+       bottom:74px＋高さ44px＝118px。余白14pxを足した132pxで足りる（2026-08-03指摘）。 */
+    .wrap{padding:16px 12px 132px;padding-bottom:calc(132px + env(safe-area-inset-bottom));}
     header.hero{padding:18px 16px 17px;border-radius:14px;}
     header.hero h1{font-size:1.24rem;line-height:1.22;margin-bottom:5px;}
     header.hero .meta{font-size:.78rem;line-height:1.45;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
@@ -872,7 +877,6 @@
 
   <!-- 最終判断: 印・評価・適性・シミュ結果を1頭1枚に統合。下の詳細指標を読む前に結論だけ分かるようにする -->
   <h2 class="sec" id="verdict">最終判断</h2>
-  <p class="lead">印・総合評価・条件相性・展開シミュを1頭1行に要約。条件相性は「コース実績」と「枠・脚質」の合成で、割れている馬は内訳を併記します。</p>
   <div id="verdictBox" class="verdictList"></div>
 
   <!-- 買い目（馬名付き）: 結論を先に。ファーストビュー直下へ配置 -->
@@ -897,7 +901,7 @@
   <div id="scExplainMount"></div>
 
   <h2 class="sec" id="minisec">印をつけなかった馬（全頭・その理由）</h2>
-  <p class="lead">能力評価のデータが薄い馬は数値推定を出していません（信頼度の偽装を避けるため）。</p>
+  <p class="lead">データが薄い馬は数値推定を出していません。</p>
   <div class="mini" id="mini"></div>
 
   <a class="pageJump toMain" data-page="detail" href="index.html">◀ 予想ページに戻る<small>（印・買い目・全頭の評価）</small></a>
@@ -917,7 +921,7 @@
 
   <div class="dpage">
   <h2 class="sec" id="bet">配分シミュレーター（買い目を組む）</h2>
-  <p class="lead">①（任意）総予算を決める → ② 買い方と馬を選んで金額を入れ「買い目に追加」→ ③ 下の<b>展開シミュレーション</b>を実行すると、この買い目の<b>収支・的中率・破産（元割れ）率</b>が出ます。オッズは想定（sim由来）です。</p>
+  <p class="lead">買い方と馬を選んで金額を入れ「買い目に追加」。下の<b>展開シミュレーション</b>を実行すると<b>収支・的中率・元割れ率</b>が出ます。オッズは想定値です。</p>
   <details class="panel" style="margin-bottom:14px;background:var(--card);">
     <summary style="cursor:pointer;font-weight:700;color:var(--accent);font-size:.95rem;">馬券の種類と説明（クリックで開閉）</summary>
     <div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:10px;font-size:.85rem;">
@@ -963,7 +967,7 @@
     </div>
     <div id="betSlipList" class="bsList"></div>
     <div id="betSlipTotal" class="bsTotal"></div>
-    <p class="lead" style="margin-top:10px;"><b>収支の結果は下の「展開シミュレーション」を実行すると表示されます</b>（この買い目＋着順分布から計算）。</p>
+    <p class="lead" style="margin-top:10px;"><b>収支は下の「展開シミュレーション」を実行すると出ます。</b></p>
     <details class="panel" style="margin:12px 0 0;background:var(--card);">
       <summary style="cursor:pointer;font-weight:700;color:var(--accent);font-size:.9rem;">参考：出走馬とオッズ一覧（印 / 枠 / 馬番 / 馬名 / 想定単勝オッズ）</summary>
       <div class="bsRef" id="betHorseRef" style="margin-top:10px;"></div>
@@ -1038,7 +1042,7 @@
         </tbody>
       </table>
       <p style="margin:0;font-size:.78rem;color:#5b6b7d;">
-        <b>なぜこれが効くか:</b> 「近2走大敗だから△に下げる」のような文章判断は再現性が低く、近走軸のスコア低下と他軸スコア維持の合成で十分に近い結果が出る。印を動かすときは必ずこの採点を先に機械的に計算し、その結果表から印を決める運用を徹底しているため、直感だけで印が動くことはない。
+        <b>なぜこれが効くか:</b> 印は必ずこの採点を先に計算してから決めるので、直感だけで動くことがない。
       </p>
     </div>
   </details>
@@ -1096,13 +1100,13 @@
   <!-- 狙い目の参考（人気馬の危なさ＋逆転候補）。未適用/空のレースではセクションごと非表示にする -->
   <section id="refpickSection">
   <h2 class="sec" id="refpick">狙い目の参考（人気馬の危なさ・逆転候補）</h2>
-  <p class="lead">過去のレース成績データから「人気ほど信用できない馬」と「人気馬が崩れた時に浮上しそうな馬」を整理した参考情報です。<b>買えば得する、という話ではありません</b>。堅い決着も多いレースでは、本命サイド中心が無難です。</p>
+  <p class="lead">「人気ほど信用できない馬」と「その馬が崩れた時に浮上しそうな馬」の一覧。<b>買えば得する話ではありません。</b></p>
   <div id="referencePickBox"></div>
   </section>
 
   <div class="dpage">
   <h2 class="sec" id="abil">能力比較（上位馬のみ・5項目並列）</h2>
-  <p class="lead">中位以下はデータ不足のため対象外。誰が何で勝っているかを項目別に確認できます。</p>
+  <p class="lead">中位以下はデータ不足のため対象外です。</p>
   <div class="panel"><div class="axisBars" id="abilBox"></div></div>
   </div>
 
@@ -1112,7 +1116,7 @@
 
   <div class="dpage">
   <h2 class="sec" id="sortview">出走馬 並び替えビュー</h2>
-  <p class="lead">斤量・上がり・勝率・体重などをボタン1つで一気に並び替え。昇順/降順も切り替え可能です。予想ページ(1ページ目)と同じデータをその場で計算しているので、データが更新されればここも自動で反映されます。「MY印・コメント」列の＋で自分の印を、✎でコメント（自由記述メモ）をこの表からも付けられます。</p>
+  <p class="lead">列の見出しをタップで並び替え。＋で自分の印、✎でメモを付けられます。</p>
   <div class="panel">
     <div class="hsChips" id="hsChips">
       <button type="button" class="hsChip on" data-mode="no" onclick="hsSetSort('no')">馬番順</button>
@@ -1129,7 +1133,7 @@
       <button type="button" class="hsChip hsDirChip" data-dir="desc" onclick="hsSetDir('desc')">▼ 降順（重い/遅い/高い が先）</button>
     </div>
     <div class="hsTableWrap"><div id="hsTableBox"></div></div>
-    <p class="qrNote" style="margin-top:8px;">斤量は確定前は「-」表示（確定次第この表にも反映）。体重は当日馬体重が発表前のため過去走の平均。上がりは過去走上位3走の自己ベスト平均。勝率・複勝率は全過去走からの通算成績。得意距離は距離別成績(2走以上のデータがある距離のみ)から複勝率最良の距離を選出、n=経験走数です。並び順（昇順/降順）は基準ごとに独立して覚えているわけではなく、基準を切り替えるとその基準の既定の並び順に戻ります。</p>
+    <p class="qrNote" style="margin-top:8px;">斤量は確定前「-」。体重は過去走の平均、上がりは自己ベスト3走の平均です。</p>
   </div>
   </div>
 
@@ -1138,7 +1142,7 @@
   <div class="panel"><div class="trendBox" id="trendBox"></div></div>
   <div class="panel" id="cmpPanel" style="margin-top:12px;">
     <h3 style="margin:0 0 4px;font-size:.86rem;color:var(--accent-deep);">今回の顔ぶれ vs 過去10年の傾向</h3>
-    <p class="lead" style="margin-bottom:8px;">「このレースは他と何が違うか」を、過去10年の傾向と今回の出走メンバー構成をカテゴリ別に見比べて確認できます。カテゴリは上の過去傾向と同じ4分類です。</p>
+    <p class="lead" style="margin-bottom:8px;">過去10年の傾向と今回のメンバー構成をカテゴリ別に見比べます。</p>
     <div class="cmpChips" id="cmpChips"></div>
     <div class="cmpGrid" id="cmpBox"></div>
   </div>
@@ -1148,7 +1152,7 @@
   <details class="fold" id="quantRank">
     <summary><span class="sec" style="display:inline;">定量ランキング（過去走の実測値から算出）</span></summary>
     <div class="foldBody">
-    <p class="lead">上の能力比較は評価スコアですが、こちらは過去走データそのものから機械的に計算した数値です（上がり3ハロン・斤量・距離別の着順など）。</p>
+    <p class="lead">こちらは評価スコアではなく、過去走データから機械的に計算した数値です。</p>
     <div class="panel" id="quantRankBox"></div>
     </div>
   </details>
@@ -1161,7 +1165,7 @@
   <h2 class="sec" id="views">他者の見方（事前評価）</h2>
   <!-- 実データには note 等の二次情報(T2)も並ぶため、全部を「一次引用」と説明しない
        （2026-07-30 指摘: 情報階層の表示と説明が矛盾していた） -->
-  <p class="lead">主要プロ予想家・メディア・関係者コメントの引用。一次情報と二次情報が混在するため、各カードの情報源表示（集計／一次／二次）で重みを確かめたうえで、自分の印付けを裏付ける／反証する材料に使う。</p>
+  <p class="lead">プロ予想家・メディア・関係者コメントの引用。各カードの情報源表示で重みを確かめてから使ってください。</p>
   <div id="viewsBox"></div>
 
   <h2 class="sec" id="pending">⏳ 今後の更新予定（チェックリスト）</h2>
@@ -1179,6 +1183,52 @@
 var DATA = {"race":{"title":"第67回 宝塚記念 GⅠ","meta":"2026年6月14日(日) 阪神・芝2200m・18頭立て・15:40発走","wx":["🌤 晴のち曇（6/14 日曜・午後から雲）","降水確率 40%（tenki.jp 6/12時点）","最高28℃/最低20℃","馬場想定：良（土曜は晴・最高30℃の真夏日で乾燥進む）","バイアス：先行・内枠有利"],"predict_version":"v5 当日・印再編（一次情報照合反映）","predict_asof":"2026-06-14 (日) 14:00 JST","predict_stage":"6/14(日)当日・発走前【v5 印再編】。netkeiba一次情報照合で判明した実フォームに序列を合わせ印を再編。(1)ダノンデサイル△->▲: 捏造last3を排した実走は大阪杯3-有馬3-ジャパンC3着のトップG1連続3着で12.5倍は過小。(2)ミュージアムマイル▲->◯: 有馬記念勝ちの地力で対抗が筋。(3)メイショウタバル◯->△: 近2走(有馬13・天皇賞秋6)大敗を重視、逃げ+阪神2200実績+追切Sで圏内は維持。(4)シンエンペラー△->☆: 訂正で弱さ確定の最深押さえ。◎クロワデュノール(天皇賞春・大阪杯連勝)は不変だが前日1.2倍で妙味薄、相手の人気薄で回収を作る。日曜阪神は良馬場想定。 【当日14:00オッズ追記】netkeiba確定単勝でクロワデュノール2.4倍(前日1.2倍から緩和)・メイショウタバル5.6倍(2人気浮上)・ミュージアムマイル6.0倍(3人気)・レガレイラ6.5倍(4人気)・ダノンデサイル7.5倍(5人気)・シンエンペラー75.6倍(12人気)。印6頭は不変、相手上位の人気集中で本線の妙味はやや低下。","race_id":"202606140911","odds_source":"netkeiba 単勝確定オッズ 2026-06-14 14:00 JST 取得（前回: SPREAD想定オッズ 6/12）"},"trends":[{"title":"枠順","text":"8枠が圧倒的・阪神開催9回中4勝、勝率20%・単回204%。1枠は勝利なしも複勝率トップ。"},{"title":"脚質","text":"先行最有力(勝率14.7%/複勝率26.5%)。逃げも複率40%・単回114%。追込は勝ち馬ゼロ・複率11.9%で消し条件。"},{"title":"前走ローテ","text":"天皇賞春組が3勝で最多・複回101%。前走G1組が3着内30頭中25頭と圧倒。"},{"title":"血統","text":"キタサンブラック産駒が連対率66.7%・複率66.7%・複回170%で最強。ステイゴールド系(オルフェ・ゴルシ)は距離適性で不振。"},{"title":"人気","text":"1番人気【2.3.0.5】複率50%、2番【2.0.3.5】複率50%、3番【3.0.0.7】最多3勝。1〜3番人気で軸を取れ。"},{"title":"騎手","text":"ルメール・川田は宝塚記念回収率20〜34%と低調。武豊は前年勝利で5勝目。北村友一は(1-0-0-3)複率25%。"},{"title":"過去5年勝ち馬","text":"2025メイショウタバル(7人気)・2024ブローザホーン(3人気)・2023イクイノックス(1人気)・2022タイトルホルダー(2人気)・2021クロノジェネシス(1人気)"},{"title":"今年の特殊事情","text":"ファン投票3位マスカレードボール(天皇賞秋勝ち)が放牧で回避。3歳世代3強のうち2頭(クロワデュノール・ミュージアムマイル)のみ参戦。クロワデュノール史上初の春古馬三冠なるか。"}],"trend_config":{"prev_bonus":{"天皇賞春":5.0,"大阪杯":4.0,"有馬記念":3.5,"宝塚記念":4.0,"天皇賞秋":3.0,"ジャパンC":2.5,"エリザベス女王杯":2.0,"ヴィクトリアマイル":1.0,"中山記念":1.0,"京都記念":1.5,"ステイヤーズS":-1.0,"オープン特別":-2.0}},"predicted_scenario":{"weather":"曇","going":"良","pace":"やや前傾","bias":"内・先行有利","chaos":"中"},"predicted_scenario_comment":"v1 初版(1週前段階)。6/14 阪神は曇時々晴・降水20-30%で例年と異なり良馬場想定。先行・内枠有利の王道形に。クロワデュノールが過去10年データ「天皇賞春組+キタサンブラック産駒+先行」の三拍子を完全に満たし、想定1番人気2.3倍で**春古馬三冠史上初**への最有力。前年覇者メイショウタバル(武豊・逃げ)が連覇狙い、有馬記念覇者ミュージアムマイル(D.レーン・大外差し)が3歳世代3強の代表として対抗。ファン投票3位マスカレードボール放牧回避で構図はシンプル化。波乱度は「中」想定だが、ルメール・川田の宝塚記念データ低調がレガレイラ・マイネルエンペラーの評価を下げる材料。","top_horses":[{"no":5,"name":"クロワデュノール","mark":"◎","pop":1,"color":"#c0392b","sex_age":"牡4","trainer":"栗東・斉藤崇史","sire":"キタサンブラック","jockey":"北村友一","jockey_stat":"宝塚記念(1-0-0-3)複率25%、単回102%","leg":"先行","temper":"G1で底力を見せる勝負強さ","bloodline":"キタサンブラック産駒(過去10年複率66.7%・複回170%の最強血統)","draw":"3枠5番（中目の好枠。先行集団でロスなく運べる絶好枠）","dist":"大阪杯・天皇賞春・ダービー連勝で2000-3200まで対応","weight":516,"weight_trend":"調教後516kg・前走比+2kg（天皇賞春5/3当日514kg、JRA 6/11発表比）。当日増減は当日発表待ち","oshi":"前人未到の春古馬三冠(大阪杯・天皇賞春・宝塚記念)。父キタサンブラックは産駒成績含めて宝塚記念最強血統。","oikiri":[{"src":"東スポ競馬 1週前追い切り 6/4","text":"栗東CW不良馬場でラスト11.6秒。斉藤崇師「息遣いなどは悪くない」","url":"https://tospo-keiba.jp/breaking_news/72323"},{"src":"netkeiba 最終追い切り 6/10","text":"栗東CWでグロリアラウス追走、6F82.6-11.2で併入。斉藤崇師「水・日曜より断然良くなった。直線でもしっかり動けてフィニッシュできた、ようやく走れるところまで来た」一方で「それでもまだ物足りないところがある」と辛口も。先週よりキレ向上。","url":"https://news.netkeiba.com/?pid=news_view&no=333781"},{"src":"うましる/競馬ヘッドライン 最終追い切り全頭診断 6/13","text":"【追い切り評価】うましる A / 競馬ヘッドライン A。うましる「不良馬場でもしっかりした脚取りで調子の良さ」、ヘッドライン「絶好調の前走デキをキープ、負荷も十分で充実度高い」。複数媒体で安定の高評価。","url":"https://umasiru.com/archives/20301"}],"last3":[{"race":"天皇賞春(G1)","date":"2026-05","order":1,"jockey":"北村友一","agari":34.9,"leg":"先行"},{"race":"大阪杯(G1)","date":"2026-04","order":1,"jockey":"北村友一","agari":34.9,"leg":"先行"},{"race":"ジャパンC(G1)","date":"2025-11","order":4,"jockey":"北村友一","agari":34.4}],"info_check":{"final_oikiri":"✅ 栗東CW 6F82.6-11.2 併入","pro_oikiri_eval":"⚠️ 上昇も師は辛口「まだ物足りない」","blinker_change":"❌ なし","jockey_change":"✅ 北村友一継続","stable_comment":"✅ 斉藤崇師「ようやく走れるところまで来た」","paddock":"❌ 当日","weight_actual":"✅ 調教後516kg 前走比+2kg（JRA公式6/11）当日分のみ未","last3_fresh":"✅ 2026年に2走+海外1走、鮮度OK"},"tags_strong":["春古馬二冠制覇","天皇賞春組(過去10年最多3勝)","キタサンブラック産駒","G1 4勝の地力","斉藤崇調教師の仕上げ"],"tags_weak":["想定1人気2.3倍の人気被り","2200m初経験","海外帰りからの再国内2戦目"],"prev":"天皇賞春","prev_pop":1,"cont_jockey":true,"ability":[89,92,88,90,88],"base":91,"vol":0.95,"odds":2.4,"dam_sire":"Cape Cross"},{"no":2,"name":"ミュージアムマイル","mark":"◯","pop":3,"color":"#8a4a2c","sex_age":"牡4","trainer":"美浦","sire":"リオンディーズ","jockey":"D.レーン","jockey_stat":"海外G1ジョッキー、大舞台慣れ","leg":"差し","temper":"終い特化型・大外一気","bloodline":"長距離も対応する持続力血統","draw":"1枠2番（最内。インロスなく立ち回れるが包まれ注意）","dist":"皐月賞→有馬記念で2000-2500実績","weight":510,"weight_trend":"調教後510kg・前走比+8kg（有馬記念25/12当日502kg、JRA 6/11発表比）。当日増減は当日発表待ち","oshi":"3歳世代3強の一角、有馬記念で大外一気の決め手で頂点。レーン乗り替わりで活性化期待。","oikiri":[{"src":"netkeiba 1週前追い切り 6/4","text":"栗東CW、D.レーン騎乗。6F81.9-5F65.9-4F50.8-3F36.2-2F22.7-1F11.5秒。加速ラップは理想的だがゴール前の伸びに物足りなさ。皐月賞・有馬記念時と比較し最終追い切りで確認したい。","url":"https://news.netkeiba.com/?pid=news_view&no=333267"},{"src":"netkeiba 栗東トレセンニュース 6/10","text":"栗東CWで81.9-65.9-50.8-36.2-11.5の併せ先着。終い鋭く反応、有馬記念覇者らしい完成度の高い動き。","url":"https://news.yahoo.co.jp/articles/e3af462c47297a3bcd9e571628eb24888716b1b8"},{"src":"うましる/競馬ヘッドライン 最終追い切り全頭診断 6/13","text":"【追い切り評価】競馬ヘッドライン B。「最良の出来という感じはないが、休み明けにしては動けている」。仕上がりは及第点も上積み余地。","url":"https://umasiru.com/archives/20301"}],"last3":[{"race":"有馬記念(G1)","date":"2025-12","order":1,"jockey":"C.デムーロ","agari":34.6,"leg":"差し"},{"race":"天皇賞秋(G1)","date":"2025-11","order":2,"jockey":"C.デムーロ","agari":32.3,"leg":"差し"},{"race":"セントライト記念(G2)","date":"2025-09","order":1,"jockey":"戸崎圭太","agari":34.4,"leg":"差し"}],"info_check":{"final_oikiri":"✅ 栗東CW 終い11.5併せ先着","pro_oikiri_eval":"✅ 完成度高い","blinker_change":"❌ なし","jockey_change":"✅ デムーロ→レーン乗り替わり","stable_comment":"✅ 順調","paddock":"❌ 当日","weight_actual":"✅ 調教後510kg 前走比+8kg（JRA公式6/11）当日分のみ未","last3_fresh":"✅"},"tags_strong":["3歳世代3強","有馬記念覇者","大外一気の決め手","D.レーン乗り替わり"],"tags_weak":["追込馬は宝塚記念で勝ち馬ゼロ(複率11.9%)","阪神2200は初経験","前走から5か月空き","1週前ゴール前の伸び物足りなさ"],"prev":"有馬記念","prev_pop":1,"cont_jockey":false,"ability":[85,86,92,85,84],"base":88,"vol":1.1,"odds":6.0,"dam_sire":"ハーツクライ"},{"no":1,"name":"ダノンデサイル","mark":"▲","pop":5,"color":"#7a8aa0","sex_age":"牡5","trainer":"美浦・安田翔伍","sire":"エピファネイア","jockey":"戸崎圭太","leg":"差し","temper":"GⅠでの底力・差し決め手","bloodline":"父エピファネイア(中距離G1向き)・母父Deep Impact","draw":"1枠1番（最内枠。位置取り次第でインを突ける）","dist":"24年ダービー(2400m)馬、2000-2400m対応、阪神2200は適距離","weight":522,"weight_trend":"調教後522kg・前走比+6kg（大阪杯4/5当日516kg、JRA 6/11発表比）。当日増減は当日発表待ち","oshi":"24年ダービー馬 + 26年AJCC(G2)→ドバイシーマ(海外G1)連勝で世界級の地力証明。前走大阪杯3着の悔しさを宝塚記念で晴らす。","oikiri":[{"src":"note ダノンデサイル戦績","text":"24年ダービー① / 26年AJCC① / 26年ドバイシーマクラシック①(カランダガン撃破) / 26年大阪杯③","url":"https://www.keibalab.jp/topics/46009/"},{"src":"東スポ 大阪杯3着コメント","text":"戸崎「届かなかったが感触は悪くない。距離2200mなら見直し」","url":"https://www.keibalab.jp/topics/46009/"},{"src":"東スポ競馬 1週前追い切り 6/4","text":"戸崎圭太を背に栗東ウッドで最先着。「随分といい動きができていた」と陣営。","url":"https://tospo-keiba.jp/breaking_news/72350"},{"src":"血統フェスティバル 最終追い切り 6/10","text":"素軽い動きで走る気十分、好感触の手応え。AJCC勝ちの充実度を維持。","url":"https://bfkeiba.com/takarazukakinen-2026-oikiri/"},{"src":"うましる/競馬ヘッドライン 最終追い切り全頭診断 6/13","text":"【追い切り評価】競馬ヘッドライン B。「久々でもいい仕上がり」。ウマニティ水曜診断でも高評価3頭に選出。","url":"https://umasiru.com/archives/20301"}],"last3":[{"race":"大阪杯(G1)","date":"2026-04","order":3,"jockey":"坂井瑠星","agari":34.9,"leg":"差し"},{"race":"有馬記念(G1)","date":"2025-12","order":3,"jockey":"戸崎圭太","agari":35.0},{"race":"ジャパンC(G1)","date":"2025-11","order":3,"jockey":"戸崎圭太","agari":33.8}],"info_check":{"one_week_oikiri":"⏳ 木曜以降公開","final_oikiri":"✅ 素軽い動き","pro_oikiri_eval":"✅ 好感触","blinker_change":"❌ なし","jockey_change":"✅ 戸崎継続(AJCC・ドバイ・大阪杯と4戦連続)","stable_comment":"✅ 走る気十分","paddock":"❌ 当日","weight_actual":"✅ 調教後522kg 前走比+6kg（JRA公式6/11）当日分のみ未","last3_fresh":"✅ 直近3走すべて2026年(AJCC・ドバイシーマ・大阪杯)で鮮度◎"},"tags_strong":["24年ダービー馬","ドバイシーマ1着(海外G1勝ち)","AJCC連勝","戸崎4戦連続騎乗","中距離G1の地力","1週前ウッド最先着"],"tags_weak":["大阪杯3着で◎◯に先着許す","阪神2200内回り未勝利","クロワデュノールに直接対戦で敗北"],"prev":"大阪杯","prev_pop":2,"cont_jockey":true,"ability":[82,86,84,84,84],"base":85,"vol":1.0,"jockey_stat":"新コンビ26年AJCC・ドバイシーマで連勝、相性◎","odds":7.5,"dam_sire":"Congrats"},{"no":16,"name":"メイショウタバル","mark":"△","pop":2,"color":"#27ae60","sex_age":"牡5","trainer":"栗東・石橋","sire":"ゴールドシップ","jockey":"武豊","jockey_stat":"宝塚記念5勝(歴代最多)、前年勝利の鞍上","leg":"逃げ","temper":"ハナを切る逃げ一辺倒","bloodline":"持続力タイプ・パワー血統","draw":"8枠16番（大外気味。逃げ馬には試練の枠で外を回されるロス懸念）","dist":"2200m前年覇者・阪神内回り◎","weight":506,"weight_trend":"調教後506kg・前走比+6kg（大阪杯4/5当日500kg、JRA 6/11発表比）。当日増減は当日発表待ち","oshi":"武豊との絆コンビで前年5番人気から逃げ切り戴冠。連覇なら宝塚記念史上に名を残す。","oikiri":[{"src":"東スポ競馬 1週前追い切り 6/4","text":"ビッシリ攻めた内容、石橋師「予定通り」","url":"https://tospo-keiba.jp/breaking_news/72323"},{"src":"日刊スポーツ/東スポ 最終追い切り 6/10","text":"荒れ馬場をものともせずラスト11.4秒の好時計。石橋師「いい追い切りだった/100点の状態を維持できている」。武豊とのタッグで父子連覇・史上3頭目の偉業へ態勢万全。","url":"https://tospo-keiba.jp/breaking_news/72512"},{"src":"うましる/競馬ヘッドライン 最終追い切り全頭診断 6/13","text":"【追い切り評価】うましる S(最高) / 競馬ヘッドライン A。うましる「2週続けて終いの時計が鋭くポテンシャルの高い走りに期待」、ヘッドライン「冷静にためる追い切りを消化できた点を高評価」。終い重視の好調教。","url":"https://umasiru.com/archives/20301"}],"last3":[{"race":"大阪杯(G1)","date":"2026-04","order":2,"jockey":"武豊","agari":35.6,"leg":"逃げ"},{"race":"有馬記念(G1)","date":"2025-12","order":13,"jockey":"武豊","agari":36.7,"leg":"逃げ"},{"race":"天皇賞秋(G1)","date":"2025-11","order":6,"jockey":"武豊","agari":33.1}],"info_check":{"final_oikiri":"✅ 荒れ馬場ラスト11.4の好時計","pro_oikiri_eval":"✅ 高評価「100点の状態」","blinker_change":"❌ なし","jockey_change":"✅ 武豊継続","stable_comment":"✅ 石橋師「いい追い切りだった」","paddock":"❌ 当日","weight_actual":"✅ 調教後506kg 前走比+6kg（JRA公式6/11）当日分のみ未","last3_fresh":"✅ 大阪杯3着の直近実績あり"},"tags_strong":["前年宝塚記念覇者","武豊継続騎乗","逃げ脚質(過去10年複率40%)","阪神2200実績"],"tags_weak":["前走大阪杯3着で2.5戦連敗中","他に逃げ馬がいると共倒れリスク"],"prev":"大阪杯","prev_pop":3,"cont_jockey":true,"ability":[86,84,80,88,85],"base":86,"vol":1.05,"odds":5.6,"dam_sire":"フレンチデピュティ"},{"no":17,"name":"レガレイラ","mark":"△","pop":4,"color":"#d35400","sex_age":"牝5","trainer":"美浦","sire":"スワーヴリチャード","jockey":"C.ルメール","jockey_stat":"宝塚記念回収率20-34%と低調","leg":"差し","temper":"操縦性高い","bloodline":"中距離牝馬の地力","draw":"8枠17番（外枠。差し脚活かすには展開向き必要）","dist":"牝馬56kg軽量はメリット","weight":494,"weight_trend":"調教後494kg・前走比+12kg（有馬記念25/12当日482kg、JRA 6/11発表比）。当日増減は当日発表待ち","oshi":"G1 3勝の地力(有馬記念24・エリザベス女王杯25 等)。","oikiri":[{"src":"東スポ競馬 1週前追い切り 6/4","text":"意欲的な乗り込み、陣営「中身の濃い調教ができた」","url":"https://tospo-keiba.jp/breaking_news/72323"},{"src":"X @netkeiba 6/上旬","text":"金曜から阪神入り。ルメール継続騎乗。","url":"https://x.com/netkeiba/status/1933831027505676297"},{"src":"血統フェスティバル/東スポ 最終追い切り 6/10","text":"美浦Wで反応良くしっかり負荷をかけ併入先着。陣営「中身の濃い調教ができた」。","url":"https://bfkeiba.com/takarazukakinen-2026-oikiri/"},{"src":"うましる/競馬ヘッドライン 最終追い切り全頭診断 6/13","text":"【追い切り評価】うましる A。「時計は目立たないが時計以上の内容に感じられた」。見た目以上の好内容との評。","url":"https://umasiru.com/archives/20301"}],"last3":[{"race":"有馬記念(G1)","date":"2025-12","order":4,"jockey":"C.ルメール","agari":34.6,"leg":"差し"},{"race":"エリザベス女王杯(G1)","date":"2025-11","order":1,"jockey":"戸崎圭太","agari":34.2,"leg":"差し"},{"race":"オールカマー(G2)","date":"2025-09","order":1,"jockey":"戸崎圭太","agari":34.0,"leg":"差し"}],"info_check":{"final_oikiri":"✅ 美浦W 併入先着","stable_comment":"✅ 中身の濃い調教","jockey_change":"✅ ルメール継続","weight_actual":"✅ 調教後494kg 前走比+12kg（JRA公式6/11）当日分のみ未","last3_fresh":"✅","pro_oikiri_eval":"✅ うましる全頭診断で最高評価S「譲らぬ闘争心に陰りなく完成期」"},"tags_strong":["G1 3勝の地力","牝馬56kg軽量","ルメール継続"],"tags_weak":["過去10年データでルメール宝塚回収率20-34%と低調","牡馬一線級との直接対決は実績薄","前走有馬記念4着で勢い微妙"],"prev":"有馬記念","prev_pop":1,"cont_jockey":true,"ability":[83,84,86,84,82],"base":84,"vol":1.05,"odds":6.5,"dam_sire":"ハービンジャー"},{"no":11,"name":"シンエンペラー","mark":"☆","pop":12,"color":"#7a8aa0","sex_age":"牡4","trainer":"栗東・矢作芳人","sire":"Siyouni","jockey":"坂井瑠星","leg":"差し","temper":"欧州ゴリゴリの長距離型・気性面はやや難","bloodline":"父Siyouni(欧州凱旋門賞のフランス系) / 母父Galileo(欧州G1血統)","draw":"6枠11番（中外。スムーズな先行が鍵）","dist":"欧州血統で2000-2400m対応、阪神2200は実績薄","weight":502,"weight_trend":"調教後502kg・前走比-6kg（天皇賞春5/3当日508kg、JRA 6/11発表比）。当日増減は当日発表待ち","oshi":"凱旋門賞12着の経験を持つ4歳・Siyouni産駒の希少血統。放牧明けで状態は未知数だが、ハマれば一発の地力。","oikiri":[{"src":"JRA公式 状況","text":"直前まで「放牧」表示で、宝塚記念で立て直し参戦。坂井瑠星継続。","url":"https://www.jra.go.jp/JRADB/accessU.html?CNAME=pw01dud102021110048%2FD7"},{"src":"日経 凱旋門賞12着回顧(24年)","text":"世界の壁は厚かったが、4歳になっての国内本格化に期待。","url":"https://www.nikkei.com/article/DGXZQOKC063IS0W4A001C2000000/"},{"src":"netkeiba 最終追い切り 6/10","text":"栗東CWで96.3-79.5-65.0-51.3-37.4-12.2の併せ遅れ。放牧明けから立て直しての参戦、動き自体は地味も坂井瑠星継続。","url":"https://news.netkeiba.com/?pid=news_view&no=333781"},{"src":"うましる/競馬ヘッドライン 最終追い切り全頭診断 6/13","text":"【追い切り評価】競馬ヘッドライン C。「もう少し無駄のない走りが見たかった」。放牧明けで前走比-6kgも併せ、状態は印馬中では見劣り。","url":"https://umasiru.com/archives/20301"}],"last3":[{"race":"天皇賞春(G1)","date":"2026-05","order":7,"jockey":"岩田望来","agari":35.5,"leg":"差し"},{"race":"ネオムターフC(海外G1)","date":"2026-02","order":4,"jockey":"坂井瑠星","agari":"海外"},{"race":"有馬記念(G1)","date":"2025-12","order":14,"jockey":"坂井瑠星","agari":36.0,"leg":"差し"}],"info_check":{"one_week_oikiri":"⏳ 木曜以降","final_oikiri":"✅ 栗東CW 併せ遅れ","pro_oikiri_eval":"⚠️ 動き地味","blinker_change":"❌ なし","jockey_change":"✅ 坂井瑠星継続","stable_comment":"⚠️ 放牧明け立て直し","paddock":"❌ 当日","weight_actual":"✅ 調教後502kg 前走比-6kg（JRA公式6/11）当日分のみ未","last3_fresh":"⚠️ JRA公式「放牧」表示。2025年の国内戦績が不明確で last3 鮮度が低い。要追加情報"},"tags_strong":["凱旋門賞経験(世界級の地力)","Siyouni産駒の希少血統","坂井瑠星継続","4歳世代"],"tags_weak":["放牧明けで状態未知数","国内G1勝利歴なし","2024年凱旋門賞12着で前回大敗","2025-26年の戦績が薄い"],"prev":"天皇賞春","prev_pop":0,"cont_jockey":true,"ability":[78,84,82,80,76],"base":81,"vol":1.25,"jockey_stat":"坂井瑠星・凱旋門賞でも騎乗","odds":75.6,"dam_sire":"Galileo"}],"mini_horses":[{"no":9,"name":"コスモキュランダ","jockey":"横山武史","sex_age":"牡5","trainer":"美浦・加藤士津八","leg":"差し","last":"24年弥生賞①(G2)、19戦2勝","why":"有馬2着の激走後、1番人気の日経賞で7着完敗と反動が見え近走は安定感を欠く。皐月賞2着以降は善戦止まりで阪神2200の決め手比べは分が悪い。","sim_base":78,"sim_vol":1.2,"color":"#95a5a6","sire":"アルアイン","_check":"✅ 性齢・厩舎・父・主要実績まで取得","odds":41.5,"pop":8,"last2":[{"race":"日経賞(G2)","order":7},{"race":"有馬記念(G1)","order":2}],"weight":526},{"no":13,"name":"シェイクユアハート","jockey":"古川吉洋","sex_age":"牡6","trainer":"栗東・宮徹","leg":"差し","last":"条件特別から重賞挑戦組","why":"中日新聞杯・金鯱賞と重賞連勝中だが、ともに後方一気の差しで展開に左右されやすい。8番人気V含め人気を裏切る面もあり、G1の厳しい流れでは届かない懸念。","sim_base":72,"sim_vol":1.3,"color":"#bdc3c7","sire":"ハーツクライ","_check":"⚠️ 性齢のみ、厩舎・父・近走詳細は精査未完","odds":69.8,"pop":11,"last2":[{"race":"金鯱賞(G2)","order":1},{"race":"中日新聞杯(G3)","order":1}],"weight":462},{"no":3,"name":"シュガークン","jockey":"吉村誠之助","sex_age":"牡5","trainer":"栗東・清水久詞","leg":"差し","last":"24年青葉賞①(G2)、26/5新潟大賞典⑮(2人気)で約2年ぶり復帰戦から不調","why":"24年ダービー以来の屈腱炎明けで約2年ぶり復帰の新潟大賞典を15着最下位。長期休養明けの実戦勘不足が明白で、G1級の地力に届かない。","sim_base":74,"sim_vol":1.25,"color":"#bdc3c7","sire":"ドゥラメンテ","_check":"✅ 直近1走を取得、復帰戦不調が懸念材料","odds":205.4,"pop":17,"last2":[{"race":"新潟大賞典(G3)","order":15},{"race":"日本ダービー(G1)","order":7}],"weight":520},{"no":10,"name":"ジューンテイク","jockey":"松山弘平","sex_age":"牡5","trainer":"栗東・武英智","leg":"先行","last":"JRA公式「放牧」表示","why":"京都記念を勝ったG2級だが、続く金鯱賞は先頭に立つも差されクビ差4着。G2では足りてもG1の決め手比べには一段壁があり、絶対能力に欠ける。","sim_base":73,"sim_vol":1.3,"color":"#bdc3c7","sire":"キズナ","_check":"⚠️ 放牧明けで直近戦績不明確","odds":176.0,"pop":15,"last2":[{"race":"金鯱賞(G2)","order":4},{"race":"京都記念(G2)","order":1}],"weight":506},{"no":14,"name":"スティンガーグラス","jockey":"岩田望来","sex_age":"牡5","trainer":"栗東・友道康夫","leg":"先行","last":"26/2ダイヤモンドS①(G3・ルメール・転厩後初戦)、前走アルゼンチン共和国杯②","why":"ダイヤモンドS(3600m)勝ちの長距離型で、本質的に2200mの瞬発力勝負は忙しい。天皇賞春を歩様の違和感で回避した臨戦過程にも一抹の不安。","sim_base":75,"sim_vol":1.3,"color":"#bdc3c7","sire":"キズナ","_check":"✅ 性齢・厩舎・父・近走3走まで取得","odds":115.0,"pop":13,"last2":[{"race":"ダイヤモンドS(G3)","order":1},{"race":"アルゼンチン共和国杯(G2)","order":2}],"weight":486},{"no":8,"name":"タガノデュード","jockey":"高杉吏麒","sex_age":"牡5","trainer":"栗東・宮徹","leg":"差し","last":"-","why":"小倉大賞典で重賞初制覇後、大阪杯4着・天皇賞春6着と善戦級だが勝ち切れず。G1では決め手が一枚足りず、若手騎手起用も人気を欠く一因。","sim_base":70,"sim_vol":1.35,"color":"#bdc3c7","sire":"ヤマカツエース","_check":"❌ 精査未完了、性齢から要追加","oikiri_note":"最終追い切りで仕掛けられると一気に突き抜ける動き(血統フェスティバル6/10)","odds":46.6,"pop":9,"last2":[{"race":"天皇賞春(G1)","order":6},{"race":"大阪杯(G1)","order":4}],"weight":514,"weight_diff":"+12kg・天皇賞春502kg比"},{"no":6,"name":"ビザンチンドリーム","jockey":"西村淳也","sex_age":"牡5","trainer":"栗東・坂口智康","leg":"差し","last":"-","why":"凱旋門賞5着の実績馬だが、前走カタールのG2を7着と海外帰りで状態に疑問。長期遠征の反動と阪神2200急坂への適性も読みにくい。","sim_base":72,"sim_vol":1.3,"color":"#bdc3c7","sire":"エピファネイア","_check":"⚠️ 性齢のみ、戦績は精査未完","odds":32.3,"pop":7,"last2":[{"race":"アミールトロフィー(海外G2)","order":7},{"race":"凱旋門賞(仏G1)","order":5}],"weight":470,"weight_diff":"前走海外(2月カタール)のため比較不可"},{"no":7,"name":"ファミリータイム","jockey":"幸英明","sex_age":"牡5","trainer":"栗東・石坂公一","leg":"差し","last":"-","why":"日経新春杯2着は11番人気での逃げ粘りで人気以上だが、自分の形でこその先行馬。G1の厳しい流れと一線級相手では展開頼みで決め手不足。","sim_base":70,"sim_vol":1.4,"color":"#bdc3c7","sire":"リアルスティール","_check":"❌ 全項目未取得、騎手も未定","odds":224.3,"pop":18,"last2":[{"race":"日経新春杯(G2)","order":2},{"race":"阪神ムーンライトH(3勝)","order":1}],"weight":482},{"no":12,"name":"マイネルエンペラー","jockey":"川田将雅","sex_age":"牡6","trainer":"美浦・宮田敬介","leg":"先行","last":"25年日経賞①(G2)、天皇賞春出走、24戦5勝","why":"昨年の日経賞勝ち馬だが今季はAJCC11着・阪神大賞典5着と精彩を欠く。本質は長距離型ステイヤーで、2200mの瞬発力勝負では適性も足りない。","sim_base":75,"sim_vol":1.25,"color":"#a4b0be","sire":"ゴールドシップ","_check":"✅ 性齢・厩舎・父・主要実績取得、データ的にダブル減点材料","oikiri_note":"最終追い切りで前向きさを感じる動き(血統フェスティバル6/10)","odds":117.2,"pop":14,"last2":[{"race":"阪神大賞典(G2)","order":5},{"race":"AJCC(G2)","order":11}],"weight":494},{"no":15,"name":"マイユニバース","jockey":"横山典弘","sex_age":"牡4","trainer":"栗東・武幸四郎","leg":"差し","last":"-","why":"日経賞勝ちの4歳上がり馬だが、前走は3勝クラスを勝った直後で2500m向きの持続力タイプ。G1初挑戦かつ阪神2200の急坂・瞬発力勝負では経験と決め手が不足。","sim_base":72,"sim_vol":1.3,"color":"#bdc3c7","sire":"レイデオロ","_check":"❌ 性齢から精査未完","odds":17.3,"pop":6,"last2":[{"race":"日経賞(G2)","order":1},{"race":"湾岸S(3勝)","order":1}],"weight":498,"weight_diff":"+30kg・日経賞468kg比"},{"no":4,"name":"ミクニインスパイア","jockey":"丹内祐次","sex_age":"牡4","trainer":"美浦・林徹","leg":"先行","last":"中距離OP級","why":"4歳の上がり馬で日経賞2着は強いが、3勝クラスから2戦目のG1挑戦。古馬一線級との実績差と日経賞からの中3ヶ月ぶっつけが不安。","sim_base":71,"sim_vol":1.3,"color":"#bdc3c7","sire":"アドマイヤマーズ","_check":"❌ 詳細精査未完","odds":56.6,"pop":10,"last2":[{"race":"日経賞(G2)","order":2},{"race":"グレイトフルS(3勝)","order":1}],"weight":510},{"no":18,"name":"ミステリーウェイ","jockey":"松本大輝","sex_age":"せん8","trainer":"栗東・小林真也","leg":"差し","last":"-","why":"8歳セン馬で有馬16着・日経賞14着と大敗続き。天皇賞春は逃げて8着に粘ったが上位とは差があり、本質はハンデG2級。G1の急坂2200では力不足。","sim_base":70,"sim_vol":1.4,"color":"#bdc3c7","sire":"ジャスタウェイ","_check":"❌ 全項目未取得","odds":196.8,"pop":16,"last2":[{"race":"天皇賞春(G1)","order":8},{"race":"日経賞(G2)","order":14}],"weight":508,"weight_diff":"+2kg・天皇賞春506kg比"}],"bet_plans":[{"title":"本線（◎クロワデュノール軸の馬連・ワイド流し）","lines":[{"text":"馬連 ◎→◯▲△△☆","prefix":"クロワデュノール→","numbers":[]},{"text":"ワイド ◎→◯▲△△☆","prefix":"クロワデュノール→","numbers":[]}],"note":"天皇賞春・大阪杯を連勝した最強馬を軸に。ただし前日1.2倍に圧縮で妙味は薄く、相手の人気薄(特に▲ダノン12.5倍)で回収率を作る。"},{"title":"妙味（▲ダノンデサイルの過小評価を突く）","lines":[{"text":"馬連 ▲→◎◯","prefix":"ダノンデサイル→","numbers":[]},{"text":"ワイド ▲→◎◯△","prefix":"ダノンデサイル→","numbers":[]}],"note":"大阪杯・有馬・ジャパンCで3連続3着のトップG1常連が12.5倍。netkeiba照合で判明した実力に人気が追いついていない本命級の押さえ。"},{"title":"3連複1頭軸（◎軸・相手広め）","lines":[{"text":"3連複 ◎-(◯▲)-(◯▲△△☆)","prefix":"クロワデュノール-","numbers":[]}],"note":"◎軸+相手で堅め配当狙い。有馬勝ちの◯ミュージアム・3着続きの▲ダノンを厚く。"},{"title":"印付け馬総取りボックス(安田記念R6改善点反映)","lines":[{"text":"3連複 ◎◯▲△△☆ ボックス","prefix":"","numbers":[]}],"note":"軸不発時の保険として6頭BOX(20通り)で印が3着内に入れば的中。安田記念2026振り返りの改善点として導入。"}],"pending_info":[{"label":"最終追い切り","when":"6/10(水)午前 実施予定","memo":"6/10(水)午前に最終追い切り実施・確定。クロワ(CW82.6-11.2併入/師は辛口)、タバル(荒れ馬場11.4好時計)、ミュージアム(11.5併先着)、ダノン(素軽い)、レガレイラ(美浦W併先着)、シンエンペラー(併せ遅れ)。詳細評価記事は金曜公開予定。","done":true},{"label":"枠順確定","when":"6/11(木) 15:00 確定","memo":"6/11(木)15:00確定。クロワ3-5、タバル8-16、ミュージアム1-2、ダノンデ1-1、レガレイラ8-17、シンエンペラー6-11。全18頭のno更新済み。逃げ・先行馬がやや外目に固まり、内の立ち回り組に展開利の可能性。","done":true},{"label":"想定オッズ→確定オッズ","when":"6/14(日) 朝〜直前","memo":"枠順確定後(6/11夜)も上位人気の構図は不変。クロワデュノール2.3-2.7倍で確固たる1人気。2-3番人気はミュージアムマイル(4.5-5.3)とメイショウタバル(3.7-5.2)が拮抗しソースで前後。ダノンデサイル6.9-8.0、レガレイラ8.6-9.5。確定オッズは6/14当日。","done":true},{"label":"馬場発表","when":"6/14(日) 9:30","memo":"現時点で良馬場想定だが、土曜の使い込み具合 / 当日朝の降水で稍重に振れる可能性。当日朝に必ず再評価。","note":"日曜良馬場想定(当日朝の正式発表待ち)"},{"label":"当日馬体重","when":"発走60分前","memo":"調教後馬体重はJRA公式(6/11)で全頭取得済み。残りは当日の増減発表のみ。"},{"label":"パドック気配","when":"発走30分前","memo":"毛づや・歩様・チャカつき。武豊×メイショウタバルの絆気配は特に。"},{"label":"前走天皇賞春の反動","when":"6/14(日) 当日","memo":"クロワデュノールは天皇賞春から中6週でゆとりあるが、長距離G1からの距離短縮反動が出ないか。"},{"label":"ファミリータイム・ミステリーウェイの想定騎手","when":"6/9(月)〜","memo":"確定済み: ファミリータイム=幸英明、ミステリーウェイ=松本大輝（mini_horses 反映済み）","done":true}],"external_views":[{"src":"note:@実績競馬","stance":"data","target":"全頭","text":"宝塚記念過去10年データ：脚質先行が勝率14.7%・複率26.5%で最有力、枠順8枠が5勝・単回204%。前走天皇賞春組が3勝で最多・複回101%。キタサンブラック産駒が連対率66.7%・複回170%。追込・ルメール・川田は宝塚記念で回収率低調。","url":"https://note.com/jissekikeiba/n/n3415c93510e6"},{"src":"東スポ競馬：1週前追い切り","stance":"bull","target":"クロワデュノール","text":"栗東CW不良馬場でラスト11.6秒。斉藤崇調教師「息遣いなどは悪くない」","url":"https://tospo-keiba.jp/breaking_news/72323"},{"src":"東スポ競馬：1週前追い切り","stance":"bull","target":"メイショウタバル","text":"ビッシリ攻めた内容、石橋師「予定通り」。連覇に向けて順調な仕上がり。","url":"https://tospo-keiba.jp/breaking_news/72323"},{"src":"東スポ競馬：1週前追い切り","stance":"bull","target":"レガレイラ","text":"意欲的な乗り込み、陣営「中身の濃い調教ができた」","url":"https://tospo-keiba.jp/breaking_news/72323"},{"src":"SPREAD編集部 想定オッズ","stance":"data","target":"上位5頭","text":"クロワデュノール 2.3倍(1人気)、メイショウタバル 3.7倍(2人気)、ミュージアムマイル 5.2倍(3人気)、レガレイラ 8.6倍(5人気)。3歳世代3強のうちマスカレードボール放牧回避でクロワ一強感が増す。","url":"https://spread-sports.jp/archives/388642"},{"src":"ファン投票最終結果 (5/28)","stance":"data","target":"全頭","text":"1位クロワデュノール 366,039票 / 2位メイショウタバル / 3位マスカレードボール（放牧で回避） / 4位レガレイラ / 5位ミュージアムマイル / 6位ダノンデサイル。ファン投票3位の天皇賞秋勝ち馬不在は構図変化の最大要素。","url":"https://dir.netkeiba.com/keibamatome/detail.html?no=5717"},{"src":"デイリースポーツ うま屋","stance":"data","target":"全頭","text":"宝塚記念に春3冠を目指すクロワデュノール、連覇を狙うメイショウタバルなど強豪がズラリ18頭がエントリー。","url":"https://www.daily.co.jp/umaya/news/2026/05/31/0020422063.shtml"},{"src":"東スポ：天皇賞春コメント","stance":"bull","target":"クロワデュノール","text":"北村友一「ゴールしたときは本当に分からなくて…」鼻差(推定2cm)の激戦を制して春古馬二冠を達成。父子制覇でG1 4勝目。","url":"https://tospo-keiba.jp/breaking_news/71221"},{"src":"中日スポーツ：宝塚記念展望","stance":"data","target":"3歳世代3強","text":"有馬記念覇者ミュージアムマイル、天皇賞秋勝ち馬マスカレードボール、ダービー馬クロワデュノールの3歳世代3強が中心。ただしマスカレードボール放牧でクロワ・ミュージアムの2頭対決構図。","url":"https://www.chunichi.co.jp/article/1187128"},{"src":"ぱねす note 回顧","stance":"data","target":"メイショウタバル","text":"2025年宝塚記念は武豊7番人気の絆勝利。逃げ切りでベラジオオペラに3馬身差。武豊5勝目で宝塚記念最年長Vの記録更新。今年もハナを切る逃げ脚質は変わらない見込み。","url":"https://note.com/xenospn/n/n8cffa72e065a"},{"src":"SPREAD 前走ローテ分析","stance":"bear","target":"クロワデュノール","text":"天皇賞春組は宝塚で馬券内率75%該当も、唯一の着外は父キタサンブラック産駒。距離適性に注意。","url":"https://spread-sports.jp/archives/388719"},{"src":"tenki.jp 6/10 取得","stance":"data","target":"馬場想定","text":"6/14(日) 阪神 曇り26/20℃ 降水30%。前日土曜は晴30%。良馬場想定が現実的。","url":"https://tenki.jp/leisure/horse/6/31/32008/10days.html"},{"source":"netkeiba AI予想オッズ (6/9時点)","title":"クロワデュノール 2.3倍(1人気)、メイショウタバル 5.0倍、ミュージアムマイル 5.3倍、ダノンデサイル 9.3倍、レガレイラ 10.3倍。上位4頭が一桁オッズ。日刊スポーツ予想ではミュージアムマイル4.5倍まで支持。"},{"source":"netkeiba 最終追い切り速報 (6/10)","title":"クロワデュノール栗東CW6F82.6-11.2で併入、斉藤崇師「ようやく走れるところまで来た」も「まだ物足りない」と辛口評価。最終追い切りで先週よりキレ向上。"},{"source":"日刊スポーツ/東スポ厩舎直送 (6/10)","title":"メイショウタバル荒れ馬場ラスト11.4の好時計。石橋師「100点の状態を維持」、武豊で父子連覇・史上3頭目の偉業へ態勢万全。"},{"source":"netkeiba 栗東トレセンニュース (6/10)","title":"ミュージアムマイル栗東CW終い11.5で併せ先着、有馬記念覇者らしい完成度。シンエンペラーは併せ遅れで放牧明けの立て直し途上。"},{"source":"日刊スポーツ 予想オッズ (6/10更新)","title":"クロワデュノール2.7倍、ミュージアムマイル4.5倍、メイショウタバル5.2倍、ダノンデサイル8.0倍、レガレイラ9.5倍。上位5頭が一桁オッズで混戦模様。"},{"src":"日刊スポーツ 予想オッズ","stance":"data","target":"全頭","text":"想定単勝: クロワ2.7-ミュージアム4.5-タバル5.2-ダノンデ8.0-レガレイラ9.5。ミュージアムとタバルの2-3番人気はソースで割れる（SPREADは逆）。","url":"https://www.keibanomiryoku.com/宝塚記念"},{"src":"東スポ競馬／netkeiba 枠順確定報 6/11","stance":"data","target":"全頭","text":"宝塚記念枠順確定。クロワデュノール3枠5番、武豊メイショウタバル8枠16番、ミュージアムマイル1枠2番、ダノンデサイル1枠1番、レガレイラ8枠17番。逃げ・先行タイプが外目に多く「先行しそうな馬が外に多数、逆の方が…」と兼ね合いを懸念する声も。","url":"https://tospo-keiba.jp/breaking_news/72621"},{"src":"SPREAD／netkeiba AI 枠順確定後想定オッズ","stance":"data","target":"全頭","text":"枠順確定後想定単勝: クロワ2.3-ミュージアム5.2-タバル3.7-ダノンデ6.9-レガレイラ8.6。上位5頭の人気構図は枠順発表後も大きく動かず、クロワデュノールの抜けた1人気は揺るがず。","url":"https://spread-sports.jp/archives/388642"},{"src":"宝塚記念 過去データ（開催4日目傾向）","stance":"data","target":"枠順・脚質","text":"開催4日目の宝塚記念は圧倒的に前有利で逃げ先行が過去3年3勝、逃げ馬の馬券内率40%。枠は見解が割れ、内枠有利説(1枠複勝率50%・1〜4枠が外の3倍)と外枠有利説(8枠5勝)が併存。最終的には枠より阪神2200mの舞台適性を重視すべきとの分析。","url":"https://winsight.jp/column/column_page?id=25058"},{"src":"note:スノウ|追い切りメモ 6/10","stance":"bull","target":"メイショウタバル","text":"追い切りだけで見るなら中心はメイショウタバル。1週前で負荷をかけ最終で反応確認という理想的な流れで、厩舎コメント「予定通りの調整」とも合致。クロワデュノールは能力上位も追い切りだけ見ると今回は少し慎重、厩舎コメントも完全な絶賛ではない。コスモキュランダは1週前の内容が目立ちタフ条件で穴として面白い。","url":"https://note.com/hanasa4_jp/n/nf8988a445496"},{"src":"SPREAD 宝塚記念2026特集（追い切り診断・6/12時点）","stance":"bull","target":"レガレイラ","text":"全頭追い切り診断で最高評価Sはレガレイラ「譲らぬ闘争心に陰りなく、完成期迎えた証」。クロワデュノールはA評価「高いレベルで状態維持」。想定オッズはクロワ2.3倍1人気、タバル3.7倍2人気、ミュージアムマイル5.2倍3人気とタバルが2人気に再浮上。","url":"https://spread-sports.jp/archives/388642"},{"src":"ウマニティ 調教診断・関係者談話","stance":"data","target":"ダノンデサイル/マイユニバース/メイショウタバル","text":"水曜追い切りチェックでダノンデサイル・マイユニバース・メイショウタバルの3頭を高評価。クロワデュノール斉藤崇師「息遣いは大丈夫。気持ちの部分と体の引き締めをしっかり」、タバル石橋師「ここ2週は併せ馬で気を抜くところがなかった。これで変わる」、マイユニバース武幸師「間隔を空けたことでメンタルが良くなっている」。","url":"https://umanity.jp/racedata/race_newsdet.php?nid=11871022"},{"src":"JRA公式 調教後の馬体重（6/11発表）","stance":"data","target":"全18頭","text":"調教後馬体重: 1ダノンデサイル 522kg、2ミュージアムマイル 510kg、3シュガークン 520kg、4ミクニインスパイア 510kg、5クロワデュノール 516kg、6ビザンチンドリーム 470kg、7ファミリータイム 482kg、8タガノデュード 514kg、9コスモキュランダ 526kg、10ジューンテイク 506kg、11シンエンペラー 502kg、12マイネルエンペラー 494kg、13シェイクユアハート 462kg、14スティンガーグラス 486kg、15マイユニバース 498kg、16メイショウタバル 506kg、17レガレイラ 494kg、18ミステリーウェイ 508kg。トップハンデ級の馬格はコスモキュランダ526kg・ダノンデサイル522kg、最軽量はシェイクユアハート462kg・ビザンチンドリーム470kg。【前走当日比】◎クロワ+2(天皇賞春514)、◯タバル+6(大阪杯500)、▲ミュージアム+8(有馬502)、△ダノンデサイル+6(大阪杯516)、△レガレイラ+12(有馬482)、△シンエンペラー-6(天皇賞春508・放牧明け)。miniではマイユニバース+30(日経賞468・netkeibaも「30キロ増」と報道)、タガノデュード+12(天皇賞春502)、ミステリーウェイ+2(天皇賞春506)。ビザンチンドリームは前走が海外(2月カタール)で当日体重発表なし・助手談「昨年天皇賞春2着時より10キロ以上増えていそう」。残り8頭は前走当日体重未取得のため増減算出せず。","url":"https://www.jra.go.jp/news/202606/061103.html"},{"src":"ウマニティ 前日オッズ(6/13 18:00)","stance":"data","target":"全18頭","text":"前日オッズ: ⑤クロワデュノール1.2倍(1人気)、⑯メイショウタバル10.0倍(2人気)、②ミュージアムマイル11.9倍(3人気)、⑰レガレイラ12.0倍(4人気)、①ダノンデサイル12.5倍(5人気)、⑮マイユニバース31.6倍(6人気)、⑥ビザンチンドリーム66.1倍、⑨コスモキュランダ91.1倍、⑧タガノデュード97.9倍。6/12時点(タバル3.7倍2人気)から一変し、クロワデュノールが断然の1強ムードに。2~5人気が10~12倍台で拮抗。","url":"https://umanity.jp/racedata/race_newsdet.php?nid=11872065"},{"src":"うましる 最終追い切り評価/全頭診断","stance":"data","target":"全18頭","text":"最終追い切り全頭診断。最高評価Sはメイショウタバル(2週続けて終い鋭くポテンシャル高い走りに期待)。A評価にクロワデュノール(不良馬場でも調子の良さ)・レガレイラ(時計以上の内容)。マイユニバースも馬なりで高水準の時計と好評。","url":"https://umasiru.com/archives/20301"},{"src":"競馬ヘッドライン 最終追い切り診断","stance":"data","target":"クロワデュノール/メイショウタバル/マイユニバース","text":"編集部が買えると判断したA評価3頭はクロワデュノール・メイショウタバル・マイユニバース。クロワ「絶好調の前走デキをキープ」、タバル「冷静にためる追い切りを消化、自分の競馬ができるか」、マイユニバース「2週続けて高水準の時計で状態は前走以上」。ミュージアムマイル・ダノンデサイルはB、シンエンペラーはCと印馬で評価差。","url":"https://keiba-headline.com/best-work-out-horses-of-takarazuka-kinen-2026-400822"},{"src":"日本気象協会 tenki.jp 阪神6/14予報","stance":"data","target":"馬場/天候","text":"6/14(日)の阪神競馬場は晴れ時々くもり、最高29℃・最低19℃。前日土曜も晴れで芝・ダートとも良発表のため、日曜も良馬場想定。高速馬場でのスピード勝負になる可能性。","url":"https://tenki.jp/leisure/horse/6/31/32008/"},{"src":"keiba.sqlite(netkeiba連動DB)による一次情報照合","stance":"data","target":"印付き6頭","text":"整備中のヒストリカルDB+netkeiba馬ページで印6頭の血統・全走歴を照合。ダノンデサイルのlast3がWeb収集時に捏造(ドバイ/AJCC2026走は実在せず実際は大阪杯3-有馬3-ジャパンC3着のトップG1連続3着)、クロワデュノール3走目はジャパンC4着(仏G3勝ちではない)、メイショウタバル3走目は天皇賞秋6着が正、と判明し訂正。dam_sireはクロワ=Cape Cross、タバル=フレンチデピュティ、ミュージアム=ハーツクライ、ダノン=Congrats、レガ=ハービンジャー、シンエン=Galileo。","url":"https://race.netkeiba.com/race/shutuba.html?race_id=202609030411"},{"src":"印再編の根拠(v5)","stance":"data","target":"印付き6頭","text":"一次情報照合の事実訂正を受け、実フォーム序列に印を整合。ダノンデサイル(3-3-3 championship)を▲へ昇格、有馬勝ちのミュージアムマイルを◯へ、近2走大敗のメイショウタバルを△へ降格、弱さ確定のシンエンペラーを☆へ。◎クロワは不変。","url":"https://race.netkeiba.com/race/shutuba.html?race_id=202609030411"},{"src":"netkeiba 確定単勝オッズ","stance":"data","target":"全18頭","text":"2026-06-14 14:00 JST時点の確定単勝。1番人気クロワデュノール2.4倍/2メイショウタバル5.6/3ミュージアムマイル6.0/4レガレイラ6.5/5ダノンデサイル7.5/6マイユニバース17.3/12シンエンペラー75.6。前日(クロワ1.2倍)から本命が緩和し、対抗以下が拮抗する混戦オッズに。","url":"https://race.netkeiba.com/odds/index.html?race_id=202609030411"}],"slug":"takarazuka_2026"};
 
 var AX = ["速さ","スタミナ","瞬発力","コース適性","仕上がり"];
+
+// data.json の src は収集経路つきの内部表記（"web:tospo-keiba.jp / umanity.jp"）。
+// 読者に見せるのは媒体名だけにする（内部の接頭辞・ドメインをUIに出さない・2026-08-03 指摘）。
+var SRC_MEDIA = {
+  'tospo-keiba.jp':'東スポ競馬', 'umanity.jp':'ウマニティ', 'nar.umanity.jp':'ウマニティ',
+  'daily.co.jp':'デイリースポーツ', 'nikkansports.com':'日刊スポーツ', 'sanspo.com':'サンスポ',
+  'hochi.news':'スポーツ報知', 'keibalab.jp':'競馬ラボ', 'winsight.jp':'ウインサイト',
+  'keiba-headline.com':'競馬ヘッドライン', 'tenki.jp':'tenki.jp', 'note.com':'note',
+  'netkeiba.com':'netkeiba', 'race.netkeiba.com':'netkeiba', 'news.netkeiba.com':'netkeiba',
+  'db.netkeiba.com':'netkeiba', 'nar.netkeiba.com':'netkeiba', 'netkeiba':'netkeiba',
+  'jra.go.jp':'JRA公式', 'jra.jp':'JRA公式', 'nankankeiba.com':'南関東公式',
+  'tokyocitykeiba.com':'東京シティ競馬', 'x.com':'X', 'youtube.com':'YouTube'
+};
+function srcLabel(src){
+  var s = String(src == null ? '' : src).trim();
+  if(!s) return '';
+  // 複数媒体は「A / B」「A／B」で並ぶ。URL 内の / と混ざらないよう、
+  // 半角スラッシュは前後に空白がある場合だけ区切りとして扱う。
+  return s.split(/\s*／\s*|\s+\/\s+|\s*・\s*/).map(function(part){
+    var d = part.replace(/^(web|url|src)\s*:\s*/i, '')
+                .replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0].trim();
+    return SRC_MEDIA[d] || SRC_MEDIA[d.replace(/^[a-z0-9-]+\./, '')] || d;
+  }).filter(function(v, i, a){ return v && a.indexOf(v) === i; }).join('・');
+}
+function emphScenario(txt){
+  return escHtml(txt).replace(/(雨|豪雨|曇|重|稍重|不良|良|道悪|内有利|外伸び|前残り|先行力|差し|逃げ|斤量|枠順|追い切り|当日馬場|波乱|荒れ|高|低|本命|信頼度|リスク|上方修正)/g, '<b>$1</b>');
+}
+// 出走馬名リスト（長い名前優先で部分マッチの取りこぼしを防ぐ）
+var _HORSE_NAMES = null;
+function horseNames(){
+  if(_HORSE_NAMES) return _HORSE_NAMES;
+  var names = [];
+  (DATA.top_horses||[]).concat(DATA.mini_horses||[]).forEach(function(h){ if(h && h.name) names.push(h.name); });
+  names.sort(function(a,b){ return b.length - a.length; });
+  _HORSE_NAMES = names;
+  return names;
+}
+// 内部の識別子（データ源キー・フィールド名）が本文に混ざった版を描画時に落とす最後の防波堤。
+// 本来は data.json に書かない側で守る（references/writing-rules.md）。2026-08-03 指摘。
+var JARGON_RE = /^(?:yosou_trends(?:\.json)?|freshness_warning|trend_config(?:\.[A-Za-z0-9_]+)*|scenario_stability|odds_asof|predict_stage|predict_revision|source_tier|origin_event_id|sim_base|anchor_score|final_score|confidence_avg|pop_provisional|fact_integrity_status|cross_category_review|walk-forward|race_count|runs)(?:\s*=\s*[A-Za-z0-9_.\-]+)?$/;
+function deJargon(txt){
+  return String(txt == null ? '' : txt).replace(/[（(]([^（()）]*)[）)]/g, function(m, inner){
+    var parts = inner.split(/\s*[・,、\/／]\s*/).filter(Boolean);
+    return (parts.length && parts.every(function(p){ return JARGON_RE.test(p.trim()); })) ? '' : m;
+  }).replace(/[ 　]{2,}/g, ' ').trim();
+}
 
 // ========== 馬色バッジの文字色を自動判定 ==========
 // 馬ごとの色(data.json の color)を背景に白文字を乗せていたため、淡い色では
@@ -1840,7 +1890,7 @@ function pvRelTime(asof){
   box.innerHTML = head + '<ul class="pendChk">' + list.map(function(p){
     return '<li class="'+(p.done?'done':'')+'"><span class="ck">'+(p.done?'☑':'☐')+'</span>'
          + '<div class="pcbody"><div class="pctop"><b>'+p.label+'</b>'+(p.when?'<span class="when">'+p.when+'</span>':'')+'</div>'
-         + (p.memo?'<div class="pcmemo">'+p.memo+'</div>':'')+'</div></li>';
+         + (p.memo?'<div class="pcmemo">'+deJargon(p.memo)+'</div>':'')+'</div></li>';
   }).join("") + '</ul>';
 })();
 
@@ -1855,7 +1905,7 @@ function pvRelTime(asof){
   var TIER_LABEL = {T0:'集計情報', T1:'一次情報', T2:'二次情報'};
   function friendlySrc(src){
     var m = String(src||'').match(/^(T[0-2]):(.*)$/);
-    return escHtml(m ? (TIER_LABEL[m[1]]||m[1])+'：'+m[2] : src);
+    return escHtml(m ? (TIER_LABEL[m[1]]||m[1])+'：'+srcLabel(m[2]) : srcLabel(src));
   }
   // 外部記事から機械取得した値をそのまま innerHTML に入れると、取得元にHTMLが混ざった時点で
   // 公開サイト上で任意スクリプトが動く（2026-07-30 指摘）。文字列は escHtml、URLは
@@ -1897,7 +1947,7 @@ function pvRelTime(asof){
 // 先頭の1文だけを本文に出し、残りと出典メタは折りたたむ（2026-08-01 指摘）
 function trendDeco(s){
   // (n=29) のような標本数は判断に効くので残すが、主張より弱く見せる
-  return s.replace(/[（(]n=(\d+)[）)]/g,'<span class="nsm">(n=$1)</span>');
+  return deJargon(s).replace(/[（(]n=(\d+)[）)]/g,'<span class="nsm">(n=$1)</span>');
 }
 document.getElementById("trendBox").innerHTML = DATA.trends.map(function(t){
   var txt=String(t.text||''), meta='';
@@ -1920,7 +1970,8 @@ document.getElementById("trendBox").innerHTML = DATA.trends.map(function(t){
 // 採点根拠なので data.json からは消さず、新しい2件だけを本文に出して残りは畳む。
 var OIK_SHOW = 2;
 function oikItemHtml(o){
-  var src = o.url ? '<a href="'+o.url+'" target="_blank">'+o.src+'</a>' : o.src;
+  var label = escHtml(srcLabel(o.src));
+  var src = o.url ? '<a href="'+o.url+'" target="_blank">'+label+'</a>' : label;
   return '<div><b>'+src+':</b> 「'+emphOikiri(o.text)+'」</div>';
 }
 function oikBlock(list){
@@ -1931,7 +1982,7 @@ function oikBlock(list){
   var rest   = list.slice(0, Math.max(0, list.length-OIK_SHOW)).reverse();
   var body = newest.map(oikItemHtml).join('');
   if(rest.length){
-    var names = rest.map(function(o){ return String(o.src||'').replace(/<[^>]*>/g,'').slice(0,12); }).join('・');
+    var names = rest.map(function(o){ return srcLabel(o.src).replace(/<[^>]*>/g,'').slice(0,12); }).join('・');
     body += '<details class="tMore"><summary>以前の評価 '+rest.length+'件（'+names+'）</summary><div>'
           + rest.map(oikItemHtml).join('') + '</div></details>';
   }
@@ -2041,22 +2092,9 @@ function escHtml(txt){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
   });
 }
-function emphScenario(txt){
-  return escHtml(txt).replace(/(雨|豪雨|曇|重|稍重|不良|良|道悪|内有利|外伸び|前残り|先行力|差し|逃げ|斤量|枠順|追い切り|当日馬場|波乱|荒れ|高|低|本命|信頼度|リスク|上方修正)/g, '<b>$1</b>');
-}
-// 出走馬名リスト（長い名前優先で部分マッチの取りこぼしを防ぐ）
-var _HORSE_NAMES = null;
-function horseNames(){
-  if(_HORSE_NAMES) return _HORSE_NAMES;
-  var names = [];
-  (DATA.top_horses||[]).concat(DATA.mini_horses||[]).forEach(function(h){ if(h && h.name) names.push(h.name); });
-  names.sort(function(a,b){ return b.length - a.length; });
-  _HORSE_NAMES = names;
-  return names;
-}
 // 他者の見方・過去傾向テキスト用: HTMLエスケープ後、馬名と要点キーワードを太字化。
 function emphText(txt){
-  var s = escHtml(txt);
+  var s = escHtml(deJargon(txt));
   horseNames().forEach(function(n){
     var e = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     if(e) s = s.replace(new RegExp(e, 'g'), '<b class="hn">'+escHtml(n)+'</b>');
@@ -2169,7 +2207,7 @@ function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u
     cpFit = Object.keys(cp.fit_rule).filter(function(k){return /◎/.test(cp.fit_rule[k]);})
       .map(function(k){return k + cp.fit_rule[k].charAt(0);}).join(' ');
   }
-  if(cp && !cpFit) cpFit = shortText(cp.bias_leg || cp.straight_note || '', 26);
+  if(cp && !cpFit) cpFit = shortText(deJargon(cp.bias_leg || cp.straight_note || ''), 26);
   var courseCard = cp
     ? '<div class="signalCard"><div><b>有利な脚質</b><strong>'+(cpFit || '-')+'</strong><small>'+shortText(cp.name || 'コース', 24)+'</small></div></div>'
     : '';
@@ -2218,8 +2256,8 @@ function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u
   var bias = '';
   if(cp.bias_leg||cp.bias_frame){
     bias = '<div class="cp-bias"><b>バイアス</b><br>'
-      + (cp.bias_leg?'脚質: '+cp.bias_leg+'<br>':'')
-      + (cp.bias_frame?'枠: '+cp.bias_frame:'') + '</div>' + fit;
+      + (cp.bias_leg?'脚質: '+deJargon(cp.bias_leg)+'<br>':'')
+      + (cp.bias_frame?'枠: '+deJargon(cp.bias_frame):'') + '</div>' + fit;
   }
   box.innerHTML = '<div class="courseprofile"><h3>コース特性 - '+(cp.name||'')+'</h3>'
     + '<div class="cp-grid">'+grid+'</div>' + bias + '</div>';
@@ -2268,7 +2306,7 @@ function applyPickStripVisibility(){
       + '<span class="pc-mark">'+h.mark+'</span>' + leg
       + '<div class="pc-body">'
       +   '<div class="pc-name">'+no+' '+h.name+'</div>'
-      +   '<div class="pc-meta"><span class="pc-pop">'+pop+'</span>'+(h.sex_age?'<span>'+h.sex_age+'</span>':'')+favBtnHtml(h.name,'sm')+'</div>'
+      +   '<div class="pc-meta"><span class="pc-pop">'+pop+'</span>'+(h.sex_age?'<span>'+h.sex_age+'</span>':'')+favBtnHtml(h.name,'sm')+memoBtnHtml(h.name,'sm')+'</div>'
       +   (catchTxt ? '<div class="pc-catch">'+catchTxt+'</div>' : '')
       +   '<a class="pc-jump" href="#horse-'+h.name.replace(/\s+/g,'-')+'">カード詳細 →</a>'
       + '</div></div>';
@@ -2417,7 +2455,7 @@ function applyPickStripVisibility(){
           // サマリ（日本語ラベル）
           var summary = '<div style="font-size:.74rem;margin-top:8px;padding-top:6px;border-top:1px solid #e5e7eb;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">';
           if(sc.raw_score!==undefined) summary += '<span title="raw_score = 7軸スコアの加重平均（補正適用前）">加重合計 <b>'+(typeof sc.raw_score==='number'?sc.raw_score.toFixed(2):sc.raw_score)+'</b></span>';
-          if(sc.final_score!==undefined && sc.adjustments && sc.adjustments.length) summary += '<span title="final_score = 加重合計 + adjustments の合計">補正後 <b>'+(typeof sc.final_score==='number'?sc.final_score.toFixed(2):sc.final_score)+'</b></span>';
+          if(sc.final_score!==undefined && sc.adjustments && sc.adjustments.length) summary += '<span title="10観点の加重合計に、加点・減点を反映した点数">補正後 <b>'+(typeof sc.final_score==='number'?sc.final_score.toFixed(2):sc.final_score)+'</b></span>';
           if(sc.confidence_avg!==undefined) summary += '<span title="各軸の情報量（採点根拠の充実度）の平均。0/5=ほぼ材料なし、5/5=一次情報まで揃った確信ベース">情報量 <b>'+(typeof sc.confidence_avg==='number'?sc.confidence_avg.toFixed(2):sc.confidence_avg)+'/5</b></span>';
           if(sc.anchor_score!==undefined) summary += '<span style="background:rgba(91,141,239,.18);padding:2px 10px;border-radius:6px;font-weight:700;" title="総合スコア = 加重合計 × (情報量/5)。印選定に使う内部ランキング値。情報量(確信度)が低い段階(追切/枠順前)は低めに出る">総合スコア（確信反映後） <b style="color:#3b5fc7;">'+(typeof sc.anchor_score==='number'?sc.anchor_score.toFixed(2):sc.anchor_score)+'</b></span>';
           summary += '</div>';
@@ -2435,10 +2473,10 @@ function applyPickStripVisibility(){
                + rows + adj + summary + legend + '</div></details>';
         })()
       + (function(){
-          // 連覇プレミアム表示（trend_config.same_race_repeat_bonus）
+          // 連覇プレミアム表示（内部ルール番号・フィールド名は読者面に出さない）
           var bonus = (DATA.trend_config && DATA.trend_config.same_race_repeat_bonus) || {};
           var v = bonus[h.name]; if(!v) return '';
-          return '<div style="margin-top:6px;padding:4px 10px;background:rgba(217,156,71,.16);border-left:3px solid #d99c47;border-radius:6px;font-size:.78rem;color:#7a5a1d;"><b>連覇プレミアム R12</b> course_dist 軸に +'+v+' 加点（trend_config.same_race_repeat_bonus）</div>';
+          return '<div style="margin-top:6px;padding:4px 10px;background:rgba(217,156,71,.16);border-left:3px solid #d99c47;border-radius:6px;font-size:.78rem;color:#7a5a1d;"><b>連覇プレミアム</b> このレースを勝った実績を評価し、コース距離に +'+v+' 加点しています</div>';
         })()
       + '</div>';
   });
@@ -2523,7 +2561,7 @@ function applyPickStripVisibility(){
       + miniOik
       + aptHtml
       + (hasMarks && m.pop && m.pop<=6 ? '<div class="factChip warn" style="margin:4px 0 0;">⚠ 人気'+m.pop+'番なのに軽視した理由</div>' : '')
-      + '<div class="why">'+m.why+'</div>'
+      + '<div class="why">'+deJargon(m.why)+'</div>'
       + '</div>';
   });
   document.getElementById("mini").innerHTML = mhtml;
@@ -3789,7 +3827,7 @@ initBetSlip();
 function verdictBetLean(winPct, tier, score, hasOdds, fullField){
   // winPct が null = シミュ対象外(能力データ未整備)。勝率0%として扱うと「押さえ程度」等の
   // 断定が出てしまうため、判定に入れず未算出であることを明示する。
-  if(winPct==null) return 'シミュ未算出（能力データ未整備）。印と採点で判断';
+  if(winPct==null) return 'データ不足でシミュ未算出。印と採点で判断';
   if(winPct>=20) return (hasOdds && fullField)
       ? '軸候補。単勝も面白い'
       : '軸候補。単勝の妙味はオッズ確定後に判断';
@@ -3838,8 +3876,7 @@ function verdictBetLean(winPct, tier, score, hasOdds, fullField){
   var warn = diffs.length
     ? '<div class="verdictWarn"><b>⚠ 見方が割れています</b><ul>'
         + diffs.map(function(d){ return '<li>' + d + '</li>'; }).join('')
-        + '</ul><small>印・市場人気・シミュレーションが一致していません。一つの結論に絞らず差異のまま示します。'
-        + 'どの見方を採るかを決めてから買ってください。</small></div>'
+        + '</ul><small>どの見方を採るかを決めてから買ってください。</small></div>'
     : '';
 
   var marked = sortByMark(DATA.top_horses||[]);
@@ -3862,13 +3899,15 @@ function verdictBetLean(winPct, tier, score, hasOdds, fullField){
       ? '（実績'+aptSym(apt.track_fit_score)+'／枠・脚質'+aptSym(apt.frame_pace_score)+'）' : '';
     if(tier) bits.push('条件相性'+tier.charAt(0)+aptSplitTxt);
     if(winPct!=null) bits.push('シミュ勝率'+winPct+'%');
-    else if(excluded[h.no]) bits.push('シミュ対象外（能力データ未整備）');
+    else if(excluded[h.no]) bits.push('シミュ対象外');
+    // 結論 → 数値 → 根拠 の順。以前は数値を先に並べて最後に結論を置いていたが、
+    // スマホでは1行目しか読まれない前提で「どう買うか」を先頭に出す（2026-08-03 指摘）。
     return '<div class="verdictCard" style="--c:'+(h.color||'#888')+'">'
       + '<div class="vHd"><b class="vMk">'+(h.mark||'-')+'</b><b class="vNm">'+h.no+' '+h.name+'</b></div>'
+      + '<div class="vConcl">'+lean+(conf?'<span class="vConf">信頼度'+conf+'</span>':'')+'</div>'
       + (bits.length?'<div class="vBits">'+bits.join(' ・ ')+'</div>':'')
       + (reasonBits.length?'<div class="vReason">'+reasonBits.join('／')+'</div>':'')
       + (aptSplitTxt?'<div class="vSplit">'+aptWhy(apt)+'</div>':'')
-      + '<div class="vConcl">結論：'+lean+(conf?'（情報信頼度'+conf+'）':'')+'</div>'
       + '</div>';
   }).join('');
 })();
