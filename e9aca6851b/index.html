@@ -793,8 +793,60 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist">
+  <button type="button" data-tab="tab-predict" class="active">予想</button>
+  <button type="button" data-tab="tab-review">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane active">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4070,6 +4122,136 @@ function doApplyBetPlan(planIdx){
       kbModalOpened(closeDom);
       lastFocus=document.activeElement;
       closeBtn.focus();
+    });
+  });
+})();
+</script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane">
+<div class="rv-wrap">
+  <p class="rv-lead">11番人気メンコイボクチャンが中団から差し切り、単勝6,370円の大波乱。2着も8番人気ギガースで馬連29,810円、3連単は384,380円の高配当となった。1番人気で連覇を狙った◎ファーンヒルは58kgのトップハンデを背負って12着に大敗。前半3F34.2の激流で逃げ・先行勢が総崩れとなり、差し・追込勢が上位を独占した。</p>
+  <h2>レース結果</h2>
+  <p class="rv-note">船橋・ダート1000m / 天候 晴・馬場 良 / 勝ち時計 0:59.2 / 14頭立て</p>
+  <div class="rv-tbl-scroll"><table class="rv-tbl">
+    <thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>厩舎</th><th>騎手</th><th>斤量</th><th>馬体重</th><th>人気</th><th>印</th><th>上り3F</th></tr></thead>
+    <tbody>
+      <tr class="win"><td>1</td><td>5</td><td>8</td><td class="nm">メンコイボクチャン</td><td>牡6</td><td>渡辺貴光</td><td>庄司大輔</td><td>56.0</td><td>510(-7)</td><td>11</td><td></td><td>35.6</td></tr>
+      <tr><td>2</td><td>6</td><td>9</td><td class="nm">ギガース</td><td>セ5</td><td>佐藤裕太</td><td>岡村健司</td><td>56.0</td><td>504(+4)</td><td>6</td><td></td><td>35.3</td></tr>
+      <tr><td>3</td><td>6</td><td>10</td><td class="nm">ワンダーランド</td><td>牡6</td><td>林正人</td><td>澤田龍哉</td><td>56.0</td><td>470(-4)</td><td>4</td><td>☆</td><td>36.2</td></tr>
+      <tr><td>4</td><td>8</td><td>14</td><td class="nm">フリーダム</td><td>牝4</td><td>宗形竹見</td><td>達城龍次</td><td>54.0</td><td>451(-1)</td><td>8</td><td></td><td>36.9</td></tr>
+      <tr><td>5</td><td>4</td><td>6</td><td class="nm">ザイデルバスト</td><td>牡5</td><td>川島正一</td><td>本橋孝太</td><td>56.0</td><td>463(+2)</td><td>3</td><td>☆</td><td>35.5</td></tr>
+      <tr><td>6</td><td>5</td><td>7</td><td class="nm">エンテレケイア</td><td>牡8</td><td>小久保智</td><td>吉原寛人</td><td>56.0</td><td>523(0)</td><td>5</td><td>△</td><td>37.3</td></tr>
+      <tr><td>7</td><td>7</td><td>11</td><td class="nm">カールスバート</td><td>牡8</td><td>斉藤敏</td><td>木間塚龍馬</td><td>56.0</td><td>489(+3)</td><td>14</td><td></td><td>35.7</td></tr>
+      <tr><td>8</td><td>7</td><td>12</td><td class="nm">ムーム</td><td>牝5</td><td>橋本和馬</td><td>矢野貴之</td><td>54.0</td><td>483(+2)</td><td>9</td><td></td><td>37.2</td></tr>
+      <tr><td>9</td><td>4</td><td>5</td><td class="nm">ハーフブルー</td><td>牝4</td><td>鈴木啓之</td><td>御神本訓史</td><td>54.0</td><td>469(+2)</td><td>2</td><td>▲</td><td>37.7</td></tr>
+      <tr><td>10</td><td>3</td><td>4</td><td class="nm">ティアラフォーカス</td><td>牡7</td><td>宗形竹見</td><td>和田譲治</td><td>56.0</td><td>555(-7)</td><td>12</td><td></td><td>36.7</td></tr>
+      <tr><td>11</td><td>8</td><td>13</td><td class="nm">フクノユリディズ</td><td>セ6</td><td>田中譲二</td><td>多田羅誠也</td><td>56.0</td><td>493(+9)</td><td>10</td><td>☆</td><td>38.1</td></tr>
+      <tr><td>12</td><td>1</td><td>1</td><td class="nm">ファーンヒル</td><td>牡7</td><td>荒山勝徳</td><td>笹川翼</td><td>58.0</td><td>479(-8)</td><td>1</td><td>◎</td><td>37.8</td></tr>
+      <tr><td>13</td><td>3</td><td>3</td><td class="nm">セイルオンセイラー</td><td>セ7</td><td>田中一巧</td><td>杉浦健太</td><td>56.0</td><td>497(+2)</td><td>13</td><td></td><td>38.1</td></tr>
+      <tr><td>14</td><td>2</td><td>2</td><td class="nm">スモークフレイバー</td><td>牡5</td><td>繁田健一</td><td>野畑凌</td><td>56.0</td><td>487(-5)</td><td>7</td><td>△</td><td>43.0</td></tr>
+    </tbody></table></div>
+  <h3>払い戻し</h3>
+  <div class="rv-pay">
+    <span class="chip"><b>単勝</b> 8 6,370円</span>
+    <span class="chip"><b>複勝</b> 8 1,150円 / 9 450円 / 10 260円</span>
+    <span class="chip"><b>枠連</b> 5-6 2,950円</span>
+    <span class="chip"><b>馬連</b> 8-9 29,810円</span>
+    <span class="chip"><b>ワイド</b> 8-9 6,140円 / 8-10 3,030円 / 9-10 1,120円</span>
+    <span class="chip"><b>馬単</b> 8→9 65,590円</span>
+    <span class="chip"><b>3連複</b> 8-9-10 29,540円</span>
+    <span class="chip"><b>3連単</b> 8→9→10 384,380円</span>
+  </div>
+  <h3>ラップ</h3>
+  <p class="rv-note">通過 11.8 - 22.5 - 34.2 - 46.6 - 59.2 / 区間ラップ 11.8 - 10.7 - 11.7 - 12.4 - 12.6</p>
+  <p>2F目に10.7を刻む激流で前半3F34.2。対して後半2Fは12.4 - 12.6と大きく失速しており、逃げ・先行勢が止まって差し馬が届く典型的な消耗戦のラップとなった。</p>
+  <h2>予想 vs 結果</h2>
+  <table class="rv-diff"><tbody>
+    <tr><th>馬場</th><td><b>予想:</b> 晴・良、時計は速め<br><b>結果:</b> 晴・良で想定通り。勝ち時計0:59.2は昨年(0:59.1)とほぼ同水準で、馬場想定は的中。</td></tr>
+    <tr><th>ペース</th><td><b>予想:</b> ハイ。「逃げ宣言級が4頭で1000m戦。前は激しくなる」<br><b>結果:</b> 前半3F34.2の激流で想定的中。ペースの読み自体は正しかった。</td></tr>
+    <tr><th>バイアス</th><td><b>予想:</b> 内有利。「内前有利の基本バイアスが効く。内枠先行勢の残り目を重く見る」<br><b>結果:</b> <b>正反対に外れた。</b>1着から4着はすべて5枠から8枠の外目で、上がり3Fは1着35.6・2着35.3と差し勢が上位。1枠1番の◎ファーンヒルが12着、2枠2番スモークフレイバーが14着と、内枠先行勢は総崩れになった。</td></tr>
+    <tr><th>印判定</th><td><b>予想:</b> 7頭に印(◎▲△△☆☆☆)<br><b>結果:</b> 馬券圏内は☆ワンダーランド3着のみ。1着メンコイボクチャンと2着ギガースはいずれも無印(mini_horses)で、しかも両馬を明示的に評価から外していた。</td></tr>
+  </tbody></table>
+  <h2>印付き馬の振り返り</h2>
+  <div class="rv-card">
+    <div class="hd"><span class="mk">◎</span> ファーンヒル<span class="res">12着 / 不発</span></div>
+    <p>昨年の勝ち馬で1番人気。予想では「この舞台のJpnI覇者が最内枠。展開・実績・鞍上のすべてで上位」としたが、58kgのトップハンデ(他の牡馬より2kg重い)と馬体重-8kgのマイナス、そして最内枠から激流に巻き込まれる形が重なり上がり37.8で失速した。斤量差を評価軸に持っていなかったことが最大の見落とし。</p>
+  </div>
+  <div class="rv-card">
+    <div class="hd"><span class="mk">▲</span> ハーフブルー<span class="res">9着 / 不発</span></div>
+    <p>2番人気。逃げ馬が多い点は「主導権争いが読みにくい」と予想時点で指摘していたが、それでも frame_pace に5点(最高評価)を与えてしまった。前半の激しい先行争いに巻き込まれ上がり37.7で後退。懸念を言語化しながらスコアに反映できていない典型例。</p>
+  </div>
+  <div class="rv-card">
+    <div class="hd"><span class="mk">△</span> スモークフレイバー<span class="res">14着 / 不発</span></div>
+    <p>最下位。上がり43.0は明らかな異常値で、レース中の不利または競走中止に近い内容が疑われる。事後の公式発表は本稿執筆時点で未取得のため、原因の断定は避ける。</p>
+  </div>
+  <div class="rv-card">
+    <div class="hd"><span class="mk">△</span> エンテレケイア<span class="res">6着 / 不発</span></div>
+    <p>2024年の同レース勝ち馬。「船橋1000mだけは別の顔を持つ」と再現に期待したが、8歳の逃げ馬にこの激流は厳しく上がり37.3で6着。近走不振(recent_form=1点)という自前の評価どおりの結果であり、コース実績で上振れを期待した分が外れた。</p>
+  </div>
+  <div class="rv-card">
+    <div class="hd"><span class="mk">☆</span> ワンダーランド<span class="res hit">3着 / 的中</span></div>
+    <p>印馬で唯一の馬券圏内。「枠がもう少し内なら評価は上がった」と6枠を減点材料にしていたが、実際にはその外めの枠こそが好走要因だった。減点の向きが逆だったにもかかわらず結果的に拾えた形で、評価が正しかったとは言い難い。</p>
+  </div>
+  <div class="rv-card">
+    <div class="hd"><span class="mk">☆</span> フクノユリディズ<span class="res">11着 / 不発</span></div>
+    <p>高知からの遠征馬。26戦16勝の逃げ馬として「ハナを切れれば粘り込む余地」と見たが、8枠13番から先手を取りに行く形は激流をさらに厳しくするだけで、上がり38.1で失速した。</p>
+  </div>
+  <div class="rv-card">
+    <div class="hd"><span class="mk">☆</span> ザイデルバスト<span class="res">5着 / 不発</span></div>
+    <p>印馬で唯一の差し脚質。「1000mで追い込みは展開頼み」として frame_pace を2.5点まで下げていたが、実際にはその展開が現実になり上がり35.5で5着まで追い上げた。ハイペースを予想しながら差し馬を減点したという矛盾が、最も分かりやすく表れた1頭。</p>
+  </div>
+  <h2>3ソース回顧</h2>
+  <p class="rv-note">本レースは2026-08-06 20:05発走で、本稿執筆時点(同日22時台)では各媒体の事後回顧記事および勝利騎手・関係者コメントがまだ公開されていない。確認できた事後の一次情報と、予想時点で記録していた事前見解のみを掲載する。推測による補完はしていない。</p>
+  <div class="rv-grid">
+    <div class="rv-view">
+      <div><span class="src">netkeiba(結果)</span><span class="tag">事後</span></div>
+      <p>着順・配当・ラップの一次情報。勝ち時計0:59.2、前半3F34.2に対し区間ラップは12.4 - 12.6と失速。1着メンコイボクチャンの上がり35.6、2着ギガース35.3がメンバー上位の脚だった。</p>
+      <p><a href="https://nar.netkeiba.com/race/result.html?race_id=202643080611" target="_blank" rel="noopener">https://nar.netkeiba.com/race/result.html?race_id=202643080611</a></p>
+    </div>
+    <div class="rv-view">
+      <div><span class="src">Wikipedia(歴代優勝馬)</span><span class="tag">事後</span></div>
+      <p>第16回優勝はメンコイボクチャン(牡6・船橋)、騎手 庄司大輔、調教師 渡邊貴光、勝ち時計59.2秒。過去5年の勝ち時計は2025年ファーンヒル59.1、2024年エンテレケイア58.7、2023年キモンルビー59.7、2022年ギシギシ59.2で、今年は平均的な決着時計だった。</p>
+      <p><a href="https://ja.wikipedia.org/wiki/%E7%BF%92%E5%BF%97%E9%87%8E%E3%81%8D%E3%82%89%E3%81%A3%E3%81%A8%E3%82%B9%E3%83%97%E3%83%AA%E3%83%B3%E3%83%88" target="_blank" rel="noopener">https://ja.wikipedia.org/wiki/習志野きらっとスプリント</a></p>
+    </div>
+    <div class="rv-view">
+      <div><span class="src">X:浅井おおきづダート</span><span class="tag">事前</span></div>
+      <p>追い切り診断からハーフブルー・ザイデルバスト・ギガース・ワンダーランド・フリーダムの5頭を推奨。このうちギガース(2着)・ワンダーランド(3着)・フリーダム(4着)・ザイデルバスト(5着)が上位を占めた。当方が無印としたギガースとフリーダムを含む点で、この見解のほうが結果に近かった。</p>
+      <p><a href="https://x.com/azaikeiba/status/2084193804903673989" target="_blank" rel="noopener">https://x.com/azaikeiba/status/2084193804903673989</a></p>
+    </div>
+    <div class="rv-view">
+      <div><span class="src">note:chiaki</span><span class="tag">事前</span></div>
+      <p>ハーフブルーを本命視。超スプリント特化の実績と54kgの斤量減、御神本騎手の短距離実績を評価していたが、結果は9着。逃げ馬多数の隊列想定を織り込めなかった点は当方の予想と共通する。</p>
+      <p><a href="https://note.com/chiaki4444/n/n2d7129a0c207" target="_blank" rel="noopener">https://note.com/chiaki4444/n/n2d7129a0c207</a></p>
+    </div>
+    <div class="rv-view">
+      <div><span class="src">Web:うまにてぃ(夢月)</span><span class="tag">事前</span></div>
+      <p>「能力はファーンヒルが上だが最内枠との比較でハーフブルーを最上位評価」。最内枠をマイナス材料と見た点は当方(内有利と評価)と逆で、結果的にはこちらの見立てが正しかった。ただし本命ハーフブルー自体は9着。</p>
+      <p><a href="https://nar.umanity.jp/race_newsdet.php?nid=11875310" target="_blank" rel="noopener">https://nar.umanity.jp/race_newsdet.php?nid=11875310</a></p>
+    </div>
+  </div>
+  <h2>今回の学び</h2>
+  <table class="rv-learn"><tbody>
+    <tr><th>ペースとバイアスの矛盾</th><td>「ハイペース」を予想しながら基本バイアスを「内前有利」に置き、逃げ・先行4頭の frame_pace に4.5から5点を与えた。ハイペース想定と前有利バイアスは原則として両立しない。ペース判定から隊列有利不利へ機械的に符号を通す仕組みが要る。</td></tr>
+    <tr><th>斤量が評価軸に無い</th><td>◎ファーンヒルは58kg、他の牡馬は56kg、牝馬は54kg。1000m戦での2kgから4kg差は決定的だが、scorecard の7軸(recent_form/class_ceiling/course_dist/condition/jockey/track_fit/frame_pace)に斤量を扱う軸が存在せず、impost はデータとして持ちながらスコアに一切反映されていない。</td></tr>
+    <tr><th>condition軸が全頭未採点</th><td>印を付けた7頭すべてで condition の score が空・信頼度0のまま anchor を算出していた。地方重賞は追い切り情報が薄く当日発表も多いが、未接地のまま出した印であることが信頼度に反映されていない。◎は当日-8kgだった。</td></tr>
+    <tr><th>自前で記録した反証を握り潰した</th><td>事前に収集した X の追い切り診断がギガース・フリーダムを推奨していたのに、当方は「追い込み一手で1000mでは間に合わない」(ギガース)、「内前有利のこの舞台で最も外を回らされるのが痛い」(フリーダム)として明示的に否定した。両馬は2着と4着。収集した外部見解が自分の想定と食い違うとき、否定の根拠が自分のバイアス想定に依存していないか点検する必要がある。</td></tr>
+  </tbody></table>
+  <p class="rv-note">着順・配当・ラップは netkeiba の結果ページおよび Wikipedia 歴代優勝馬表で二重に照合した一次情報。事後の関係者コメントおよび各媒体の回顧記事は発走から約2時間半の本稿執筆時点で未公開のため取得未完とし、推測では埋めていない。ハーフブルーの厩舎表記はレース当日の公式記録(鈴木啓之)を採用しており、当方の事前データ(北海道・小野望)とは食い違いがある。</p>
+</div>
+</section><!-- /tab-review -->
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=document.querySelectorAll('.tabHd button[data-tab]');
+  var panes=document.querySelectorAll('.tab-pane');
+  if(!btns.length) return;
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var id=b.getAttribute('data-tab');
+      btns.forEach(function(x){x.classList.toggle("active",x===b);});
+      panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+      window.scrollTo({top:0,behavior:'smooth'});
     });
   });
 })();
