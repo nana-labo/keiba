@@ -891,6 +891,11 @@
 
   <!-- 過去10年傾向は全馬リストの下へ、今後更新チェックリストは結論ページ最下部へ移設（下部参照） -->
 
+  <!-- 結論ページ限定で「定量ランキング」「出走馬 並び替えビュー」をここへ引き上げる移設先。
+       客観データを個別馬の講評（判定の内訳チェックリスト）より先に読ませるため（2026-08-07 指摘）。
+       詳細ページのデータタブの構成は変えないので、移設は JS 側で main のときだけ実行する。 -->
+  <div id="dataUpMount"></div>
+
   <h2 class="sec" id="cards">印をつけた馬（詳しい根拠）</h2>
 
   <div id="courseProfileBox"></div>
@@ -2261,6 +2266,21 @@ function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u
   }
   box.innerHTML = '<div class="courseprofile"><h3>コース特性 - '+(cp.name||'')+'</h3>'
     + '<div class="cp-grid">'+grid+'</div>' + bias + '</div>';
+})();
+
+// 結論ページ（main）だけ「定量ランキング」「出走馬 並び替えビュー」を馬カードの前へ引き上げる。
+// 数値だけで並ぶ客観データを、1頭目の判定の内訳チェックリストより先に読ませるため（2026-08-07 指摘）。
+// 詳細ページ（body[data-view="detail"]）はデータタブの構成を保つので何もしない。
+(function(){
+  if(document.body.getAttribute('data-view') === 'detail') return;
+  var mount = document.getElementById('dataUpMount');
+  if(!mount) return;
+  // 定量ランキングが先、その下に並び替えビュー
+  ['quantRank','sortview'].forEach(function(id){
+    var el = document.getElementById(id);
+    var page = el && el.closest('.dpage');
+    if(page) mount.appendChild(page);
+  });
 })();
 
 // 本命ピックの表示/非表示（この端末のみ・レース単位でlocalStorageに保存）
