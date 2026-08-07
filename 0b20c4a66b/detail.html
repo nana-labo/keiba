@@ -21,7 +21,10 @@
     --ease:cubic-bezier(.2,.7,.2,1); --dur:200ms;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  /* -webkit-text-size-adjust を指定しないと、iOS Safari は横にはみ出した要素を見つけた瞬間
+     「ページが縮小表示されている」と判断して本文の実効フォントを勝手に拡大する。
+     はみ出しがさらに悪化して表が読めなくなるため、自動拡大を無効化して指定どおりに描く。 */
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1;font-variant-numeric:tabular-nums;background-image:radial-gradient(1400px 700px at 85% -5%, rgba(26,90,138,.06), transparent 55%), radial-gradient(900px 600px at -5% 70%, rgba(26,90,138,.04), transparent 60%);}
   body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.5;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
   .wrap{position:relative;z-index:2;}

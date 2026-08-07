@@ -21,7 +21,10 @@
     --ease:cubic-bezier(.2,.7,.2,1); --dur:200ms;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  /* -webkit-text-size-adjust を指定しないと、iOS Safari は横にはみ出した要素を見つけた瞬間
+     「ページが縮小表示されている」と判断して本文の実効フォントを勝手に拡大する。
+     はみ出しがさらに悪化して表が読めなくなるため、自動拡大を無効化して指定どおりに描く。 */
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1;font-variant-numeric:tabular-nums;background-image:radial-gradient(1400px 700px at 85% -5%, rgba(26,90,138,.06), transparent 55%), radial-gradient(900px 600px at -5% 70%, rgba(26,90,138,.04), transparent 60%);}
   body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.5;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
   .wrap{position:relative;z-index:2;}
@@ -800,6 +803,13 @@
 .tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
 .tab-pane{display:none;}
 .tab-pane.active{display:block;}
+/* 振り返り本文はレースごとの手書きサイドカー(review_tab.html)なので、想定外に横幅の広い
+   表が混ざると document 全体が横スクロールし、position:sticky の .tabHd だけ取り残されて
+   「見出しと本文が横にズレる」実機事故になる（2026-08-07 iPhone 報告）。
+   個々の表は下で必ず折り返す/自前でスクロールさせるが、最後の砦としてペイン自体を
+   clip し、ページ本体が横に動かないことを保証する。overflow:clip はスクロールコンテナを
+   作らないため、外側の .tabHd の sticky を壊さない。 */
+#tab-review{overflow-x:clip;}
 .rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
 .rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
 .rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
@@ -810,12 +820,23 @@
 .rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
 .rv-tbl td.nm{text-align:left;font-weight:700;}
 .rv-tbl tr.win td{background:#fffbe9;}
+/* 一部のレースのサイドカーは .rv-tblscroll/.rv-tbl ではなく .rv-tablewrap/.rv-table と
+   書かれており、対応する規則が無いまま素の table として描画されていた（北九州記念）。
+   列数の多い結果表がそのまま viewport を超え、ページ全体を横にずらしていたため、
+   別名も同じ「自前で横スクロールする表」として扱う。 */
+.rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;margin:10px 0;}
+.rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-table th,.rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-table td.nm{text-align:left;font-weight:700;}
+.rv-table td.sm{text-align:left;}
+.rv-table tr.win td{background:#fffbe9;}
 .rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
 .rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
 .rv-pay .chip b{color:var(--accent-deep);}
-.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
-.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
-.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-diff{width:100%;table-layout:fixed;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;overflow-wrap:anywhere;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:min(6.5em,28%);}
 .rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
 .rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
 .rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
@@ -829,9 +850,13 @@
 .rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
 .rv-view p{margin:5px 0;}
 .rv-view a{color:var(--accent);word-break:break-all;}
-.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
-.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
-.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+/* 学びの見出し列は「自前で記録した反証を握り潰した」のような長い一文が入る。
+   以前は width:5.5em + white-space:nowrap だったため、th が折り返せず表全体が
+   viewport の 1.8 倍(375px に対し 685px)へ膨張し、ページごと横にズレていた。
+   table-layout:fixed + 折り返し可で、列幅を宣言どおりに固定する。 */
+.rv-learn{width:100%;table-layout:fixed;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;overflow-wrap:anywhere;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:min(13em,32%);}
 .rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
 .rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
 @media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
