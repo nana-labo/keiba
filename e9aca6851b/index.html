@@ -891,11 +891,6 @@
 
   <!-- 過去10年傾向は全馬リストの下へ、今後更新チェックリストは結論ページ最下部へ移設（下部参照） -->
 
-  <!-- 結論ページ限定で「定量ランキング」「出走馬 並び替えビュー」をここへ引き上げる移設先。
-       客観データを個別馬の講評（判定の内訳チェックリスト）より先に読ませるため（2026-08-07 指摘）。
-       詳細ページのデータタブの構成は変えないので、移設は JS 側で main のときだけ実行する。 -->
-  <div id="dataUpMount"></div>
-
   <h2 class="sec" id="cards">印をつけた馬（詳しい根拠）</h2>
 
   <div id="courseProfileBox"></div>
@@ -1164,6 +1159,11 @@
   </div>
 
   </div><!-- /dTabPane data -->
+
+  <!-- 結論ページ限定で「定量ランキング」「出走馬 並び替えビュー」をここへ集める移設先。
+       他者の見方（人の評価）の直前に、数値だけで並ぶ客観データを置く（2026-08-07 指摘）。
+       詳細ページのデータタブの構成は変えないので、移設は JS 側で main のときだけ実行する。 -->
+  <div id="dataUpMount"></div>
 
   <!-- 他者の見方（事前評価）：X / note / Web 記事の引用カードでバランスをとる -->
 
@@ -2281,6 +2281,14 @@ function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u
     var page = el && el.closest('.dpage');
     if(page) mount.appendChild(page);
   });
+  // 定量ランキングは畳まず開いた状態で見せる（結論ページのみ・2026-08-07 指摘）。
+  // 中身が空のレース（過去走が未接地）で空の枠だけ開くのは避ける。ランキングの描画は
+  // このIIFEより後ろで走るため、同期処理が終わってから中身の有無を見て開く。
+  setTimeout(function(){
+    var qr = document.getElementById('quantRank');
+    var qrBox = document.getElementById('quantRankBox');
+    if(qr && qrBox && qrBox.children.length) qr.open = true;
+  }, 0);
 })();
 
 // 本命ピックの表示/非表示（この端末のみ・レース単位でlocalStorageに保存）
