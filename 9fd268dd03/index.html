@@ -1182,6 +1182,23 @@ function deJargon(txt){
     return (parts.length && parts.every(function(p){ return JARGON_RE.test(p.trim()); })) ? '' : m;
   }).replace(/[ 　]{2,}/g, ' ').trim();
 }
+// 標本数の内部表記 n=◯ を読者面の日本語へ開く（2026-08-08 指摘：n= が内部値のまま出ていた）。
+// 標本数そのものは「32.4%は34走ぶんの話」と判断の重みが変わる情報なので消さず、単位を付けて残す。
+// 表記ゆれ実例: (n=33) / (各n=22) / (n=192走) / (n=各枠20-32) / (n=103・複勝27.2%) / ・n=151)
+function sampleJa(txt){
+  return String(txt == null ? '' : txt).replace(/n\s*=\s*([^()（）、。・，]*)/g, function(m, rest){
+    var s = String(rest).trim();
+    if(!s) return '';                                  // 値の無い裸の n= は落とす
+    return /[0-9０-９]$/.test(s) ? s + '走' : s;        // 既に単位付き（192走・33ずつ）はそのまま
+  });
+}
+// 標本数を含む括弧だけを .nsm（弱いトーン）で包み、主張本文より一段落として見せる。
+// HTML 化するので、不等号の整形など素のテキストへの加工はこの前に済ませておくこと。
+function sampleDeco(txt){
+  return String(txt == null ? '' : txt).replace(/[（(]([^（()）]*)[）)]/g, function(m, inner){
+    return /n\s*=/.test(inner) ? '<span class="nsm">（' + sampleJa(inner) + '）</span>' : m;
+  });
+}
 
 // ========== 馬色バッジの文字色を自動判定 ==========
 // 馬ごとの色(data.json の color)を背景に白文字を乗せていたため、淡い色では
@@ -1899,8 +1916,8 @@ function pvRelTime(asof){
 // 傾向カードは1枚あたり4〜5節が1段落に詰まって走査できないため、
 // 先頭の1文だけを本文に出し、残りと出典メタは折りたたむ（2026-08-01 指摘）
 function trendDeco(s){
-  // (n=29) のような標本数は判断に効くので残すが、主張より弱く見せる
-  return deJargon(s).replace(/[（(]n=(\d+)[）)]/g,'<span class="nsm">(n=$1)</span>');
+  // (n=29) のような標本数は判断に効くので残すが、日本語へ開いたうえで主張より弱く見せる
+  return sampleDeco(deJargon(s));
 }
 document.getElementById("trendBox").innerHTML = DATA.trends.map(function(t){
   var txt=String(t.text||''), meta='';
@@ -2160,7 +2177,7 @@ function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u
     cpFit = Object.keys(cp.fit_rule).filter(function(k){return /◎/.test(cp.fit_rule[k]);})
       .map(function(k){return k + cp.fit_rule[k].charAt(0);}).join(' ');
   }
-  if(cp && !cpFit) cpFit = shortText(deJargon(cp.bias_leg || cp.straight_note || ''), 26);
+  if(cp && !cpFit) cpFit = shortText(sampleJa(deJargon(cp.bias_leg || cp.straight_note || '')), 26);
   var courseCard = cp
     ? '<div class="signalCard"><div><b>有利な脚質</b><strong>'+(cpFit || '-')+'</strong><small>'+shortText(cp.name || 'コース', 24)+'</small></div></div>'
     : '';
@@ -2208,9 +2225,21 @@ function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u
   }
   var bias = '';
   if(cp.bias_leg||cp.bias_frame){
-    bias = '<div class="cp-bias"><b>バイアス</b><br>'
-      + (cp.bias_leg?'脚質: '+deJargon(cp.bias_leg)+'<br>':'')
-      + (cp.bias_frame?'枠: '+deJargon(cp.bias_frame):'') + '</div>' + fit;
+    // 「脚質: 過去11年: 先行複勝32.4%(n=34)>差し19.1%(n=47)」のまま出ていて、
+    // 集計年が両行に重複・標本数が n= の内部表記・比較が半角不等号と、読者面の文章に
+    // なっていなかった（2026-08-08 指摘）。集計年は見出しへ1回だけ寄せる。
+    var yrs = (String(cp.bias_leg||cp.bias_frame).match(/^過去(\d+)年\s*[:：]/)||[])[1];
+    var yrRe = yrs ? new RegExp('^過去'+yrs+'年\\s*[:：]\\s*') : null;
+    var biasText = function(s){
+      var t = deJargon(s);
+      if(yrRe) t = t.replace(yrRe, '');            // 見出しへ寄せた集計年は本文から落とす
+      t = t.replace(/\s*>\s*/g, ' ＞ ');            // 半角不等号の連結を読み下せる並びに
+      return sampleDeco(escHtml(t));               // HTML 化はテキスト加工をすべて終えた後
+    };
+    bias = '<div class="cp-bias"><b>バイアス</b>'
+      + (yrs ? '<span class="nsm">（過去'+yrs+'年の集計）</span>' : '') + '<br>'
+      + (cp.bias_leg?'脚質：'+biasText(cp.bias_leg)+'<br>':'')
+      + (cp.bias_frame?'枠：'+biasText(cp.bias_frame):'') + '</div>' + fit;
   }
   box.innerHTML = '<div class="courseprofile"><h3>コース特性 - '+(cp.name||'')+'</h3>'
     + '<div class="cp-grid">'+grid+'</div>' + bias + '</div>';
@@ -2591,7 +2620,8 @@ function raceDistNum(){
 // 今がプラスいくつか」という要望への対応。好走(3着以内)した過去走の体重・斤量・距離を平均し、
 // 今回の値との差分をそのまま提示する（好走が無い馬は全過去走の平均で代用し、その旨を明記する）。
 function prFitProfile(h){
-  var races = h.past_races || [];
+  // 取消・除外はゲートを出ていないので「過去N走平均」の母数に入れない（2026-08-08 指摘）
+  var races = (h.past_races || []).filter(isRanRace);
   if(!races.length) return null;
   var good = races.filter(function(r){ var f=parseInt(r.finish,10); return !isNaN(f) && f<=3; });
   var base = good.length ? good : races;
@@ -3196,11 +3226,19 @@ function prGradeColor(g){
 // 人気薄カードでも同じ見え方にできるよう切り出した。r.order は数値/数値文字列/'-' いずれも許容。
 // r.agari は「上がり」接頭辞の有無が呼び出し元によって異なる（sync_last3済みは接頭辞あり・
 // past_races直参照は接頭辞なし）ため、二重表記(「上がり 上がり34.2」)にならないよう吸収する）。
+/* 出走取消(取)・競走除外(除)はゲートを出ていない＝「走」ではない。
+   sync_last3.py / validate_race.py の NON_START と同一定義。中止・失格は出走しているので1走に数える。
+   馬カード描画より後ろに置かれる関数なので、実行順に依存する変数は持たせず判定を自己完結させる。 */
+function isRanRace(r){ return !/^[取除]$/.test(String((r && r.finish) || '').trim()); }
 /* 直近3走の行データを past_races（機械接地の正本）から作る。
-   past_races が無い馬だけ last3 にフォールバックする。 */
+   past_races が無い馬だけ last3 にフォールバックする。
+   past_races を無条件に3件切ると取消・除外が枠を潰して着順欄が「取」になり、
+   1走ぶん古い実戦が押し出される（2026-08-08 指摘。エルムSのウェイワードアクトで
+   オアシスS「取」が居座り根岸S7着が消えていた。data 側は 2026-08-05 に直したが
+   描画が past_races を直参照していたため同じ症状が再発していた）。 */
 function last3Rows(h){
   if(h.past_races && h.past_races.length){
-    return h.past_races.slice(0,3).map(function(r){
+    return h.past_races.filter(isRanRace).slice(0,3).map(function(r){
       return {race:r.race, date:r.date, order:r.finish, jockey:r.jockey,
               dist:r.dist, pass:r.pass, agari:r.agari, leg:r.style};
     });
