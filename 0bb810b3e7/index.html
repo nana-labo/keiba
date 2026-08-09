@@ -2205,19 +2205,29 @@ function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u
   var planLine = (firstPlan && firstPlan.lines && firstPlan.lines[0]) ? firstPlan.lines[0].text : (firstPlan ? firstPlan.title : '買い目を確認');
   // コース適性カード（race.course_profile から脚質適性を要約）
   var cp = (DATA.race && DATA.race.course_profile) || null;
+  // このバッジは「有利な脚質」だけを答える。データ側は脚質名のうしろに
+  // 理由や但し書きをカッコ書き・読点で足してくることがあるが、問いへの答えは脚質名だけ。
+  // テンプレート側で機械的に脚質名へ落とす（ユーザー指摘・2026-08-09）。
+  // データの書き方に依存させず、ここを唯一の門番にする。
+  // 注: この注釈に脚質バッジの実例文字列を書かないこと（生成HTMLへ焼き込まれ検索を汚す）。
+  function legOnly(s){
+    if(!s) return '';
+    var head = String(s).split(/[（(、,。]/)[0];
+    var found = head.match(/逃げ|先行|差し|追込|マクリ/g);
+    return found ? found.filter(function(v,i,a){return a.indexOf(v)===i;}).join('・') : '';
+  }
   var cpFit = '';
   if(cp && cp.fit_rule){
     // ◎（このコースで最も恵まれる脚質）だけを出す。○まで並べると
     // 「逃げ◎ 先行◎ 差し○」のように要点がぼやけるため（2026-07-26指摘）
     cpFit = Object.keys(cp.fit_rule).filter(function(k){return /◎/.test(cp.fit_rule[k]);})
-      .map(function(k){return k + cp.fit_rule[k].charAt(0);}).join(' ');
+      .join('・');
   }
-  // fit_rule が無いレース（採点へ影響させたくないコース）は bias_leg_short を使う。
-  // bias_leg をそのまま26字で切ると「過去11年の複勝率は先行が32.4%で最も高く、差…」のように
-  // 文の途中で切れて答えになっていないバッジが出る（ユーザー指摘・2026-08-08）。
-  // このカードは「有利な脚質は何か」に一言で答える場所なので、専用の短い文を持たせる。
-  if(cp && !cpFit) cpFit = cp.bias_leg_short || '';
-  if(cp && !cpFit) cpFit = shortText(deJargon(cp.bias_leg || cp.straight_note || ''), 26);
+  // fit_rule が無いレース（採点へ影響させたくないコース）は bias_leg_short → bias_leg の順に見る。
+  // どちらも legOnly を通すので、文になっていても脚質名だけが残る。
+  // 脚質名を1つも含まない文しか無いレースは、途中で切れた文を出すより '-' のほうが正直。
+  if(cp && !cpFit) cpFit = legOnly(cp.bias_leg_short);
+  if(cp && !cpFit) cpFit = legOnly(cp.bias_leg || cp.straight_note || '');
   var courseCard = cp
     ? '<div class="signalCard"><div><b>有利な脚質</b><strong>'+(cpFit || '-')+'</strong><small>'+shortText(cp.name || 'コース', 24)+'</small></div></div>'
     : '';
