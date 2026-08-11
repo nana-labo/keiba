@@ -797,8 +797,60 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist">
+  <button type="button" data-tab="tab-predict" class="active">予想</button>
+  <button type="button" data-tab="tab-review">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane active">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4129,6 +4181,102 @@ function doApplyBetPlan(planIdx){
       kbModalOpened(closeDom);
       lastFocus=document.activeElement;
       closeBtn.focus();
+    });
+  });
+})();
+</script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane">
+<div class="rv-wrap">
+<p class="rv-lead">◯9番アンズアメ（川田将雅・1番人気）が中団から差し切り、逃げた◎3番サンライズアムールにクビ差をつけて重賞初制覇。3着に△2番クロジシジョーが入り、keiba-yosouの印馬が1〜3着を独占した。3連単は⑨→③→②で1,420円（3番人気）、馬連③-⑨は290円。◎と◯が入れ替わっただけで、上位評価の構造そのものは的中している。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>8</td><td>9</td><td class="nm">アンズアメ</td><td>牝4</td><td>52.0</td><td>川田将雅</td><td>1:09.7</td><td>-</td><td>33.6</td><td>2.2</td><td>1</td><td>478(-6)</td><td>◯</td></tr>
+<tr><td>2</td><td>3</td><td>3</td><td class="nm">サンライズアムール</td><td>牡7</td><td>55.0</td><td>幸英明</td><td>1:09.7</td><td>クビ</td><td>34.1</td><td>2.9</td><td>2</td><td>513(-5)</td><td>◎</td></tr>
+<tr><td>3</td><td>2</td><td>2</td><td class="nm">クロジシジョー</td><td>牡7</td><td>54.0</td><td>菱田裕二</td><td>1:10.3</td><td>4</td><td>34.3</td><td>6.3</td><td>4</td><td>452(-2)</td><td>△</td></tr>
+<tr><td>4</td><td>6</td><td>6</td><td class="nm">ポッドベイダー</td><td>牡4</td><td>54.0</td><td>吉村智洋</td><td>1:10.6</td><td>1.3/4</td><td>34.8</td><td>4.2</td><td>3</td><td>485(+5)</td><td>△</td></tr>
+<tr><td>5</td><td>4</td><td>4</td><td class="nm">ルコルセール</td><td>牡8</td><td>54.0</td><td>渡辺竜也</td><td>1:10.6</td><td>ハナ</td><td>34.9</td><td>21.0</td><td>5</td><td>531(+7)</td><td>▲</td></tr>
+<tr><td>6</td><td>8</td><td>10</td><td class="nm">チアフルヴォイス</td><td>牝5</td><td>52.0</td><td>高松亮</td><td>1:12.0</td><td>9</td><td>35.2</td><td>189.7</td><td>6</td><td>474(+3)</td><td>☆</td></tr>
+<tr><td>7</td><td>7</td><td>7</td><td class="nm">ルクスディライト</td><td>牝4</td><td>52.0</td><td>斉藤友香</td><td>1:12.0</td><td>クビ</td><td>35.6</td><td>365.9</td><td>8</td><td>432(+4)</td><td></td></tr>
+<tr><td>8</td><td>1</td><td>1</td><td class="nm">スプラウティング</td><td>セ7</td><td>54.0</td><td>塚本涼人</td><td>1:12.1</td><td>1/2</td><td>35.6</td><td>312.9</td><td>7</td><td>515(+3)</td><td></td></tr>
+<tr><td>9</td><td>5</td><td>5</td><td class="nm">クリダーム</td><td>牡6</td><td>54.0</td><td>村上忍</td><td>1:12.9</td><td>5</td><td>36.3</td><td>424.7</td><td>9</td><td>495(+1)</td><td></td></tr>
+<tr><td>取消</td><td>7</td><td>8</td><td class="nm">ボナンザ</td><td>牡6</td><td>54.0</td><td>吉村智洋</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p class="rv-note">天候:晴、馬場:良。勝ちタイム1:09.7。3コーナー通過は③-④-⑥-②-⑨の隊列で、◎サンライズアムールが単騎でハナ。逃げ馬と読んでいた☆⑩チアフルヴォイスは先手を主張できず7番手。JRA勢が1〜4着を独占し、地方勢は▲④ルコルセール5着が最先着だった。</p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ⑨ 220円</span>
+<span class="chip">複勝 ⑨100 / ③100 / ②120円</span>
+<span class="chip">枠連 ③-⑧ 340円</span>
+<span class="chip">馬連 <b>③-⑨ 290円</b></span>
+<span class="chip">ワイド ③-⑨ 130円 / ②-⑨ 210円 / ②-③ 190円</span>
+<span class="chip">馬単 ⑨-③ 510円</span>
+<span class="chip">3連複 <b>②-③-⑨ 380円</b></span>
+<span class="chip">3連単 <b>⑨-③-② 1,420円</b></span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>馬場</th><td><b>予想:</b> 晴・ダート良を当日確定として想定。<br><b>結果:</b> 想定どおり晴・良。時計も1:09.7と速く、前が止まりにくい盛岡ダートの標準的な決着になった。</td></tr>
+<tr><th>展開</th><td><b>予想:</b> ペース速い・前有利。「逃げるチアフルヴォイスに先行勢が並ぶ」隊形を想定した。<br><b>結果:</b> ☆チアフルヴォイスは全くハナを主張できず7番手。代わりに◎サンライズアムールが単騎で楽に逃げ、競り合いの起きない流れになった。「誰が逃げるか」の読みは外したが、前有利という結論は当たった。</td></tr>
+<tr><th>印判定</th><td><b>予想:</b> ◎サンライズアムール（昨年の勝ち馬・斤量4.5kg減）を本命、◯アンズアメは「盛岡初コース・輸送未経験・重賞初挑戦」を減点材料として対抗まで。<br><b>結果:</b> ◯アンズアメが1着、◎サンライズアムールが2着。◎◯▲△△☆の6頭すべてが掲示板圏内〜6着以内に収まり、印の面は完勝。ただし1着2着の序列は逆で、「前走で◎に0.8秒先着している」という直接対決の事実より、コース経験の欠如を重く見たのが誤り。</td></tr>
+<tr><th>券種の相性</th><td><b>予想:</b> 買い目（bet_plans）は未設定で公開した。<br><b>結果:</b> ◎◯▲△△☆のうち3頭で決着し、3連単1,420円・3連複380円と配当は安い。印は当たっても妙味は出ないタイプのレースで、本来は「厚く買うか見送るか」の判断が要る場面だった。</td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">◯</span>9 アンズアメ（川田将雅）<span class="res hit">1着</span></div>
+<p>ダート1200mで13戦5勝・3着内12回という安定感と、前走・水無月Sでサンライズアムールに0.8秒先着していた事実を評価して対抗に置いた。中団5番手から直線で確実に伸び、ゴール寸前で差し切って3連勝＋重賞初制覇。懸念に挙げた「盛岡初コース・輸送未経験・重賞初挑戦」はいずれも影響しなかった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>3 サンライズアムール（幸英明）<span class="res hit">2着</span></div>
+<p>昨年の覇者で、前走から4.5kg減の55kg。想定より楽な単騎逃げに持ち込めて1:09.7と好時計をマークしたが、最後にアンズアメの決め手に屈してクビ差。本命の走りとしては及第点で、負けた相手が強かった内容。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>2 クロジシジョー（菱田裕二）<span class="res hit">3着</span></div>
+<p>2024年のこのレースで2着だった実績馬。斤量5kg減が効いて、差し脚質ながら4馬身差の3着まで押し上げた。「盛岡は前が止まりにくく差しは不利」という減点で△に置いたが、コース実績（盛岡1回で3着内1回）を持つ馬をもう一段上げてよかった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>6 ポッドベイダー（吉村智洋）<span class="res ">4着</span></div>
+<p>3番人気の支持を集めたが4着。59kg→54kgの5kg減という条件好転は活きたものの、盛岡初コース・前走が芝という懸念どおり、上位3頭とは決め手で差がついた。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>4 ルコルセール（渡辺竜也）<span class="res ">5着</span></div>
+<p>岩手重賞5連勝の地元最上位。2番手を追走して見せ場は作ったが、「ダートグレードでの実績がない」というtags_weakどおり、JRA勢の壁を破れず5着。地方最先着ではあり、地元評価としては妥当な着順だった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>10 チアフルヴォイス（高松亮）<span class="res ">6着</span></div>
+<p>「盛岡10走の地元逃げ馬・52kg」という前提でハナを主張できると読んだが、実際は先手を取れず7番手。単勝189.7倍の低評価どおりの6着で、穴指名の前提（逃げられること）そのものが崩れた。</p></div>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">netkeiba 結果ページ（確定着順・払戻）<span class="tag">T0</span></p><p>1着⑨アンズアメ 1:09.7 / 2着③サンライズアムール クビ / 3着②クロジシジョー 4馬身。3連単⑨→③→② 1,420円。天候:晴・馬場:良。取消⑧ボナンザ。</p><p><a href="https://nar.netkeiba.com/race/result.html?race_id=202635081110">https://nar.netkeiba.com/race/result.html?race_id=202635081110</a></p></div>
+<div class="rv-view"><p class="src">netkeiba 公式（X）<span class="tag">事後</span></p><p>「【#クラスターカップ 入線速報】1位入線 9 アンズアメ 1人気／2位入線 3 サンライズアムール 2人気／3位入線 2 クロジシジョー 4人気。川田将雅騎手騎乗、JRAアンズアメがゴール寸前差し切り3連勝＆重賞初制覇！」</p><p><a href="https://x.com/netkeiba/status/2087088851517161625">https://x.com/netkeiba/status/2087088851517161625</a></p></div>
+<div class="rv-view"><p class="src">netkeiba ニュース<span class="tag">事後</span></p><p>「中団から脚を伸ばした川田将雅騎手騎乗の1番人気アンズアメが、逃げた2番人気サンライズアムールにクビ差をつけ優勝した」と報じている。アンズアメの脚質評価（先行〜中団）と、サンライズアムールが逃げたという隊形が裏取りできた。</p><p><a href="https://news.netkeiba.com/?no=339382&pid=news_view">https://news.netkeiba.com/?no=339382&pid=news_view</a></p></div>
+<div class="rv-view"><p class="src">東スポ競馬（見出しのみ確認）<span class="tag">事後</span></p><p>「【盛岡競馬・クラスターC】アンズアメがサンライズアムールとの一騎打ちを制す！川田将雅は素質を高く評価」。本文は取得できておらず、見出しの範囲でのみ引用する。</p><p><a href="https://tospo-keiba.jp/breaking_news/74476">https://tospo-keiba.jp/breaking_news/74476</a></p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>前走の直接対決の着差は、コース経験の欠如より重い</th><td>アンズアメは前走・水無月Sでサンライズアムールに0.8秒先着していた。この直接対決の事実をtags_strongに書きながら、「盛岡初コース・輸送未経験・重賞初挑戦」という経験系の減点を優先して◯に留め、結果は1着。同一路線の2頭が同じレースに出てくる場合、直接対決の着差を最上位の判定材料に置き、コース初経験は「実績が拮抗しているときの決勝点」に格下げする運用へ改めたい。</td></tr>
+<tr><th>『誰が逃げるか』は脚質タグの合算では決まらない</th><td>☆チアフルヴォイスを『盛岡の地元逃げ馬・52kg』としてハナを主張できると読んだが、実際は先手を取れず7番手、代わりに◎サンライズアムールが単騎逃げに持ち込んだ。leg_derived（平均4角位置からの導出）は『前に行きたい馬』は拾えるが、『実際にハナを取れる馬』の優先順位までは決められない。テン3F実績・枠順・斤量・格の4点で逃げ争いの序列を明示する欄を予想側に設けたい。同日の浦和・ルーキーズサマーカップでも同型の外し方をしており、本日2レース連続の再現事故である。</td></tr>
+<tr><th>印が的中しても配当が付かない構図を事前に見抜く</th><td>◎◯▲△△☆の6頭中3頭で決着したが、3連単1,420円・3連複380円・馬連290円と配当は総じて安い。10頭立て・JRA勢と地方勢の力差が明確なダートグレードでは、印を当てても回収に結びつかない。予想段階で『印の的中期待は高いが妙味は薄い』と明示し、見送りまたは単勝・馬単の一点厚めといった券種選択に落とす判断欄が要る。</td></tr>
+</tbody>
+</table>
+</div>
+</section><!-- /tab-review -->
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=document.querySelectorAll('.tabHd button[data-tab]');
+  var panes=document.querySelectorAll('.tab-pane');
+  if(!btns.length) return;
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var id=b.getAttribute('data-tab');
+      btns.forEach(function(x){x.classList.toggle("active",x===b);});
+      panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+      window.scrollTo({top:0,behavior:'smooth'});
     });
   });
 })();
