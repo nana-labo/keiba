@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4ce6017956324668a858bd8f5a12ff2c"}'></script>
+<link rel="icon" href="/keiba/favicon.svg" type="image/svg+xml">
 <meta name="robots" content="noindex,nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,7 +66,8 @@
   .predictVer>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;padding:9px 14px;font-size:.82rem;-webkit-tap-highlight-color:transparent;}
   .predictVer>summary::-webkit-details-marker{display:none;}
   .predictVer>summary:hover{background:rgba(255,255,255,.04);}
-  .pv-rev{flex:0 0 auto;background:rgba(255,210,150,.18);border:1px solid rgba(255,210,150,.3);color:#ffd9a8;font-weight:700;border-radius:7px;padding:2px 9px;font-feature-settings:"tnum" 1;}
+  /* v4 のような内部更新番号は読者の判断材料にならない。更新日時と確定状況だけを表示する。 */
+  .pv-rev{display:none;}
   .pv-now{flex:0 0 auto;font-weight:700;color:#ffe9cf;}
   .pv-status{flex:1 1 auto;min-width:0;font-size:.74rem;color:rgba(255,233,207,.78);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .pv-mini{flex:1 1 auto;display:flex;align-items:center;min-width:24px;}
@@ -566,6 +568,12 @@
   .verdictCard .vSplit{font-size:.72rem;color:#7a5a12;background:rgba(191,148,32,.11);border-radius:6px;padding:4px 8px;margin-top:5px;line-height:1.5;}
   /* 結論はカードの1行目（馬名の直下）。根拠の数値はその下に置く＝結論先行（2026-08-03 指摘） */
   .verdictCard .vConcl{font-size:.86rem;font-weight:700;margin-top:4px;color:var(--accent-deep);line-height:1.45;}
+  .verdictMore{grid-column:1/-1;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--bg-tint);overflow:hidden;}
+  .verdictMore>summary{min-height:44px;cursor:pointer;list-style:none;display:flex;align-items:center;padding:10px 14px;font-size:.82rem;font-weight:700;color:var(--accent-deep);}
+  .verdictMore>summary::-webkit-details-marker{display:none;}
+  .verdictMore>summary::after{content:"⌄";margin-left:auto;color:var(--sub);transition:transform var(--dur) var(--ease);}
+  .verdictMore[open]>summary::after{transform:rotate(180deg);}
+  .verdictMoreCards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:10px;padding:0 10px 10px;}
   /* 印・市場人気・シミュが割れたときの警告。結論を1つに丸めず差異のまま提示する */
   .verdictWarn{background:#fff8e6;border:1px solid #e0c265;border-left:4px solid #c8901a;border-radius:var(--radius-md);padding:11px 14px;box-shadow:var(--shadow-1);}
   .verdictWarn b{display:block;font-size:.9rem;color:#8a5c05;margin-bottom:6px;}
@@ -848,7 +856,7 @@
        データ（pace_contest）が無いレースはセクションごと非表示。 -->
   <section id="paceContestSection">
   <h2 class="sec" id="pacecontest">先頭を奪い合いそうな馬（人気を見ずに並べた表）</h2>
-  <p class="lead">スタート直後に<b>先頭へ行きたがる馬</b>を、出走<b>全頭</b>ぶん並べた表です。過去のレースで最初のカーブをどのあたりで回ってきたか、その実績だけで順番を決めています。人気・オッズ・この予想の印は一切使っていません。<b>「誰が先頭を取るか」を当てる表ではなく、先頭を奪い合う顔ぶれを見落とさないための表です。</b>上位の馬が多いほど、序盤から競り合ってペースが速くなりやすく、逆に上位が1頭だけなら楽に逃げてそのまま粘る展開になりやすい、という読み方をします。</p>
+  <p class="lead">スタート直後に<b>先頭へ行きたがる馬</b>を全頭ぶん並べた表です。順番は過去に最初のカーブをどこで回ったかだけで決めており、人気・オッズ・印は使っていません。<br><b>上位が数頭いれば</b>序盤で競り合ってペースが速くなり、<b>上位が1頭だけなら</b>楽に逃げて粘りやすくなります。</p>
   <div id="paceContestBox"></div>
   </section>
 
@@ -1692,9 +1700,11 @@ function pvRelTime(asof){
     mini += '<span class="nd'+(i<ci?' done':(i===ci?' cur':''))+'"></span>';
     if(i<ORDER.length-1) mini += '<span class="bar'+(i<ci?' done':'')+'"></span>';
   }
-  // 自由文の predict_stage を畳み見出しに全文表示するとバーが溢れるため、
-  // 段階が enum でない場合は版(predict_version)だけを短く出す（詳細は下の予想方針カードへ）
-  var nowLbl = ci>=0 ? LBL[stage] : (SPECIAL[stage]||pv||"");
+  // 自由文の predict_stage を畳み見出しに全文表示するとバーが溢れるため、段階が enum でない場合は
+  // 見出しを空にして、更新日時と待ち情報だけを見せる（詳細は下の予想方針カードへ）。
+  // 以前は版(predict_version)を出していたが、"v4" は内部の版番号で読者の判断材料にならず、
+  // 内部識別子を読者面に出さない方針にも反していた（2026-08-17 日次改善で是正）。
+  var nowLbl = ci>=0 ? LBL[stage] : (SPECIAL[stage]||"");
   // rev番号(内部の改訂カウンタ)とpredict_label中の自由記述「vN」は別々に更新されており、
   // 「ヘッダーはrev 3、下部はv4」のように食い違うことがあった。ユーザー向けには内部の版数ではなく
   // 更新日時を示す方が分かりやすく、かつ矛盾も起きないため、日時バッジに置き換える。
@@ -3557,7 +3567,13 @@ var BET_META = {
   wide:{label:'ワイド', size:2, useP:true},
   sanpuku:{label:'3連複', size:3, useP:true}
 };
-function bsHorse(no){ return FIELD.find(function(x){return x.no===no;}); }
+// 馬番→馬の解決は FIELD ではなく出走全頭から行う（2026-08-15 修正）。
+// FIELD は sim_base/ability が無い馬を除外した「シミュ可能な母集団」なので、
+// ここを FIELD にしていると非印馬の印・枠・オッズが軒並み解決できなくなる。
+function bsHorse(no){
+  var all=(DATA.top_horses||[]).concat(DATA.mini_horses||[]);
+  return all.find(function(x){return x.no===no;});
+}
 function bsName(no){ var h=bsHorse(no); return h?h.name:('馬'+no); }
 function bsMark(no){ var h=bsHorse(no); return (h&&h.mark&&h.mark!=='-')?h.mark:''; }
 function bsWaku(no){ var h=bsHorse(no); if(!h)return''; var m=(h.draw||'').match(/(\d+)\s*枠/); return m?m[1]:''; }
@@ -3691,7 +3707,11 @@ function renderHorseRef(){
   var recs=LAST_SIM.records, N=recs.length;
   var win={}; FIELD.forEach(function(h){win[h.no]=0;});
   for(var t=0;t<N;t++){ if(win[recs[t][0]]!=null) win[recs[t][0]]++; }
-  var sorted=sortFieldForBet(FIELD);
+  // 参考オッズ一覧は FIELD ではなく出走全頭を並べる（2026-08-15 修正）。
+  // オッズは市場データであってシミュ可否とは無関係なのに、FIELD を回していたため
+  // sim_base 未設定の非印馬が一覧から丸ごと消えていた（札幌記念2026は16頭中6頭しか出ない）。
+  var simOut={}; SIM_EXCLUDED.forEach(function(e){ simOut[e.no]=true; });
+  var sorted=sortFieldForBet((DATA.top_horses||[]).concat(DATA.mini_horses||[]));
   // 2段組（一画面に収める）。各行は馬紹介カードへのリンク。枠は確定時のみ「枠-馬番」で前置。
   box.innerHTML = sorted.map(function(h){
     var wp=N?win[h.no]/N:0;
@@ -3701,7 +3721,7 @@ function renderHorseRef(){
     return '<a class="bsRefRow" href="index.html#'+hidByName(h.name)+'" title="この馬の紹介へ移動（ブラウザの戻るで戻れます）">'
       +'<span class="bsMk">'+(bsMark(h.no)||'')+'</span>'
       +'<span class="bsNo">'+noStr+'</span>'
-      +'<span class="bsNm">'+h.name+'</span>'
+      +'<span class="bsNm">'+h.name+(simOut[h.no]?'<span style="font-size:.68rem;color:var(--sub);margin-left:5px;" title="能力データ未整備のため展開シミュの対象外。オッズは実値です">シミュ外</span>':'')+'</span>'
       +'<span class="bsOd">'+od+'</span></a>';
   }).join('');
 }
@@ -3869,10 +3889,10 @@ function renderPaceContest(){
          + '<i style="display:block;height:100%;width:' + w + '%;background:' + col + ';"></i></span></div>';
   }
   var head = '<tr><th>順</th><th>馬番</th><th>印</th><th>馬名</th>'
-           + '<th>先頭に行きたがる度<br><small style="font-weight:400;color:var(--sub)">100が最も強い</small></th>'
-           + '<th>先頭で回った割合<br><small style="font-weight:400;color:var(--sub)">最初のカーブ時点</small></th>'
-           + '<th>ふだんの位置<br><small style="font-weight:400;color:var(--sub)">前寄り〜後ろ寄り</small></th>'
-           + '<th>先頭を取れた時の<br>出走頭数</th><th>ひとこと</th></tr>';
+           + '<th>先頭に行きたがる度<br><small style="font-weight:400;color:var(--sub)">0〜100</small></th>'
+           + '<th>先頭で回った割合</th>'
+           + '<th>ふだんの位置</th>'
+           + '<th>先頭時の頭数</th><th>ひとこと</th></tr>';
   var body = rows.map(function(r){
     var hot = r.rank <= 3;
     return '<tr style="' + (hot ? 'background:#fff8ec;' : '') + '">'
@@ -3889,15 +3909,16 @@ function renderPaceContest(){
   box.innerHTML = '<div class="panel" style="overflow-x:auto;">'
     + '<table style="width:100%;border-collapse:collapse;font-size:.86rem;min-width:640px;">'
     + '<thead style="background:#f5f7fa;">' + head + '</thead><tbody>' + body + '</tbody></table>'
-    + '<p style="margin:10px 2px 0;font-size:.78rem;color:var(--sub);line-height:1.7;">'
-    + '<b>各列の見方</b>　'
-    + '「先頭に行きたがる度」は、過去に先頭で回った割合と、ふだん走る位置の前後を合わせた0〜100の目安です。'
-    + '数字が大きいほど、この馬は序盤から前へ行きたがります。'
-    + '「先頭で回った割合」は、最初のカーブを1番手で通過した回数の割合です。'
-    + '「ふだんの位置」は、最初のカーブを集団のどのあたりで回ることが多いかを表します。'
-    + '「先頭を取れた時の出走頭数」は、実際に先頭に立てたレースが平均何頭立てだったかです。'
-    + '少ない頭数でしか先頭に立てていない馬は、多頭数の今回は同じようにいかない可能性がある、という見方ができます。<br>'
-    + (pc.method || '') + '（作成 ' + (pc.derived_at || '') + '）</p></div>';
+    // 列の解説と導出方法は常時展開すると11行の表に対して説明が500字を超え、
+    // 表そのものより説明のほうが目立っていた（2026-08-15 指摘）。畳んで残す。
+    + '<details style="margin:10px 2px 0;"><summary style="cursor:pointer;font-size:.78rem;color:var(--accent);font-weight:700;">くわしい見方（列の意味・作り方）</summary>'
+    + '<p style="margin:8px 0 0;font-size:.78rem;color:var(--sub);line-height:1.7;">'
+    + 'この表は<b>「誰が先頭を取るか」を当てるものではなく</b>、先頭を奪い合う顔ぶれを見落とさないためのものです。<br>'
+    + '<b>先頭に行きたがる度</b>：先頭で回った割合とふだんの位置を合わせた0〜100の目安。大きいほど前へ行きたがります。<br>'
+    + '<b>先頭で回った割合</b>：最初のカーブを1番手で通過した回数の割合。<br>'
+    + '<b>ふだんの位置</b>：最初のカーブを集団のどのあたりで回ることが多いか。<br>'
+    + '<b>先頭時の頭数</b>：実際に先頭へ立てたレースが平均何頭立てだったか。少頭数でしか立てていない馬は、多頭数の今回は同じようにいかない可能性があります。<br>'
+    + (pc.method || '') + '（作成 ' + (pc.derived_at || '') + '）</p></details></div>';
 }
 renderPaceContest();
 
@@ -3966,7 +3987,7 @@ function verdictBetLean(winPct, tier, score, hasOdds, fullField){
     : '';
 
   var marked = sortByMark(DATA.top_horses||[]);
-  box.innerHTML = warn + marked.map(function(h){
+  function card(h){
     var sc = h.scorecard || {};
     var score = (typeof sc.final_score==='number') ? sc.final_score : null;
     var tier = (h.aptitude||{}).course_fit_tier || '';
@@ -3995,7 +4016,12 @@ function verdictBetLean(winPct, tier, score, hasOdds, fullField){
       + (reasonBits.length?'<div class="vReason">'+reasonBits.join('／')+'</div>':'')
       + (aptSplitTxt?'<div class="vSplit">'+aptWhy(apt)+'</div>':'')
       + '</div>';
-  }).join('');
+  }
+  var primary = marked.filter(function(h){ return /^(◎|○|▲)$/.test(h.mark||''); });
+  var secondary = marked.filter(function(h){ return !/^(◎|○|▲)$/.test(h.mark||''); });
+  box.innerHTML = warn + primary.map(card).join('')
+    + (secondary.length ? '<details class="verdictMore"><summary>相手候補を見る（'+secondary.length+'頭）</summary><div class="verdictMoreCards">'
+      + secondary.map(card).join('') + '</div></details>' : '');
 })();
 
 // ========== 買い目 ==========

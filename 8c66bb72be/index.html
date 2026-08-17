@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4ce6017956324668a858bd8f5a12ff2c"}'></script>
+<link rel="icon" href="/keiba/favicon.svg" type="image/svg+xml">
 <meta name="robots" content="noindex,nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1699,9 +1700,11 @@ function pvRelTime(asof){
     mini += '<span class="nd'+(i<ci?' done':(i===ci?' cur':''))+'"></span>';
     if(i<ORDER.length-1) mini += '<span class="bar'+(i<ci?' done':'')+'"></span>';
   }
-  // 自由文の predict_stage を畳み見出しに全文表示するとバーが溢れるため、
-  // 段階が enum でない場合は版(predict_version)だけを短く出す（詳細は下の予想方針カードへ）
-  var nowLbl = ci>=0 ? LBL[stage] : (SPECIAL[stage]||pv||"");
+  // 自由文の predict_stage を畳み見出しに全文表示するとバーが溢れるため、段階が enum でない場合は
+  // 見出しを空にして、更新日時と待ち情報だけを見せる（詳細は下の予想方針カードへ）。
+  // 以前は版(predict_version)を出していたが、"v4" は内部の版番号で読者の判断材料にならず、
+  // 内部識別子を読者面に出さない方針にも反していた（2026-08-17 日次改善で是正）。
+  var nowLbl = ci>=0 ? LBL[stage] : (SPECIAL[stage]||"");
   // rev番号(内部の改訂カウンタ)とpredict_label中の自由記述「vN」は別々に更新されており、
   // 「ヘッダーはrev 3、下部はv4」のように食い違うことがあった。ユーザー向けには内部の版数ではなく
   // 更新日時を示す方が分かりやすく、かつ矛盾も起きないため、日時バッジに置き換える。
