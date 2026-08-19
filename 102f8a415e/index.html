@@ -805,8 +805,60 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist">
+  <button type="button" data-tab="tab-predict" class="active">予想</button>
+  <button type="button" data-tab="tab-review">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane active">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4234,6 +4286,108 @@ function doApplyBetPlan(planIdx){
       kbModalOpened(closeDom);
       lastFocus=document.activeElement;
       closeBtn.focus();
+    });
+  });
+})();
+</script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane">
+<div class="rv-wrap">
+<p class="rv-lead">◯8番ベアバッキューン（2番人気）がハナを譲らず逃げ切って優勝、△6番サヨノネイチヤが2着、◎11番アランバローズは3着。上位3頭はすべて印付きで、ワイド◎-◯とワイド◎-△の2本が的中した。ただし本線の3連複21点は当たっても配当1,390円で投資を下回り、収支はマイナス。1番人気△10番ジョージテソーロは4着に敗れた。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>6</td><td>8</td><td class="nm">ベアバッキューン</td><td>牡4</td><td>57.0</td><td>野畑凌</td><td>1:40.7</td><td>-</td><td>38.9</td><td>2.8</td><td>2</td><td>508(+1)</td><td>◯</td></tr>
+<tr><td>2</td><td>5</td><td>6</td><td class="nm">サヨノネイチヤ</td><td>牡7</td><td>57.0</td><td>西啓太</td><td>1:41.1</td><td>2</td><td>38.1</td><td>7.3</td><td>4</td><td>497(-5)</td><td>△</td></tr>
+<tr><td>3</td><td>8</td><td>11</td><td class="nm">アランバローズ</td><td>牡8</td><td>58.0</td><td>笹川翼</td><td>1:41.8</td><td>3</td><td>38.8</td><td>4.9</td><td>3</td><td>459(-6)</td><td>◎</td></tr>
+<tr><td>4</td><td>7</td><td>10</td><td class="nm">ジョージテソーロ</td><td>牡5</td><td>58.0</td><td>本田正重</td><td>1:42.4</td><td>3</td><td>39.0</td><td>2.6</td><td>1</td><td>470(+2)</td><td>△</td></tr>
+<tr><td>5</td><td>4</td><td>4</td><td class="nm">バハルダール</td><td>セ7</td><td>57.0</td><td>鷹見陸</td><td>1:42.4</td><td>ハナ</td><td>38.2</td><td>42.1</td><td>7</td><td>512(-8)</td><td></td></tr>
+<tr><td>6</td><td>7</td><td>9</td><td class="nm">シーソーゲーム</td><td>牡4</td><td>57.0</td><td>矢野貴之</td><td>1:42.6</td><td>1.1/2</td><td>39.2</td><td>15.6</td><td>5</td><td>490(-5)</td><td>☆</td></tr>
+<tr><td>7</td><td>2</td><td>2</td><td class="nm">ゴールドホイヤー</td><td>牡9</td><td>57.0</td><td>古岡勇樹</td><td>1:42.8</td><td>1</td><td>39.4</td><td>185.8</td><td>11</td><td>483(-18)</td><td></td></tr>
+<tr><td>8</td><td>1</td><td>1</td><td class="nm">ヴィクトゥーラ</td><td>牡8</td><td>56.0</td><td>張田昂</td><td>1:43.3</td><td>2.1/2</td><td>39.5</td><td>139.2</td><td>10</td><td>487(+4)</td><td>☆</td></tr>
+<tr><td>9</td><td>8</td><td>12</td><td class="nm">ゴールドレガシー</td><td>牡8</td><td>57.0</td><td>御神本訓</td><td>1:43.4</td><td>クビ</td><td>40.0</td><td>21.2</td><td>6</td><td>489(-5)</td><td>☆</td></tr>
+<tr><td>10</td><td>6</td><td>7</td><td class="nm">ベラール</td><td>牡9</td><td>56.0</td><td>町田直希</td><td>1:44.1</td><td>3</td><td>40.3</td><td>115.0</td><td>9</td><td>509(+3)</td><td>▲</td></tr>
+<tr><td>11</td><td>5</td><td>5</td><td class="nm">グレートジャーニー</td><td>牡6</td><td>56.0</td><td>見越彬央</td><td>1:44.1</td><td>ハナ</td><td>39.5</td><td>401.4</td><td>12</td><td>487(-1)</td><td></td></tr>
+<tr><td>12</td><td>3</td><td>3</td><td class="nm">ポリゴンウェイヴ</td><td>牡6</td><td>57.0</td><td>山中悠希</td><td>1:45.3</td><td>6</td><td>43.1</td><td>65.9</td><td>8</td><td>512(+6)</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p class="rv-note">天候:晴、馬場:良。川崎ダート1600m・12頭立て・勝ちタイム1:40.7。ラップは12.8-11.1-12.5-13.2-12.2-13.0-13.3-12.6で前半800m 49.6秒／後半800m 51.1秒の前傾。コーナー通過は1角(8,3)-11-6,10と8番が終始先頭で、4角では8-11,6の隊列。前傾ラップでも逃げ切りが決まり、上がり最速38.1秒の2着サヨノネイチヤ以外に差し馬の台頭はなかった。</p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ⑧ 280円</span>
+<span class="chip">複勝 ⑧130 / ⑥180 / ⑪200</span>
+<span class="chip">枠連 ⑤-⑥ 840円</span>
+<span class="chip">馬連 ⑥-⑧ 850円</span>
+<span class="chip">ワイド ⑥-⑧340 / <b>⑧-⑪370</b> / <b>⑥-⑪480</b></span>
+<span class="chip">馬単 ⑧→⑥ 1,290円</span>
+<span class="chip">3連複 <b>⑥-⑧-⑪ 1,390円</b></span>
+<span class="chip">3連単 ⑧→⑥→⑪ 5,850円</span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>馬場</th><td><b>予想:</b> 当日14:39時点で晴・ダート良を確定として反映。<br><b>結果:</b> 晴・良で想定どおり。当日馬場の判定に外しはなかった。</td></tr>
+<tr><th>ペース</th><td><b>予想:</b> 逃げ候補が3頭同居するため前半が速くなり、前が競り合って崩れる余地があるとした。<br><b>結果:</b> 前半800m 49.6秒／後半51.1秒と前傾にはなったが、競り合いは起きなかった。8番ベアバッキューンが1角から単独先頭で、2番手に入った3番ポリゴンウェイヴは12着に沈み、逆に逃げ馬がそのまま押し切った。ペースの向き（前傾）は当たったが、そこから導いた「前崩れ」の結論が外れた。</td></tr>
+<tr><th>展開</th><td><b>予想:</b> 逃げ争いの序列（人気・印を使わない機械導出）では8番ベアバッキューンが1位（ハナ率63.6%）、3番ポリゴンウェイヴが2位、11番アランバローズが3位だった。予想本文はこの1位馬について「アランバローズとポリゴンウェイヴが同居し、単騎で行けた前走とは前提が違う」と割り引き、◎は序列3位の11番に置いた。<br><b>結果:</b> 序列1位の8番がそのままハナを取り切って優勝。序列が示した結論を本文判断で否定した側が外れた。</td></tr>
+<tr><th>印判定</th><td><b>予想:</b> ◎11アランバローズ（anchor 3.03）を軸に、◯8ベアバッキューン（2.85）、▲7ベラール（2.76）、△6サヨノネイチヤ（2.67）、△10ジョージテソーロ（2.67）。1番人気のジョージテソーロは「川崎に一度も乗っていない・本質は1400m寄り」として△に抑えた。<br><b>結果:</b> 1着から3着まで◯・△・◎とすべて印付き馬で、印の網としては成功。△に抑えた1番人気ジョージテソーロが4着に敗れた点も評価どおりだった。一方、展開待ちで拾った▲7ベラール（10着）と☆12ゴールドレガシー（9着）・☆1ヴィクトゥーラ（8着）の差し3頭は全滅した。</td></tr>
+<tr><th>買い目構成</th><td><b>予想:</b> 3連複◎軸1頭→7頭流し（21点）、ワイド◎→◯▲△（3点）、前が総崩れした場合のヘッジとして3連複BOX ▲7・△6・△10・2ゴールドホイヤー（4点）。<br><b>結果:</b> 本線の3連複は⑥-⑧-⑪で的中したが配当1,390円に対し21点2,100円で710円のマイナス。ワイドは⑧-⑪370円と⑥-⑪480円の2本が的中し3点300円で550円のプラス。ヘッジ4点は8番を含まないため不的中。合計は投資2,800円・回収2,240円で回収率80%。</td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">◯</span>8 ベアバッキューン（野畑凌）<span class="res hit">1着</span></div>
+<p>2番人気の支持に応えて逃げ切り勝ち。前走を同じ川崎1600mで逃げ切った実績と、逃げ争いの序列1位（ハナ率63.6%・11戦7回ハナ）がそのまま出た。予想では「今回は単騎で行けない」と条件を割り引いて◯に留めたが、実際は1角から誰にも絡まれずに先頭。馬体重508kg(+1)で当日の気配にも不安がなかった。この馬を◎に置けなかったことが今回の最大の判断ミス。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>6 サヨノネイチヤ（西啓太）<span class="res hit">2着</span></div>
+<p>4番人気で2着。上がり3F 38.1秒はメンバー最速で、先行から粘り込む形ではなく直線でしっかり脚を使った。予想では「マイルの勝率6割の地力は魅力だが川崎の小回りが実質初めて」として△止まりにしたが、小回りの割引は必要なかった。ワイド◎-△480円の的中を作った1頭。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>11 アランバローズ（笹川翼）<span class="res ">3着</span></div>
+<p>3番人気で3着。1角から3番手の好位につけたが、直線で上位2頭に離された。8歳・58kgの最重量タイに加え馬体重459kg(-6)はメンバー最軽量で、斤量比の負担が最も重い1頭だった。複勝圏は確保しており◎として大きく外したわけではないが、単勝軸としては届かなかった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>10 ジョージテソーロ（本田正重）<span class="res ">4着</span></div>
+<p>1番人気（2.6倍）に支持されたが4着。予想が挙げた「川崎に一度も乗っていない」「本質は1400m寄り」という2つの割引がそのまま出た形で、5-6番手から直線で伸び切れなかった。市場の1番人気を△に抑えた判断は結果的に正しかった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>9 シーソーゲーム（矢野貴之）<span class="res ">6着</span></div>
+<p>5番人気で6着。馬体重490kg(-5)で前走の+18kgは解消されていたが、川崎3戦目も勝ち切れず。「川崎2戦0勝が引っかかる」という事前の懸念どおりの結果。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>1 ヴィクトゥーラ（張田昂）<span class="res ">8着</span></div>
+<p>10番人気で8着。最内枠と条件適性を買って連下に拾ったが、前が崩れなかったため差し脚を使う場面がなかった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>12 ゴールドレガシー（御神本訓）<span class="res ">9着</span></div>
+<p>6番人気で9着。「近3走は着順を大きく落としている・展開待ちの一頭」という評価どおり、展開が向かず上がり40.0秒で沈んだ。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>7 ベラール（町田直希）<span class="res ">10着</span></div>
+<p>9番人気で10着。「この条件を誰よりも走っている」「逃げ馬が3頭そろった今回は展開が向く」という前提で単穴に押し上げたが、その前提である前崩れが起きず上がり40.3秒。展開一本に賭けた印が最も大きく外れた。</p></div>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">netkeiba 結果ページ（一次データ）<span class="tag">事後</span></p><p>着順・配当・ラップ・コーナー通過を全12頭分で取得。1角(8,3)-11-6,10、4角8-11,6の隊列で、8番が終始先頭。勝ちタイム1:40.7、天候晴・馬場良。</p><p><a href="https://nar.netkeiba.com/race/result.html?race_id=202645081911">https://nar.netkeiba.com/race/result.html?race_id=202645081911</a></p></div>
+<div class="rv-view"><p class="src">事前評価との対比（自ページ・逃げ争いの序列）<span class="tag">事前</span></p><p>人気・オッズ・印を使わずに導出した逃げ争いの序列は1位8番（ハナ率63.6%）、2位3番、3位11番。結果は序列1位がハナを取って優勝、2位は12着、3位は3着。序列の1位判定は当たっていた。</p><p>本ページ「逃げ争いの序列」セクション（2026-08-16 導出）</p></div>
+<div class="rv-view"><p class="src">関係者コメント<span class="tag">取得未完</span></p><p>勝ち馬・上位馬の騎手および厩舎コメントは、レース当夜の時点で到達可能な情報源に掲載を確認できなかった。X・note・専門紙系サイトは今回の実行環境からアクセスできず、推測では埋めない。次サイクルで再取得を試みる。</p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>逃げ争いの序列1位を、本文判断で◎から外した</th><td>人気・印を使わない機械導出で8番ベアバッキューンが序列1位（ハナ率63.6%）と出ていたのに、予想本文は「逃げ候補が3頭同居するので単騎では行けない」と割り引いて◯に留め、◎は序列3位の11番に置いた。結果は序列1位がそのまま逃げ切り。黒潮盃で得た「本文の隊形読みが数字と食い違ったら数字を見る」という教訓の裏返しで、今回は数字が示した1位を本文が否定して外れた。ルール化候補: 逃げ争いの序列1位かつハナ率0.6超の馬を◎以外に置く場合、割引の根拠を scorecard の anchor_note に明示し、単なる印象で下げていないかを見えるようにする。</td></tr>
+<tr><th>本線とヘッジが同じ「前崩れ」前提に乗っていた</th><td>本線の3連複21点は◎軸で組みつつ、相手に展開待ちの差し馬（▲7・☆12・☆1）を厚く含め、さらにヘッジの3連複BOX 4点も「前が総崩れした場合」として組んだ。つまり本線の一部とヘッジが同一の前提を共有しており、前崩れが起きなかった時点で両方が同時に死んだ。既存の検査は「ヘッジの相手集合が本線の相手集合に包含されていないこと」を見ているが、前提そのものの独立性は見ていない。ルール化候補: ヘッジ線には、本線が置いた展開前提と反対の前提（今回なら「逃げ切り成立」）を明示的に割り当てる。</td></tr>
+<tr><th>3連複21点は的中しても回収できない配当帯だった</th><td>◎軸1頭7頭流し（21点2,100円）に対し、決着した⑥-⑧-⑪は3連複3番人気で1,390円。上位人気3頭で収まる決着では、この点数だと的中しても必ずマイナスになる。同じレースでワイド3点300円は850円を回収してプラスだった。ルール化候補: 3連複の◎軸流しで相手を6頭以上に広げるときは、想定配当が点数×100円を上回る組み合わせに絞るか、ワイド側へ配分を寄せる。</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=document.querySelectorAll('.tabHd button[data-tab]');
+  var panes=document.querySelectorAll('.tab-pane');
+  if(!btns.length) return;
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var id=b.getAttribute('data-tab');
+      btns.forEach(function(x){x.classList.toggle("active",x===b);});
+      panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+      window.scrollTo({top:0,behavior:'smooth'});
     });
   });
 })();
