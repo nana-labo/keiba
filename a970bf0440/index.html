@@ -852,6 +852,26 @@
 .rv-shot img{display:block;width:100%;height:auto;}
 .rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
 </style>
+<style>
+/* 振り返りタブの長文を3行に畳む。狭い画面だけで効かせ、広い画面は従来どおり全文表示 */
+#tab-review .rvMore{display:none;}
+@media (max-width:560px){
+  #tab-review .rvClampBody{
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+    overflow:hidden;
+  }
+  #tab-review .rvClamp.is-open .rvClampBody{
+    display:block;-webkit-line-clamp:none;overflow:visible;
+  }
+  #tab-review .rvMore{
+    display:inline-block;margin-top:4px;padding:2px 8px;
+    font:inherit;font-size:.78rem;line-height:1.6;color:#1a5a8a;
+    background:#eef4fa;border:1px solid #ccd6e2;border-radius:999px;cursor:pointer;
+  }
+  #tab-review .rvMore:hover{background:#e2edf7;}
+  #tab-review .rvMore:focus-visible{outline:2px solid #1a5a8a;outline-offset:2px;}
+}
+</style>
 </head>
 <body data-view="main">
 <nav class="tabHd" role="tablist">
@@ -4296,7 +4316,7 @@ function doApplyBetPlan(planIdx){
 <div class="rv-wrap">
   <p class="rv-lead">超高速馬場(良)のロングスプリント戦を、1番人気ロブチェンが10番手から鋭く差し切りアタマ差で完勝。皐月賞(逃げ切り)からの変幻自在の脚質で史上25頭目の春二冠達成。2着は皐月賞14着から東京替わりで巻き返したパントルナイーフ、3着は最後方から早め進出で粘ったバステール(11人気)。本命◎ロブチェンは的中も、○リアライズシリウス(7着)は前受けから伸び負け、上がり最速32.8のゴーイントゥスカイ(△)は出遅れと位置取りで4着に泣いた。</p>
   <h2>レース結果</h2>
-  <p class="rv-note">馬場: 晴・良 / 勝ち時計 2:22.7</p>
+  <p class="rv-note">馬場: 晴・良 / 勝ち時計2:22.7</p>
   <div class="rv-tbl-scroll"><table class="rv-tbl">
     <thead><tr><th>着</th><th>馬番</th><th>馬名</th><th>性齢</th><th>厩舎</th><th>父</th><th>騎手</th><th>馬体重</th><th>人気</th><th>印</th><th>上り</th></tr></thead>
     <tbody>
@@ -4314,7 +4334,7 @@ function doApplyBetPlan(planIdx){
   <h3>払い戻し</h3>
   <div class="rv-pay">
     <span class="chip"><b>単勝</b> 270円</span>
-    <span class="chip"><b>複勝</b> 17番 130円 / 13番 250円 / 5番 650円</span>
+    <span class="chip"><b>複勝</b> 17番130円 / 13番250円 / 5番650円</span>
     <span class="chip"><b>馬連</b> 13-17 1,460円</span>
     <span class="chip"><b>ワイド</b> 13-17 550円 / 5-17 1,950円 / 5-13 3,850円</span>
     <span class="chip"><b>3連複</b> 5-13-17 14,280円</span>
@@ -4370,7 +4390,7 @@ function doApplyBetPlan(planIdx){
     </div>
     <div class="rv-view">
       <div><span class="src">note AI競馬分析 (mug1_cha)</span><span class="tag">事後</span></div>
-      <p>ロブチェン勝因は(1)中盤以降緩まず長く脚を使える流れで持続性能が活きた(2)外枠17番で無理に前へ行かず自分のリズムを優先(3)3-4角で慌てず自分のタイミングで加速。リアライズシリウスは伸び比べに苦しみ、ゴーイントゥスカイは位置取りと展開が噛み合わず。</p>
+      <p class="rvClamp"><span class="rvClampBody" id="rvc-1">ロブチェンの勝因は3つ。中盤以降が緩まず長く脚を使える流れになり、持続力が活きた。外枠17番から無理に前へ行かず、自分のリズムを優先した。3〜4コーナーでも慌てず、自分のタイミングで加速している。リアライズシリウスは伸び比べに苦しみ、ゴーイントゥスカイは位置取りと展開が噛み合わず。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-1">続きを読む</button></p>
       <p><a href="https://note.com/mug1_cha/n/n168f7801773a" target="_blank" rel="noopener">https://note.com/mug1_cha/n/n168f7801773a</a></p>
     </div>
     <div class="rv-view">
@@ -4625,5 +4645,23 @@ body.kbModalOpen .fb-fab{display:none;}
 })();
 </script>
 
+<script>
+/* 振り返りタブの「続きを読む」。button 要素なので Enter/Space は素で効く。
+   開閉状態は aria-expanded で支援技術へ伝える（aria-controls で本文と紐付け済み） */
+(function(){
+  var btns = document.querySelectorAll('#tab-review .rvMore');
+  if(!btns.length) return;
+  Array.prototype.forEach.call(btns, function(b){
+    b.addEventListener('click', function(){
+      var host = b.parentNode;
+      while(host && !(host.classList && host.classList.contains('rvClamp'))) host = host.parentNode;
+      if(!host) return;
+      var open = host.classList.toggle('is-open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      b.textContent = open ? '閉じる' : '続きを読む';
+    });
+  });
+})();
+</script>
 </body>
 </html>

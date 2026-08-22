@@ -4341,7 +4341,7 @@ function doApplyBetPlan(planIdx){
 <div class="rv-pay">
 <span class="chip">単勝 ③ 580円</span>
 <span class="chip">複勝 ③170 / ⑤230 / ⑫150</span>
-<span class="chip">枠連 1,130円</span>
+<span class="chip">枠連1,130円</span>
 <span class="chip">馬連 ③-⑤ <b>1,820円</b></span>
 <span class="chip">ワイド ③-⑤620 / ③-⑫470 / ⑤-⑫670</span>
 <span class="chip">馬単 ③→⑤ 4,200円</span>
@@ -4355,7 +4355,7 @@ function doApplyBetPlan(planIdx){
 <tr><th>馬場</th><td><b>予想:</b> 晴・芝良を想定。<br><b>結果:</b> 想定通り晴・良馬場、しかもレコード決着の高速馬場だった。</td></tr>
 <tr><th>展開</th><td><b>予想:</b> 逃げ馬不在で先行争いが激しくなる想定。<br><b>結果:</b> 9番リリージョワが単独で先手を奪い最後まで粘るも、直線でラヴァンダ・ミニトランザット・サトノシャイニングの3頭に交わされて14着。差し・追込勢が上位を占める結果だった。</td></tr>
 <tr><th>印判定</th><td class="rvClamp"><span class="rvClampBody" id="rvc-1"><b>予想:</b> ◎ラヴァンダ(2番人気の実力馬)を軸に、◯チェルビアット・▲キープカルムで本線を構成。1番人気サトノシャイニングは穴評価の☆に据えた。<br><b>結果:</b> ◎は評価どおりレコードで的中、☆サトノシャイニングも3着に来て「1番人気を過大評価しない」判断は機能した。一方◯チェルビアット7着・▲キープカルム9着とも馬券外に沈み、2着には無印のミニトランザットが入った。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-1">続きを読む</button></td></tr>
-<tr><th>買い目構成</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2"><b>予想:</b> 3連複は◎軸→印付き6頭(◯▲△△☆☆)の21点、ワイドは◎→◯▲☆の3点。<br><b>結果:</b> ◎が勝ったにもかかわらず、2着ミニトランザットが相手プールに含まれておらず3連複・ワイドとも全滅。ミニトランザットはaptitude判定でtrack_fit_score満点(5/5)だったが、course_fit_tier表示が「△疑問符」だったため無印のまま買い目から漏れていた（同日の札幌記念レディネスと同型の見落とし）。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
+<tr><th>買い目構成</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2"><b>予想:</b> 3連複は◎軸→印付き6頭(◯▲△△☆☆)の21点、ワイドは◎→◯▲☆の3点。<br><b>結果:</b> ◎が勝ったにもかかわらず、2着ミニトランザットが相手プールに含まれておらず3連複・ワイドとも全滅。ミニトランザットはコース適性の採点が満点(5点)だった。だが適性の総合判定の表示が「△疑問符」だったため、無印のまま買い目から漏れていた。同日の札幌記念レディネスと同じ型の見落としである。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
 </tbody>
 </table>
 
@@ -4363,7 +4363,7 @@ function doApplyBetPlan(planIdx){
 <div class="rv-card"><div class="hd"><span class="mk">◎</span>3 ラヴァンダ（岩田望来）<span class="res hit">1着</span></div>
 <p>2番人気の支持どおり後方から鋭く伸びてレコード勝ち、重賞2勝目。評価軸の中心に据えた地力の高さが結果に出た。</p></div>
 <div class="rv-card"><div class="hd"><span class="mk"></span>5 ミニトランザット（松山弘平）<span class="res ">2着</span></div>
-<p>5番人気・無印での2着。aptitude.track_fit_score=5(満点)ながらcourse_fit_tierが「△疑問符」表示のため無印判定のまま買い目からも除外され、3連複・ワイドを丸ごと逃す直接要因になった。</p></div>
+<p>5番人気・無印での2着。コース適性の採点が満点(5点)ながら適性の総合判定が「△疑問符」表示のため無印判定のまま買い目からも除外され、3連複・ワイドを丸ごと逃す直接要因になった。</p></div>
 <div class="rv-card"><div class="hd"><span class="mk">☆</span>12 サトノシャイニング（コレット）<span class="res hit">3着</span></div>
 <p>1番人気の支持を集めたが事前評価は穴の☆に抑制。それでも3着に来て馬券圏内は確保、「1番人気を鵜呑みにしない」評価スタンス自体は妥当だった。</p></div>
 <div class="rv-card"><div class="hd"><span class="mk">◯</span>11 チェルビアット（吉村誠之助）<span class="res ">7着</span></div>
@@ -4388,7 +4388,7 @@ function doApplyBetPlan(planIdx){
 <h2>今回の学び</h2>
 <table class="rv-learn">
 <tbody>
-<tr><th>track_fit満点だが無印のまま（R43は既に「再設計待ち」判定済み）</th><td class="rvClamp"><span class="rvClampBody" id="rvc-3">ミニトランザットとカズミクラーシュはaptitude.track_fit_score=5（満点）だったが、course_fit_tierの表示（それぞれ「△疑問符」「◎好相性」）に関わらず無印(mini_horses)のまま2着・4着に。evaluation-criteria.md R43は2026-08-12の27レース一括監査で既に「track_fit_score=5の未採点馬は中京記念だけで9頭該当し、満点トリガーは非選択的で運用不能」と差し戻し（sweep_verdict）判定済みだった。今回のミニトランザット2着はこの既知の高頻度問題の追加データ点であり、新発見ではない。再設計方針（フィールド内の相対順位トリガー）の実装が引き続き必要。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-3">続きを読む</button></td></tr>
+<tr><th>コース適性が満点だが無印のまま（R43は既に「再設計待ち」判定済み）</th><td class="rvClamp"><span class="rvClampBody" id="rvc-3">ミニトランザットとカズミクラーシュはコース適性の採点が満点(5点)だった。適性の総合判定の表示はそれぞれ「△疑問符」「◎好相性」。どちらも表示に関わらず無印のまま2着・4着に来た。評価基準R43は2026-08-12の27レース一括監査で既に差し戻されていた。理由は「コース適性5点の未採点馬は中京記念だけで9頭該当し、満点というだけの条件では絞り込めず運用できない」というものである。今回のミニトランザット2着はこの既知の高頻度問題の追加データ点であり、新発見ではない。再設計方針（フィールド内の相対順位トリガー）の実装が引き続き必要。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-3">続きを読む</button></td></tr>
 </tbody>
 </table>
 

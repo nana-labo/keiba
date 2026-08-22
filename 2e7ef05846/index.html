@@ -4313,7 +4313,7 @@ function doApplyBetPlan(planIdx){
 </script>
 </section><!-- /tab-predict -->
 <section id="tab-review" class="tab-pane">
-<div class="rv-head"><h2>🔁 振り返り（レース回顧）</h2><p class="rv-sub">第62回 北九州記念 GⅢ ／ 2026年7月5日(日) 小倉・芝1200m・重 ／ <b>結果：◎10着・▲1着・△3着、買い目は全券種ハズレ</b></p></div>
+<div class="rv-head"><h2>🔁 振り返り（レース回顧）</h2><p class="rv-sub">第62回北九州記念 GⅢ ／ 2026年7月5日(日) 小倉・芝1200m・重 ／ <b>結果：◎10着・▲1着・△3着、買い目は全券種ハズレ</b></p></div>
 <h3>🏁 レース結果（公式・netkeiba）</h3>
 <div class="rv-tablewrap"><table class="rv-table">
 <thead><tr><th>着</th><th>馬番</th><th>馬名</th><th>印</th><th>性齢</th><th>厩舎</th><th>父</th><th>騎手</th><th>馬体重</th><th>人気</th><th>上3F</th><th>備考</th></tr></thead>
@@ -4350,15 +4350,15 @@ function doApplyBetPlan(planIdx){
 <tr><td>ペース</td><td>ハイ</td><td>前半600m 33.0秒＝ハイ</td><td class="ok">◯</td></tr>
 <tr><td>トラックバイアス</td><td>当初「内有利」→当日14:00追記で<b>「内著しく不利／外差し有利」を検知</b></td><td>実際も<b>外有利・内ラチ沿いガラ空き</b></td><td class="warn">△ 検知済だが印に未反映</td></tr>
 <tr><td>波乱度</td><td>高</td><td>高（2着9人気・3連単41,430円）</td><td class="ok">◯</td></tr>
-<tr><td>本命◎</td><td>anchor 2.19 で市場1番人気フリッカー(2.07)を退けて◎</td><td>◎デアヴェ10着 / ▲フリッカー1着＝<b>anchor順位と真逆</b></td><td class="ng">✗</td></tr>
+<tr><td>本命◎</td><td>評価点2.19 で市場1番人気フリッカー(2.07)を退けて◎</td><td>◎デアヴェ10着 / ▲フリッカー1着＝<b>評価点順位と真逆</b></td><td class="ng">✗</td></tr>
 </tbody></table></div>
-<p class="rv-cap rvClamp"><span class="rvClampBody" id="rvc-2">馬場・ペース・波乱度の想定は的中。<b>当日のバイアス反転（内有利→外有利）を14:00時点で正しく検知していた</b>が、「印・anchorは機械再計算由来のみ変更可」の原則に縛られ、外枠先行でバイアス合致の▲フリッカージャブを◎へ、中枠のデアヴェを格下げする経路が無かった。認識と印の乖離が最大の学び。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></p>
+<p class="rv-cap rvClamp"><span class="rvClampBody" id="rvc-2">馬場・ペース・波乱度の想定は的中。<b>当日のバイアス反転（内有利→外有利）を14:00時点で正しく検知していた</b>。だが「印と評価点は機械再計算によるものだけ変更できる」という原則に縛られていた。外枠先行でバイアスに合う▲フリッカージャブを◎へ上げ、中枠のデアヴェを下げる経路が無かった。認識と印の乖離が最大の学び。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></p>
 
 <h3>✅ 印付き馬・情報取得と実測の照合</h3>
 <div class="rv-tablewrap"><table class="rv-table">
 <thead><tr><th>馬</th><th>印→着</th><th>当日馬体重（予想時pending→実測）</th><th>コメント</th></tr></thead>
 <tbody>
-<tr><td>デアヴェローチェ</td><td>◎→10着</td><td>464kg(+6)</td><td>3歳牝馬53.0kg・重馬場で+6kg。斤量利あるも消耗戦で伸びず。anchor過信の反省点</td></tr>
+<tr><td>デアヴェローチェ</td><td>◎→10着</td><td>464kg(+6)</td><td>3歳牝馬53.0kg・重馬場で+6kg。斤量利あるも消耗戦で伸びず。評価点過信の反省点</td></tr>
 <tr><td>フリッカージャブ</td><td>▲→1着</td><td>508kg(-2)</td><td>近5戦4勝の充実・外枠先行がバイアス合致。◎に据えるべきだった</td></tr>
 <tr><td>ヨシノイースター</td><td>△→3着</td><td>486kg(-10)</td><td>-10kgで絞れて8歳でも好走。外差しがハマる</td></tr>
 <tr><td>アブキールベイ</td><td>△→5着</td><td>430kg(-12)</td><td>小柄・-12kg。印圏内で健闘</td></tr>
@@ -4367,13 +4367,13 @@ function doApplyBetPlan(planIdx){
 <tr><td>ヤマニンアルリフラ</td><td>△→9着</td><td>504kg(+9)</td><td>昨年覇者だが+9kg・差し脚不発</td></tr>
 <tr style="background:rgba(241,196,15,.14);"><td><b>ジェニファー</b></td><td><b>無印→2着</b></td><td>466kg(±0)</td><td><b>全戦績接地が未取得（Playwright未接続）。評価対象外→完全無印→2着を取りこぼし。今回最大のカバレッジ欠落</b></td></tr>
 </tbody></table></div>
-<h3>🎬 レース映像の切り抜き</h3><div class="rv-shots"><figure class="rv-shot"><img src="p/548787cc46c8.jpg" alt="スタート：ほぼ揃った発馬"><figcaption>スタート：ほぼ揃った発馬</figcaption></figure><figure class="rv-shot"><img src="p/09b231573e7c.jpg" alt="3角手前：前半600m 33.0秒のハイペース"><figcaption>3角手前：前半600m 33.0秒のハイペース</figcaption></figure><figure class="rv-shot"><img src="p/0f158d5ded0f.jpg" alt="4角：外差し勢が押し上げ"><figcaption>4角：外差し勢が押し上げ</figcaption></figure><figure class="rv-shot"><img src="p/76d10895cdcd.jpg" alt="直線入口：馬群は外へ膨らみ内ラチ沿いはガラ空き（外有利バイアス）"><figcaption>直線入口：馬群は外へ膨らみ内ラチ沿いはガラ空き（外有利バイアス）</figcaption></figure><figure class="rv-shot"><img src="p/ee6b3b5afed9.jpg" alt="残り200m：▲フリッカージャブ(桃帽)が外目先頭、2着ジェニファー(緑帽)が追う"><figcaption>残り200m：▲フリッカージャブ(桃帽)が外目先頭、2着ジェニファー(緑帽)が追う</figcaption></figure><figure class="rv-shot"><img src="p/8b434f0a5806.jpg" alt="ゴール：フリッカージャブ重賞初制覇 1:08.0"><figcaption>ゴール：フリッカージャブ重賞初制覇 1:08.0</figcaption></figure></div>
+<h3>🎬 レース映像の切り抜き</h3><div class="rv-shots"><figure class="rv-shot"><img src="p/548787cc46c8.jpg" alt="スタート：ほぼ揃った発馬"><figcaption>スタート：ほぼ揃った発馬</figcaption></figure><figure class="rv-shot"><img src="p/09b231573e7c.jpg" alt="3角手前：前半600m 33.0秒のハイペース"><figcaption>3角手前：前半600m 33.0秒のハイペース</figcaption></figure><figure class="rv-shot"><img src="p/0f158d5ded0f.jpg" alt="4角：外差し勢が押し上げ"><figcaption>4角：外差し勢が押し上げ</figcaption></figure><figure class="rv-shot"><img src="p/76d10895cdcd.jpg" alt="直線入口：馬群は外へ膨らみ内ラチ沿いはガラ空き（外有利バイアス）"><figcaption>直線入口：馬群は外へ膨らみ内ラチ沿いはガラ空き（外有利バイアス）</figcaption></figure><figure class="rv-shot"><img src="p/ee6b3b5afed9.jpg" alt="残り200m：▲フリッカージャブ(桃帽)が外目先頭、2着ジェニファー(緑帽)が追う"><figcaption>残り200m：▲フリッカージャブ(桃帽)が外目先頭、2着ジェニファー(緑帽)が追う</figcaption></figure><figure class="rv-shot"><img src="p/8b434f0a5806.jpg" alt="ゴール：フリッカージャブ重賞初制覇 1:08.0"><figcaption>ゴール：フリッカージャブ重賞初制覇1:08.0</figcaption></figure></div>
 <h3>🗣 回顧ソース</h3>
 <p class="rv-cap">レース終了直後のため、書き起こし型の回顧記事（note/専門メディア）はまだ未公開。捏造は避け、以下の一次情報を回顧の根拠とした：</p>
 <ul class="rv-src">
 <li><span class="tag t0">T0</span> JRA/netkeiba 公式着順・払戻（12→2→9・3連単41,430円）</li>
 <li><span class="tag t0">T0</span> レース映像（YouTube <a href="https://www.youtube.com/watch?v=R6UJlqJFfmw" target="_blank" rel="noopener">R6UJlqJFfmw</a>）— 直線で内ラチ沿いガラ空き＝外有利バイアスを映像で確認</li>
-<li><span class="tag t1">T1</span> netkeiba「北九州記念・馬体重」記事 — 全13頭の当日馬体重（予想時pendingを実測で補完）</li>
+<li><span class="tag t1">T1</span> netkeiba「北九州記念・馬体重」記事 — 全13頭の当日馬体重（予想時は未取得だったものを実測で補完）</li>
 </ul>
 <p class="rv-cap">後日、専門メディア/noteの回顧が出た際は本セクションに追記する（現時点では未取得＝独立票にカウントしない）。</p>
 
@@ -4381,18 +4381,18 @@ function doApplyBetPlan(planIdx){
 <div class="rv-learn">
 <div class="lc confirm">
 <b>R30 の再現（候補→昇格級）</b>
-<p>「軽ハンデ×新規/接地漏れの伏兵を☆すら付けず取りこぼす」——2着ジェニファー（50.0kg最軽量・9人気・全戦績接地なし）が該当。函館記念2026ファウストラーゼンに続く<b>2例目の独立事例</b>。新規登録馬でも market odds＋前走だけで簡易評価し、最低でも☆検討対象へ入れる救済枠を発火させるべきだった。→ R30 を candidate→shadow へ昇格提案。</p>
+<p>「軽ハンデ×新規/接地漏れの伏兵を☆すら付けず取りこぼす」——2着ジェニファー（50.0kg最軽量・9人気・全戦績接地なし）が該当。函館記念2026ファウストラーゼンに続く<b>2例目の独立事例</b>。新規登録馬でも market odds＋前走だけで簡易評価し、最低でも☆検討対象へ入れる救済枠を発火させるべきだった。→ R30 を候補→試行中 へ昇格提案。</p>
 </div>
 <div class="lc confirm">
 <b>R31 系の再現（◎軸固定の全滅）</b>
-<p>ラジオNIKKEI賞2026（危険人気◎全滅）に続き、<b>全買い目◎軸固定→◎大敗で全滅</b>が再発。今回は◎を危険人気と明記していなかった点がR31の発火条件と異なるが、構造的欠陥は同一。<b>chaos=高 かつ ◎-▲のanchor差が薄い（今回2.19 vs 2.07＝0.12）ときは全券種を◎軸に固定しない</b>——◎抜き/▲軸のヘッジ線を最低1本義務化する新ルールを提案（R35候補）。</p>
+<p>ラジオNIKKEI賞2026（危険人気◎全滅）に続き、<b>全買い目◎軸固定→◎大敗で全滅</b>が再発。今回は◎を危険人気と明記していなかった点がR31の発火条件と異なるが、構造的欠陥は同一。<b>混戦度=高かつ ◎-▲の評価点差が薄い（今回2.19 vs 2.07＝0.12）ときは全券種を◎軸に固定しない</b>——◎抜き/▲軸のヘッジ線を最低1本義務化する新ルールを提案（R35候補）。</p>
 </div>
 <div class="lc new">
 <b>R36候補（新規・プロセス）：当日バイアス反転の即時反映経路</b>
-<p>当日14:00に「内有利想定→外有利へ反転」を正しく検知しながら、「印は機械再計算のみ変更可」の原則で反映できず、外枠先行でバイアス合致の▲フリッカージャブを◎へ繰り上げられなかった。宝塚R10（発走60分前の馬場再確認）の姉妹ルールとして、<b>事前想定とバイアスが反転確定した場合は frame_pace 軸へ evidence 付き adjustments を即時許可</b>（R14「機械再計算のみ」の明示的例外）とする経路を設ける。</p>
+<p>当日14:00に「内有利想定→外有利へ反転」を正しく検知しながら、「印は機械再計算のみ変更可」の原則で反映できず、外枠先行でバイアス合致の▲フリッカージャブを◎へ繰り上げられなかった。宝塚R10（発走60分前の馬場再確認）の姉妹ルールとして、<b>事前想定とバイアスが反転確定した場合は枠と展開軸へ根拠付き adjustments を即時許可</b>（R14「機械再計算のみ」の明示的例外）とする経路を設ける。</p>
 </div>
 </div>
-<p class="rv-cap">※R30/R31 の昇格・R35/R36 の candidate 登録は、この後ユーザー承認のうえ evaluation-criteria.md／SKILL 本文へ反映する（Step 12-7/12-8）。</p>
+<p class="rv-cap">※R30/R31 の昇格・R35/R36 の候補登録は、この後ユーザー承認のうえ評価基準と手順書の本文へ反映する（Step 12-7/12-8）。</p>
 
   </section><!-- /tab-review -->
 
