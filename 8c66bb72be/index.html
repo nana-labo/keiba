@@ -806,8 +806,80 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+</style>
+<style>
+/* 振り返りタブの長文を3行に畳む。狭い画面だけで効かせ、広い画面は従来どおり全文表示 */
+#tab-review .rvMore{display:none;}
+@media (max-width:560px){
+  #tab-review .rvClampBody{
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+    overflow:hidden;
+  }
+  #tab-review .rvClamp.is-open .rvClampBody{
+    display:block;-webkit-line-clamp:none;overflow:visible;
+  }
+  #tab-review .rvMore{
+    display:inline-block;margin-top:4px;padding:2px 8px;
+    font:inherit;font-size:.78rem;line-height:1.6;color:#1a5a8a;
+    background:#eef4fa;border:1px solid #ccd6e2;border-radius:999px;cursor:pointer;
+  }
+  #tab-review .rvMore:hover{background:#e2edf7;}
+  #tab-review .rvMore:focus-visible{outline:2px solid #1a5a8a;outline-offset:2px;}
+}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist">
+  <button type="button" data-tab="tab-predict" class="active">予想</button>
+  <button type="button" data-tab="tab-review">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane active">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4239,6 +4311,121 @@ function doApplyBetPlan(planIdx){
   });
 })();
 </script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane">
+<div class="rv-wrap">
+<p class="rv-lead">☆評価の5番人気サウンドモリアーナが直線で抜け出し重賞初制覇、◎パンジャタワーが2着で3連複・ワイドともに的中した。印馬が上位4着を独占し「◎軸+印馬全頭流し」の設計どおりの決着になった。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>7</td><td>14</td><td class="nm">サウンドモリアーナ</td><td>牝4</td><td>55.0</td><td>武豊</td><td>1:07.7</td><td>-</td><td>33.6</td><td>12.9</td><td>5</td><td>454(+4)</td><td>☆</td></tr>
+<tr><td>2</td><td>2</td><td>3</td><td class="nm">パンジャタワー</td><td>牡4</td><td>58.0</td><td>松山</td><td>1:07.9</td><td>1.1/4</td><td>33.5</td><td>1.9</td><td>1</td><td>494(+6)</td><td>◎</td></tr>
+<tr><td>3</td><td>4</td><td>8</td><td class="nm">ウインカーネリアン</td><td>牡9</td><td>59.0</td><td>三浦</td><td>1:08.0</td><td>クビ</td><td>34.0</td><td>9.8</td><td>3</td><td>514(-2)</td><td>△</td></tr>
+<tr><td>4</td><td>2</td><td>4</td><td class="nm">エーティーマクフィ</td><td>牡7</td><td>57.0</td><td>富田</td><td>1:08.0</td><td>クビ</td><td>33.6</td><td>12.1</td><td>4</td><td>482(+8)</td><td>◯</td></tr>
+<tr><td>5</td><td>8</td><td>16</td><td class="nm">ロードフォアエース</td><td>牡5</td><td>57.0</td><td>岩田望</td><td>1:08.2</td><td>1</td><td>33.4</td><td>55.2</td><td>12</td><td>544(+4)</td><td></td></tr>
+<tr><td>6</td><td>7</td><td>13</td><td class="nm">ロジケープ</td><td>牡3</td><td>55.0</td><td>丹内</td><td>1:08.3</td><td>1/2</td><td>33.8</td><td>6.3</td><td>2</td><td>500(+2)</td><td>▲</td></tr>
+<tr><td>7</td><td>5</td><td>9</td><td class="nm">イツモニコニコ</td><td>牝5</td><td>55.0</td><td>ナレド</td><td>1:08.4</td><td>クビ</td><td>34.1</td><td>79.3</td><td>13</td><td>500(-4)</td><td></td></tr>
+<tr><td>8</td><td>5</td><td>10</td><td class="nm">ダノンマッキンリー</td><td>牡5</td><td>57.0</td><td>池添</td><td>1:08.6</td><td>1.1/2</td><td>33.6</td><td>22.6</td><td>9</td><td>472(-8)</td><td>☆</td></tr>
+<tr><td>9</td><td>6</td><td>11</td><td class="nm">リラエンブレム</td><td>牡4</td><td>57.0</td><td>ルメール</td><td>1:08.6</td><td>ハナ</td><td>33.4</td><td>31.6</td><td>10</td><td>498(-2)</td><td></td></tr>
+<tr><td>10</td><td>3</td><td>5</td><td class="nm">ゾンニッヒ</td><td>牡8</td><td>57.0</td><td>ロイド</td><td>1:08.7</td><td>クビ</td><td>34.1</td><td>44.9</td><td>11</td><td>478(+4)</td><td></td></tr>
+<tr><td>11</td><td>1</td><td>2</td><td class="nm">ルシード</td><td>牡4</td><td>57.0</td><td>レーン</td><td>1:08.7</td><td>ハナ</td><td>34.4</td><td>18.4</td><td>7</td><td>512(0)</td><td>☆</td></tr>
+<tr><td>12</td><td>3</td><td>6</td><td class="nm">ジョーメッドヴィン</td><td>牡5</td><td>57.0</td><td>吉村智</td><td>1:08.8</td><td>1/2</td><td>34.3</td><td>138.3</td><td>14</td><td>522(0)</td><td></td></tr>
+<tr><td>13</td><td>1</td><td>1</td><td class="nm">ナムラクララ</td><td>牝4</td><td>55.0</td><td>浜中</td><td>1:08.9</td><td>3/4</td><td>34.4</td><td>22.0</td><td>8</td><td>476(-2)</td><td>△</td></tr>
+<tr><td>14</td><td>4</td><td>7</td><td class="nm">マイネルジェロディ</td><td>牡8</td><td>57.0</td><td>M.ヴェイスケラ</td><td>1:08.9</td><td>ハナ</td><td>34.3</td><td>291.7</td><td>16</td><td>480(-4)</td><td></td></tr>
+<tr><td>15</td><td>8</td><td>15</td><td class="nm">エイシンディード</td><td>牡3</td><td>55.0</td><td>川又</td><td>1:09.2</td><td>1.3/4</td><td>35.0</td><td>16.2</td><td>6</td><td>460(+10)</td><td>☆</td></tr>
+<tr><td>16</td><td>6</td><td>12</td><td class="nm">レッドアヴァンティ</td><td>牡7</td><td>57.0</td><td>岩田康</td><td>1:09.3</td><td>1/2</td><td>34.5</td><td>206.2</td><td>15</td><td>506(+18)</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p class="rv-note">天候:晴、馬場:良（当日確定どおり）。札幌芝1200m・16頭立て、直線266.1m。前半3F34.0秒はやや縦長のスローで、逃げたウインカーネリアン(59kg最重量・9歳)が3着まで残る底力を見せた。</p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ⑭ 1,290円</span>
+<span class="chip">複勝 ⑭300 / ③110 / ⑧270</span>
+<span class="chip">枠連 2-7 420円</span>
+<span class="chip">馬連 ③-⑭ <b>1,520円</b></span>
+<span class="chip">ワイド ③-⑭590 / ⑧-⑭1,720 / ③-⑧480</span>
+<span class="chip">馬単 ⑭→③ 4,700円</span>
+<span class="chip">3連複 ③-⑧-⑭ <b>4,540円</b></span>
+<span class="chip">3連単 ⑭→③→⑧ <b>36,780円</b></span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>馬場</th><td><b>予想:</b> 当日昼に晴・良で確定させ、洋芝でも時計の掛かり方に変化なしと判断。<br><b>結果:</b> 想定どおり晴・良馬場で決着、馬場を理由にした評価変更は不要だった。</td></tr>
+<tr><th>展開</th><td><b>予想:</b> 先行馬の多い16頭立てのハンデ戦で前半は流れ、突出した逃げ馬は不在と想定（pace: やや速い）。<br><b>結果:</b> 実際は59kg最重量のウインカーネリアンが単独で先手を取り、前半3F34.0秒は縦長ながら消耗戦にはならず、2番手につけたサウンドモリアーナが直線で楽に差し切った。</td></tr>
+<tr><th>印判定</th><td class="rvClamp"><span class="rvClampBody" id="rvc-1"><b>予想:</b> 当該コース連覇実績の◎パンジャタワーを軸に、実績重視の◯エーティーマクフィ・勢い重視の▲ロジケープで本線を構成。穴☆は札幌巧者のサウンドモリアーナ・ルシードなど4頭に厚めに配分。<br><b>結果:</b> ☆サウンドモリアーナが1着、◎パンジャタワーが2着、△ウインカーネリアンが3着、◯エーティーマクフィが4着と上位4頭を印馬が独占。「札幌実績と乗り替わりを評価した穴☆」の設計が的中し、▲ロジケープ（重賞初挑戦でクラスの天井が見えていない、と弱み評価していた）は6着に沈んだ。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-1">続きを読む</button></td></tr>
+<tr><th>買い目構成</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2"><b>予想:</b> 3連複は◎軸→印付き8頭流しの28点、ワイドは◎→◯▲△△の4点、◎不発時のヘッジで3連複BOX4点。<br><b>結果:</b> 3連複が3-8-14で的中（4,540円、28点計2,800円→回収率約162%）、ワイドも3-8で的中（480円、4点400円→回収率120%）。ヘッジBOX（◯▲☆+ロードフォアエース）は対象外の組み合わせで不的中（400円損）。3券種合計コスト3,600円・払戻5,020円でトータルROI約139%。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>3 パンジャタワー（松山弘平）<span class="res hit">2着</span></div>
+<p>重賞連覇を狙った1番人気は直線で交わされたが2着を確保。58kgの重いハンデを背負っても崩れない地力の高さを改めて示した。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◯</span>4 エーティーマクフィ（富田暁）<span class="res">4着</span></div>
+<p>複勝率72%の安定感どおり4着に食い込んだが、決め手であと一歩届かず。7歳のベテランらしい堅実さは出た。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>13 ロジケープ（丹内祐次）<span class="res">6着</span></div>
+<p>3連勝中の勢いを評価したが、重賞初挑戦で「クラスの天井が見えていない」という弱み評価どおり6着まで。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>8 ウインカーネリアン（三浦皇成）<span class="res hit">3着</span></div>
+<p>59kg最重量・9歳の休み明けという厳しい条件で単独逃げも、スプリンターズS覇者の底力で3着に粘り込んだ。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>1 ナムラクララ（浜中俊）<span class="res">13着</span></div>
+<p>陣営が「上積みはない」と話していた中2週ローテーションどおり13着に終わった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>14 サウンドモリアーナ（武豊）<span class="res hit">1着</span></div>
+<p>札幌2戦2勝の巧者ぶりと武豊騎手への乗り替わりを評価した穴が的中、直線で抜け出し重賞初制覇。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>2 ルシード（デムーロ）<span class="res">11着</span></div>
+<p>札幌3戦3着内だった巧者評価も、レーン騎手ではなくデムーロ騎手騎乗となり11着まで。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>15 エイシンディード（川又賢治）<span class="res">15着</span></div>
+<p>約3か月ぶりの休み明けと未経験の札幌コースという弱みが響き、15着に終わった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>10 ダノンマッキンリー（池添謙一）<span class="res">8着</span></div>
+<p>追込脚質で直線266mの札幌は展開待ちという弱み評価どおり、8着まで届かなかった。</p></div>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">SPAIA競馬（Yahoo!ニュース配信）<span class="tag">事後</span></p><p>道中は縦長の展開で前半3F34.0秒とそこまで速くない流れ。直線に入ると2番手につけていたサウンドモリアーナが先頭へ、1番人気パンジャタワーが追うが差は縮まらずゴールしたと分析。</p><p><a href="https://news.yahoo.co.jp/articles/0c0379be70975cbb835eccb264ee0c0e486e6704">https://news.yahoo.co.jp/articles/0c0379be70975cbb835eccb264ee0c0e486e6704</a></p></div>
+<div class="rv-view"><p class="src">netkeiba（競馬ニュース）<span class="tag">事後</span></p><p>武豊騎手騎乗のサウンドモリアーナがGI馬2頭（パンジャタワー・ウインカーネリアン）を退けて重賞初制覇と見出しで報道。</p><p><a href="https://news.sp.netkeiba.com/?no=340470&pid=news_view">https://news.sp.netkeiba.com/?no=340470&pid=news_view</a></p></div>
+<div class="rv-view"><p class="src">競馬ラボ（X）<span class="tag">事後</span></p><p>「道中2番手を追走したサウンドモリアーナが押し切り1着！ 2着パンジャタワー、3着ウインカーネリアン」と実況ツイート。</p><p><a href="https://x.com/keibalab/status/2091417486889738252">https://x.com/keibalab/status/2091417486889738252</a></p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>59kg最重量・9歳の休み明け馬でも逃げて3着</th><td class="rvClamp"><span class="rvClampBody" id="rvc-3">ウインカーネリアンは「9歳で休み明け」「札幌0勝」という弱みタグを付けていたが、GI級の地力を持つ馬は最重量ハンデ・休み明けでも崩れきらないことがある。斤量や休み明けだけで機械的に評価を下げすぎない目安として留めておく（新たなRルール化はせず、evaluation-criteria.mdの既存の「地力上位は減点を抑える」考え方の追加データ点として記録）。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-3">続きを読む</button></td></tr>
+</tbody>
+</table>
+
+<h3>レース映像</h3>
+<div class="rv-shots">
+<figure class="rv-shot"><img src="p/b69957bc9999.jpg" alt="スタート：8番ウインカーネリアンがいい飛び出しで先手、14番サウンドモリアーナが2番手につける"><figcaption>スタート：8番ウインカーネリアンがいい飛び出しで先手、14番サウンドモリアーナが2番手につける</figcaption></figure>
+<figure class="rv-shot"><img src="p/96f5c61d75a5.jpg" alt="道中：ウインカーネリアン先頭のまま縦長の展開、サウンドモリアーナが2番手をキープ"><figcaption>道中：ウインカーネリアン先頭のまま縦長の展開、サウンドモリアーナが2番手をキープ</figcaption></figure>
+<figure class="rv-shot"><img src="p/aae6149beaec.jpg" alt="4コーナー：なおウインカーネリアンが先頭、サウンドモリアーナが直後で直線に向く"><figcaption>4コーナー：なおウインカーネリアンが先頭、サウンドモリアーナが直後で直線に向く</figcaption></figure>
+<figure class="rv-shot"><img src="p/8369f2cb03a3.jpg" alt="直線入口：サウンドモリアーナがウインカーネリアンとの差を詰め始める"><figcaption>直線入口：サウンドモリアーナがウインカーネリアンとの差を詰め始める</figcaption></figure>
+<figure class="rv-shot"><img src="p/5802d2bee44e.jpg" alt="残り200m：サウンドモリアーナが先頭に立ち、パンジャタワーが外から追う"><figcaption>残り200m：サウンドモリアーナが先頭に立ち、パンジャタワーが外から追う</figcaption></figure>
+<figure class="rv-shot"><img src="p/2e2df189b111.jpg" alt="ゴール前：サウンドモリアーナが1.1/4馬身差で押し切り重賞初制覇"><figcaption>ゴール前：サウンドモリアーナが1.1/4馬身差で押し切り重賞初制覇</figcaption></figure>
+</div>
+</div>
+</section><!-- /tab-review -->
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=document.querySelectorAll('.tabHd button[data-tab]');
+  var panes=document.querySelectorAll('.tab-pane');
+  if(!btns.length) return;
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var id=b.getAttribute('data-tab');
+      btns.forEach(function(x){x.classList.toggle("active",x===b);});
+      panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+})();
+</script>
 <a href="../" class="portalBack" aria-label="レースアーカイブに戻る">← レースアーカイブ</a>
 <style>
 .portalBack{position:fixed;left:14px;bottom:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;gap:6px;
@@ -4449,5 +4636,23 @@ body.kbModalOpen .fb-fab{display:none;}
 })();
 </script>
 
+<script>
+/* 振り返りタブの「続きを読む」。button 要素なので Enter/Space は素で効く。
+   開閉状態は aria-expanded で支援技術へ伝える（aria-controls で本文と紐付け済み） */
+(function(){
+  var btns = document.querySelectorAll('#tab-review .rvMore');
+  if(!btns.length) return;
+  Array.prototype.forEach.call(btns, function(b){
+    b.addEventListener('click', function(){
+      var host = b.parentNode;
+      while(host && !(host.classList && host.classList.contains('rvClamp'))) host = host.parentNode;
+      if(!host) return;
+      var open = host.classList.toggle('is-open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      b.textContent = open ? '閉じる' : '続きを読む';
+    });
+  });
+})();
+</script>
 </body>
 </html>

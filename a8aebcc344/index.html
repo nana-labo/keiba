@@ -806,8 +806,80 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+</style>
+<style>
+/* 振り返りタブの長文を3行に畳む。狭い画面だけで効かせ、広い画面は従来どおり全文表示 */
+#tab-review .rvMore{display:none;}
+@media (max-width:560px){
+  #tab-review .rvClampBody{
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+    overflow:hidden;
+  }
+  #tab-review .rvClamp.is-open .rvClampBody{
+    display:block;-webkit-line-clamp:none;overflow:visible;
+  }
+  #tab-review .rvMore{
+    display:inline-block;margin-top:4px;padding:2px 8px;
+    font:inherit;font-size:.78rem;line-height:1.6;color:#1a5a8a;
+    background:#eef4fa;border:1px solid #ccd6e2;border-radius:999px;cursor:pointer;
+  }
+  #tab-review .rvMore:hover{background:#e2edf7;}
+  #tab-review .rvMore:focus-visible{outline:2px solid #1a5a8a;outline-offset:2px;}
+}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist">
+  <button type="button" data-tab="tab-predict" class="active">予想</button>
+  <button type="button" data-tab="tab-review">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane active">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4239,6 +4311,109 @@ function doApplyBetPlan(planIdx){
   });
 })();
 </script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane">
+<div class="rv-wrap">
+<p class="rv-lead">◯レッチュベルクが内から抜け出し無傷2連勝で重賞初制覇、◎トウシンマジックが2着、△トップチェッカーが3着で上位3頭を印馬が独占。3連複・ワイドともに的中し「上がり最速勢を◎○△に厚く配置する」設計どおりの決着になった。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>2</td><td>2</td><td class="nm">レッチュベルク</td><td>牡2</td><td>55.0</td><td>田辺</td><td>1:34.7</td><td>-</td><td>32.8</td><td>2.8</td><td>1</td><td>478(0)</td><td>◯</td></tr>
+<tr><td>2</td><td>7</td><td>7</td><td class="nm">トウシンマジック</td><td>牡2</td><td>55.0</td><td>コレット</td><td>1:34.9</td><td>1.1/4</td><td>33.0</td><td>4.0</td><td>2</td><td>476(+10)</td><td>◎</td></tr>
+<tr><td>3</td><td>3</td><td>3</td><td class="nm">トップチェッカー</td><td>牡2</td><td>55.0</td><td>北村友一</td><td>1:35.4</td><td>3</td><td>33.3</td><td>8.2</td><td>5</td><td>492(+2)</td><td>△</td></tr>
+<tr><td>4</td><td>8</td><td>9</td><td class="nm">スイートアリッサム</td><td>牝2</td><td>55.0</td><td>杉原誠人</td><td>1:35.5</td><td>1/2</td><td>33.2</td><td>19.8</td><td>6</td><td>440(+8)</td><td>☆</td></tr>
+<tr><td>5</td><td>1</td><td>1</td><td class="nm">シャンデヴァーグ</td><td>牝2</td><td>55.0</td><td>津村明秀</td><td>1:36.0</td><td>3</td><td>33.8</td><td>4.3</td><td>3</td><td>426(-2)</td><td>△</td></tr>
+<tr><td>6</td><td>6</td><td>6</td><td class="nm">マインドフルネス</td><td>牝2</td><td>55.0</td><td>菊沢一樹</td><td>1:36.0</td><td>クビ</td><td>33.3</td><td>40.3</td><td>7</td><td>406(0)</td><td></td></tr>
+<tr><td>7</td><td>5</td><td>5</td><td class="nm">エレスレイプニル</td><td>牡2</td><td>55.0</td><td>木幡育也</td><td>1:36.5</td><td>3</td><td>34.6</td><td>113.4</td><td>9</td><td>444(+4)</td><td></td></tr>
+<tr><td>8</td><td>4</td><td>4</td><td class="nm">アイデアルカット</td><td>牡2</td><td>55.0</td><td>嶋田純次</td><td>1:37.0</td><td>3</td><td>34.5</td><td>110.6</td><td>8</td><td>446(+10)</td><td></td></tr>
+<tr><td>9</td><td>8</td><td>10</td><td class="nm">インカルナータ</td><td>牡2</td><td>55.0</td><td>坂井瑠星</td><td>1:37.4</td><td>2.1/2</td><td>34.1</td><td>5.0</td><td>4</td><td>488(+10)</td><td>▲</td></tr>
+<tr><td>10</td><td>7</td><td>8</td><td class="nm">マイホームパパ</td><td>牡2</td><td>55.0</td><td>江田照男</td><td>1:37.7</td><td>1.3/4</td><td>36.0</td><td>185.0</td><td>10</td><td>402(-6)</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p class="rv-note">天候:曇、馬場:良（当日確定どおり）。新潟芝1600m外回り・10頭立て。逃げ想定だった▲インカルナータは道中で終始インにこそ収まったが伸びを欠き9着、上がり3F最速タイの32.8を出したレッチュベルクが直線内から抜け出した。</p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ② 280円</span>
+<span class="chip">複勝 ②120 / ⑦140 / ③180</span>
+<span class="chip">枠連 2-7 700円</span>
+<span class="chip">馬連 ②-⑦ <b>700円</b></span>
+<span class="chip">ワイド ②-⑦260 / ②-③400 / ③-⑦480</span>
+<span class="chip">馬単 ②→⑦ 1,200円</span>
+<span class="chip">3連複 ②-③-⑦ <b>1,540円</b></span>
+<span class="chip">3連単 ②→⑦→③ <b>5,810円</b></span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>馬場</th><td><b>予想:</b> 当日昼に曇・良で確定させ、外回りの上がり勝負という前提に変化なしと判断。<br><b>結果:</b> 想定どおり曇・良馬場で決着、馬場を理由にした評価変更は不要だった。</td></tr>
+<tr><th>展開</th><td class="rvClamp"><span class="rvClampBody" id="rvc-1"><b>予想:</b> 逃げるのはインカルナータ1頭で前半は緩み、直線658.7mの外回りで上がり3Fの絶対値がそのまま着順に出ると想定（pace: スロー、bias: 外差し有利）。<br><b>結果:</b> 上がり3F最速タイの32.8を出したレッチュベルクが1着、僅差2位の33.0だったトウシンマジックが2着と、想定どおり「上がり最速勝負」の決着。単独ハナを想定した▲インカルナータは9着に沈み、「差しが届きやすい外回りは逃げ脚質に形が合いにくい」という弱み評価が的中した。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-1">続きを読む</button></td></tr>
+<tr><th>印判定</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2"><b>予想:</b> 新潟外回り・当該距離の実績と上がり最速の決め手を評価した◎トウシンマジックを軸に、新馬完勝の決め手を評価した◯レッチュベルク・逃げ想定の▲インカルナータで本線を構成。<br><b>結果:</b> ◯レッチュベルクが1着、◎トウシンマジックが2着、△トップチェッカーが3着と上位3頭を印馬が独占。◎と◯が入れ替わったものの「上がり最速勢を軸にする」評価方針自体は的中、▲インカルナータは弱み評価どおり9着に終わった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
+<tr><th>買い目構成</th><td class="rvClamp"><span class="rvClampBody" id="rvc-3"><b>予想:</b> 3連複は◎軸→印付き5頭流しの10点、ワイドは◎→◯▲△の3点、◎不発時のヘッジで3連複BOX4点。<br><b>結果:</b> 3連複が2-3-7で的中（1,540円、10点計1,000円→回収率約154%）、ワイドも2-7で的中（260円、3点300円→回収率約87%）。ヘッジBOX（◯▲△+マインドフルネス）は対象外の組み合わせで不的中（400円損）。3券種合計コスト1,700円・払戻1,800円でトータルROI約106%。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-3">続きを読む</button></td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>7 トウシンマジック（コレット）<span class="res hit">2着</span></div>
+<p>新潟外回り当該距離での新馬勝ちと上がり最速の決め手を評価した軸は、僅差2着で軸としての役割を果たした。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◯</span>2 レッチュベルク（田辺裕信）<span class="res hit">1着</span></div>
+<p>東京新馬を3馬身差で完勝した決め手どおり、直線で内から鋭く抜け出し無傷の2連勝で重賞初制覇。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>10 インカルナータ（坂井瑠星）<span class="res">9着</span></div>
+<p>逃げ脚質は外回りで差しが届きやすく形が合いにくいという弱み評価どおり、単独先手も直線で失速し9着に終わった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>1 シャンデヴァーグ（津村明秀）<span class="res">5着</span></div>
+<p>調教評価Sの上昇度を評価したが、新馬戦が超スローの平凡タイムだった点が響き5着まで。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>3 トップチェッカー（北村友一）<span class="res hit">3着</span></div>
+<p>恵まれた馬格と調教評価Aを評価した連下候補どおり、3着で馬券圏内を確保した。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>9 スイートアリッサム（杉原誠人）<span class="res">4着</span></div>
+<p>新潟外回り経験済みで上がり最速タイという穴評価どおり、4着まで食い込む健闘を見せた。</p></div>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">netkeiba（競馬ニュース）<span class="tag">事後</span></p><p>「レッチュベルクが内から抜け出し無傷2連勝で重賞V」の見出しで、中団のインでレースを進め直線でも内から抜け出したと展開を報道。</p><p><a href="https://news.netkeiba.com/?no=340468&pid=news_view">https://news.netkeiba.com/?no=340468&pid=news_view</a></p></div>
+<div class="rv-view"><p class="src">競馬ラボ<span class="tag">事後</span></p><p>父インディチャンプ、母リヴィア（母父Galileo）の血統紹介とともに、東京新馬に続く無傷2連勝での重賞制覇と総括。</p><p><a href="https://www.keibalab.jp/db/race/202604030207/">https://www.keibalab.jp/db/race/202604030207/</a></p></div>
+<div class="rv-view"><p class="src">ガリのデータ競馬研究所（note）<span class="tag">事前(参考)</span></p><p>過去10年の新潟2歳Sで前走に0秒4差以上をつけて勝った馬の成績は1-2-1-1と好走率が高いというレース前のデータ分析。レッチュベルクは前走を3馬身差で完勝しておりこの型に合致していた。</p><p><a href="https://note.com/gari_keiba_lab/n/n665175b5c6eb">https://note.com/gari_keiba_lab/n/n665175b5c6eb</a></p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>◎と◯が入れ替わっても軸方針自体は的中</th><td class="rvClamp"><span class="rvClampBody" id="rvc-4">◎トウシンマジック・◯レッチュベルクの順位は結果と逆になったが、両馬とも「新馬戦の上がり最速クラスを重視する」という評価軸そのものは機能し、上位2頭を占めた。2歳戦でキャリア1戦馬同士の◎◯甲乙は近走実績が薄く僅差になりやすいため、順位の入れ替わり自体を大きな誤りとして扱わず、軸選定の妥当性は别で評価する（新たなRルール化はせず、2歳戦セオリーの追加データ点として記録）。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-4">続きを読む</button></td></tr>
+</tbody>
+</table>
+
+<h3>レース映像</h3>
+<div class="rv-shots">
+<figure class="rv-shot"><img src="p/ff96cf6978ca.jpg" alt="スタート：10番インカルナータが大外から先頭を奪い単独逃げの形に"><figcaption>スタート：10番インカルナータが大外から先頭を奪い単独逃げの形に</figcaption></figure>
+<figure class="rv-shot"><img src="p/c14e667bc72f.jpg" alt="道中：インカルナータが縦長のレースを先導、中団インに7番トウシンマジックら"><figcaption>道中：インカルナータが縦長のレースを先導、中団インに7番トウシンマジックら</figcaption></figure>
+<figure class="rv-shot"><img src="p/9c4f1154f06c.jpg" alt="4コーナー：インカルナータが先頭も、外から2番レッチュベルクらが押し上げる"><figcaption>4コーナー：インカルナータが先頭も、外から2番レッチュベルクらが押し上げる</figcaption></figure>
+<figure class="rv-shot"><img src="p/d3ef6b9dfed4.jpg" alt="直線入口：7番トウシンマジックが一旦先頭に立ち、内から2番レッチュベルクが追う"><figcaption>直線入口：7番トウシンマジックが一旦先頭に立ち、内から2番レッチュベルクが追う</figcaption></figure>
+<figure class="rv-shot"><img src="p/a70a1c27766d.jpg" alt="残り200m：レッチュベルクが内から先頭を奪い、トウシンマジックが外で追走"><figcaption>残り200m：レッチュベルクが内から先頭を奪い、トウシンマジックが外で追走</figcaption></figure>
+<figure class="rv-shot"><img src="p/128477fdcb2c.jpg" alt="ゴール前：レッチュベルクが1.1/4馬身差で押し切り重賞初制覇"><figcaption>ゴール前：レッチュベルクが1.1/4馬身差で押し切り重賞初制覇</figcaption></figure>
+</div>
+</div>
+</section><!-- /tab-review -->
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=document.querySelectorAll('.tabHd button[data-tab]');
+  var panes=document.querySelectorAll('.tab-pane');
+  if(!btns.length) return;
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var id=b.getAttribute('data-tab');
+      btns.forEach(function(x){x.classList.toggle("active",x===b);});
+      panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+})();
+</script>
 <a href="../" class="portalBack" aria-label="レースアーカイブに戻る">← レースアーカイブ</a>
 <style>
 .portalBack{position:fixed;left:14px;bottom:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;gap:6px;
@@ -4449,5 +4624,23 @@ body.kbModalOpen .fb-fab{display:none;}
 })();
 </script>
 
+<script>
+/* 振り返りタブの「続きを読む」。button 要素なので Enter/Space は素で効く。
+   開閉状態は aria-expanded で支援技術へ伝える（aria-controls で本文と紐付け済み） */
+(function(){
+  var btns = document.querySelectorAll('#tab-review .rvMore');
+  if(!btns.length) return;
+  Array.prototype.forEach.call(btns, function(b){
+    b.addEventListener('click', function(){
+      var host = b.parentNode;
+      while(host && !(host.classList && host.classList.contains('rvClamp'))) host = host.parentNode;
+      if(!host) return;
+      var open = host.classList.toggle('is-open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      b.textContent = open ? '閉じる' : '続きを読む';
+    });
+  });
+})();
+</script>
 </body>
 </html>
