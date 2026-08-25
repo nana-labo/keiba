@@ -854,11 +854,11 @@
 </style>
 </head>
 <body data-view="main">
-<nav class="tabHd" role="tablist">
-  <button type="button" data-tab="tab-predict" class="active">予想</button>
-  <button type="button" data-tab="tab-review">振り返り</button>
+<nav class="tabHd" role="tablist" aria-label="予想と振り返り">
+  <button type="button" role="tab" id="tabBtn-predict" data-tab="tab-predict" aria-controls="tab-predict" aria-selected="false" tabindex="-1">予想</button>
+  <button type="button" role="tab" id="tabBtn-review" data-tab="tab-review" aria-controls="tab-review" aria-selected="true" tabindex="0" class="active">振り返り</button>
 </nav>
-<section id="tab-predict" class="tab-pane active">
+<section id="tab-predict" class="tab-pane" role="tabpanel" aria-labelledby="tabBtn-predict" tabindex="0">
 
 <div class="wrap">
   <header class="hero">
@@ -4292,7 +4292,7 @@ function doApplyBetPlan(planIdx){
 })();
 </script>
 </section><!-- /tab-predict -->
-<section id="tab-review" class="tab-pane">
+<section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
 <div class="rv-wrap">
   <p class="rv-lead">1番人気クロワデュノールの春古馬三冠を阻んだのは、連覇を狙う武豊のメイショウタバル(2番人気)。レース直前の大雨で馬場が重に悪化する中、2番手から直線先頭に立ちクビ差凌ぎ切り、父ゴールドシップに続く史上初の同一G1父子連覇かつ史上3頭目の連覇を達成した。武豊は前週の安田記念に続く2週連続G1制覇。</p>
   <h2>レース結果</h2>
@@ -4392,15 +4392,32 @@ function doApplyBetPlan(planIdx){
 <script>
 /* タブ切替（予想 / 振り返り） */
 (function(){
-  var btns=document.querySelectorAll('.tabHd button[data-tab]');
-  var panes=document.querySelectorAll('.tab-pane');
+  var btns=Array.prototype.slice.call(document.querySelectorAll('.tabHd button[data-tab]'));
+  var panes=Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
   if(!btns.length) return;
-  btns.forEach(function(b){
-    b.addEventListener('click',function(){
-      var id=b.getAttribute('data-tab');
-      btns.forEach(function(x){x.classList.toggle("active",x===b);});
-      panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
-      window.scrollTo({top:0,behavior:'smooth'});
+  function select(b,moveFocus){
+    var id=b.getAttribute('data-tab');
+    btns.forEach(function(x){
+      var on=(x===b);
+      x.classList.toggle("active",on);
+      x.setAttribute('aria-selected',on?'true':'false');
+      x.tabIndex=on?0:-1;
+    });
+    panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+    if(moveFocus) b.focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){select(b,false);});
+    b.addEventListener('keydown',function(e){
+      var nx=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx=btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx=btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx=btns[0];
+      else if(e.key==='End') nx=btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      select(nx,true);
     });
   });
 })();

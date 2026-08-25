@@ -874,11 +874,11 @@
 </style>
 </head>
 <body data-view="main">
-<nav class="tabHd" role="tablist">
-  <button type="button" data-tab="tab-predict" class="active">予想</button>
-  <button type="button" data-tab="tab-review">振り返り</button>
+<nav class="tabHd" role="tablist" aria-label="予想と振り返り">
+  <button type="button" role="tab" id="tabBtn-predict" data-tab="tab-predict" aria-controls="tab-predict" aria-selected="false" tabindex="-1">予想</button>
+  <button type="button" role="tab" id="tabBtn-review" data-tab="tab-review" aria-controls="tab-review" aria-selected="true" tabindex="0" class="active">振り返り</button>
 </nav>
-<section id="tab-predict" class="tab-pane active">
+<section id="tab-predict" class="tab-pane" role="tabpanel" aria-labelledby="tabBtn-predict" tabindex="0">
 
 <div class="wrap">
   <header class="hero">
@@ -4312,7 +4312,7 @@ function doApplyBetPlan(planIdx){
 })();
 </script>
 </section><!-- /tab-predict -->
-<section id="tab-review" class="tab-pane">
+<section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
 <div class="rv-wrap">
 <p class="rv-lead">◯8番ベアバッキューン（2番人気）がハナを譲らず逃げ切って優勝、△6番サヨノネイチヤが2着、◎11番アランバローズは3着。上位3頭はすべて印付きで、ワイド◎-◯とワイド◎-△の2本が的中した。ただし本線の3連複21点は当たっても配当1,390円で投資を下回り、収支はマイナス。1番人気△10番ジョージテソーロは4着に敗れた。</p>
 
@@ -4400,15 +4400,32 @@ function doApplyBetPlan(planIdx){
 <script>
 /* タブ切替（予想 / 振り返り） */
 (function(){
-  var btns=document.querySelectorAll('.tabHd button[data-tab]');
-  var panes=document.querySelectorAll('.tab-pane');
+  var btns=Array.prototype.slice.call(document.querySelectorAll('.tabHd button[data-tab]'));
+  var panes=Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
   if(!btns.length) return;
-  btns.forEach(function(b){
-    b.addEventListener('click',function(){
-      var id=b.getAttribute('data-tab');
-      btns.forEach(function(x){x.classList.toggle("active",x===b);});
-      panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
-      window.scrollTo({top:0,behavior:'smooth'});
+  function select(b,moveFocus){
+    var id=b.getAttribute('data-tab');
+    btns.forEach(function(x){
+      var on=(x===b);
+      x.classList.toggle("active",on);
+      x.setAttribute('aria-selected',on?'true':'false');
+      x.tabIndex=on?0:-1;
+    });
+    panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+    if(moveFocus) b.focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){select(b,false);});
+    b.addEventListener('keydown',function(e){
+      var nx=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx=btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx=btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx=btns[0];
+      else if(e.key==='End') nx=btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      select(nx,true);
     });
   });
 })();
