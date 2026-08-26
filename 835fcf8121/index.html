@@ -806,8 +806,80 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+</style>
+<style>
+/* 振り返りタブの長文を3行に畳む。狭い画面だけで効かせ、広い画面は従来どおり全文表示 */
+#tab-review .rvMore{display:none;}
+@media (max-width:560px){
+  #tab-review .rvClampBody{
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+    overflow:hidden;
+  }
+  #tab-review .rvClamp.is-open .rvClampBody{
+    display:block;-webkit-line-clamp:none;overflow:visible;
+  }
+  #tab-review .rvMore{
+    display:inline-block;margin-top:4px;padding:2px 8px;
+    font:inherit;font-size:.78rem;line-height:1.6;color:#1a5a8a;
+    background:#eef4fa;border:1px solid #ccd6e2;border-radius:999px;cursor:pointer;
+  }
+  #tab-review .rvMore:hover{background:#e2edf7;}
+  #tab-review .rvMore:focus-visible{outline:2px solid #1a5a8a;outline-offset:2px;}
+}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist" aria-label="予想と振り返り">
+  <button type="button" role="tab" id="tabBtn-predict" data-tab="tab-predict" aria-controls="tab-predict" aria-selected="false" tabindex="-1">予想</button>
+  <button type="button" role="tab" id="tabBtn-review" data-tab="tab-review" aria-controls="tab-review" aria-selected="true" tabindex="0" class="active">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane" role="tabpanel" aria-labelledby="tabBtn-predict" tabindex="0">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4239,6 +4311,130 @@ function doApplyBetPlan(planIdx){
   });
 })();
 </script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
+<div class="rv-wrap">
+<p class="rv-lead">△5リベイクフルシティ（4番人気）が大外から差し切って優勝した。2着は☆9ダテノショウグン、3着は印を打たなかった4フォーチュンテラー。◎10ウィリアムバローズは最終1番人気に支持されたが11着に大敗した。印は1着と2着を押さえていたが、買い目は本線もヘッジも全滅し回収率0%。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>4</td><td>5</td><td class="nm">リベイクフルシティ</td><td>セ6</td><td>57.0</td><td>和田譲治</td><td>1:53.3</td><td>-</td><td>38.7</td><td>6.5</td><td>4</td><td>513(+1)</td><td>△</td></tr>
+<tr><td>2</td><td>6</td><td>9</td><td class="nm">ダテノショウグン</td><td>牡5</td><td>56.0</td><td>本田正重</td><td>1:53.6</td><td>1.1/2</td><td>39.2</td><td>16.3</td><td>5</td><td>487(+2)</td><td>☆</td></tr>
+<tr><td>3</td><td>4</td><td>4</td><td class="nm">フォーチュンテラー</td><td>牡7</td><td>56.0</td><td>野畑凌</td><td>1:53.6</td><td>アタマ</td><td>38.7</td><td>39.0</td><td>9</td><td>480(0)</td><td></td></tr>
+<tr><td>4</td><td>1</td><td>1</td><td class="nm">ドゥラエレーデ</td><td>牡6</td><td>56.0</td><td>吉原寛人</td><td>1:53.9</td><td>1.1/2</td><td>40.3</td><td>3.3</td><td>2</td><td>516(+3)</td><td>▲</td></tr>
+<tr><td>5</td><td>2</td><td>2</td><td class="nm">グーデンドラーク</td><td>牡7</td><td>56.0</td><td>御神本訓史</td><td>1:53.9</td><td>アタマ</td><td>40.8</td><td>4.2</td><td>3</td><td>529(-3)</td><td>◯</td></tr>
+<tr><td>6</td><td>5</td><td>7</td><td class="nm">ジョーエスポワール</td><td>牡6</td><td>54.0</td><td>西啓太</td><td>1:54.4</td><td>2.1/2</td><td>39.6</td><td>116.6</td><td>11</td><td>492(0)</td><td>☆</td></tr>
+<tr><td>7</td><td>6</td><td>8</td><td class="nm">シシュフォス</td><td>牡5</td><td>56.0</td><td>F.ゴンサルヴェス</td><td>1:55.3</td><td>4</td><td>41.5</td><td>32.4</td><td>8</td><td>521(-3)</td><td></td></tr>
+<tr><td>8</td><td>7</td><td>11</td><td class="nm">フジユージーン</td><td>牡5</td><td>56.0</td><td>杉山海波</td><td>1:55.5</td><td>3/4</td><td>42.1</td><td>26.8</td><td>7</td><td>576(-2)</td><td></td></tr>
+<tr><td>9</td><td>8</td><td>13</td><td class="nm">プラセボ</td><td>セ5</td><td>56.0</td><td>小杉亮</td><td>1:55.8</td><td>1.1/2</td><td>41.9</td><td>273.5</td><td>12</td><td>478(-3)</td><td></td></tr>
+<tr><td>10</td><td>8</td><td>12</td><td class="nm">ヒーローコール</td><td>牡6</td><td>57.0</td><td>山中悠希</td><td>1:55.9</td><td>クビ</td><td>41.6</td><td>17.1</td><td>6</td><td>507(+1)</td><td>△</td></tr>
+<tr><td>11</td><td>7</td><td>10</td><td class="nm">ウィリアムバローズ</td><td>牡8</td><td>59.0</td><td>笹川翼</td><td>1:56.7</td><td>4</td><td>43.4</td><td>3.0</td><td>1</td><td>486(+3)</td><td>◎</td></tr>
+<tr><td>12</td><td>5</td><td>6</td><td class="nm">ガバナビリティー</td><td>牡4</td><td>56.0</td><td>矢野貴之</td><td>1:56.8</td><td>1/2</td><td>42.5</td><td>63.3</td><td>10</td><td>478(-4)</td><td></td></tr>
+<tr><td>13</td><td>3</td><td>3</td><td class="nm">グランデマーレ</td><td>牡9</td><td>56.0</td><td>木間塚龍馬</td><td>2:04.5</td><td>大</td><td>47.4</td><td>574.0</td><td>13</td><td>492(-14)</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p class="rv-note rvClamp"><span class="rvClampBody" id="rvc-1">天候は晴、馬場は良。船橋ダート1800m・13頭立てで、勝ちタイムは1:53.3。ラップは11.6-11.1-12.6-12.9-12.6-12.3-12.5-13.8-13.9。前半1000mが1:00.8に対し、最後の2ハロンは13.8-13.9まで落ちた。公式のペース表記もハイである。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-1">続きを読む</button></p>
+<p class="rv-note">1コーナーは2番が先頭で、10番が2番手。勝った5番は10番手、3着の4番は12番手あたりに置かれていた。4コーナーでも2番が先頭を守り、5番は8番手。そこから外へ持ち出した差し・追い込み勢が上位3着を独占した。</p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ⑤ 650円</span>
+<span class="chip">複勝 ⑤230 / ⑨480 / ④640</span>
+<span class="chip">枠連 ④-⑥ 2,280円</span>
+<span class="chip">馬連 ⑤-⑨ 3,790円</span>
+<span class="chip">ワイド ⑤-⑨1,270 / ④-⑤2,070 / ④-⑨5,460</span>
+<span class="chip">馬単 ⑤→⑨ 6,710円</span>
+<span class="chip">3連複 ④-⑤-⑨ 28,700円</span>
+<span class="chip">3連単 ⑤→⑨→④ 115,630円</span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>馬場</th><td><b>予想:</b> 当日14時41分の時点で晴・ダート良として反映した。<br><b>結果:</b> 晴・良で想定どおり。馬場の読みに外れはなかった。</td></tr>
+<tr><th>ペース</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2"><b>予想:</b> 逃げ候補が3頭そろうため流れは速くなるとしつつ、前が止まらない船橋の傾向を優先した。相手も前受け中心に固めた。<br><b>結果:</b> 前半1000mは1:00.8のハイペース。最後の2ハロンが13.8-13.9まで落ち、前が総崩れになった。速くなるという読みは当たり、そこから引いた結論だけが逆だった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
+<tr><th>展開</th><td><b>予想:</b> 逃げ争いの序列では◎10ウィリアムバローズが1位で、ハナ率46.2%だった。単騎逃げが叶えば軸とした。<br><b>結果:</b> ハナを切ったのは序列8位の◯2グーデンドラーク。◎は2番手追走から上がり43.4秒で11着。序列1位が先頭に立てない目を、印の側で減点していなかった。</td></tr>
+<tr><th>印判定</th><td><b>予想:</b> ◎10を軸に、◯2・▲1・△5・△12・☆7・☆9まで印を広げた。<br><b>結果:</b> 1着は△5、2着は☆9で、印は上位2頭を押さえていた。一方で◎は11着、◯は5着、▲は4着。3着の4フォーチュンテラーは印なしで、非印馬の強さ推定でも下から2番目だった。</td></tr>
+<tr><th>オッズ</th><td><b>予想:</b> 当日14時41分のオッズで◎は5.2倍の3番人気まで緩み、軸の妙味が出たと書いた。<br><b>結果:</b> 発走時は3.0倍の1番人気に戻っていた。◯は2.6倍から4.2倍へ緩み、日中の並びは発走時と入れ替わっていた。</td></tr>
+<tr><th>買い目構成</th><td><b>予想:</b> 本線は◎軸の馬連4点・ワイド3点・3連複15点。ヘッジは◯▲△に6ガバナビリティーと13プラセボを足した3連複ボックス10点と馬連ボックス3点。<br><b>結果:</b> 決着は⑤-⑨-④で、5本すべて不的中。投資3,500円に対し回収0円、回収率0%。</td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>5 リベイクフルシティ（和田譲治）<span class="res hit">1着</span></div>
+<p>4番人気で優勝。1コーナー10番手から4コーナー8番手、直線は大外へ持ち出して差し切った。上がり38.7秒はメンバー最速タイ。予想は「前が止まらない馬場だと届かない懸念」として△に留めたが、ハイペースでその懸念は消えた。1800mの複勝率64%という評価そのものは正しかった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>9 ダテノショウグン（本田正重）<span class="res hit">2着</span></div>
+<p>5番人気で2着。「展開が向けば差し込む一発」という事前の評価がそのまま出た。4コーナー5番手から粘り、上がりは39.2秒。連下の☆に置いた判断は当たっている。ただしこの馬を含む買い目が◎軸の3連複だけだったため、回収には結びつかなかった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>1 ドゥラエレーデ（吉原寛人）<span class="res ">4着</span></div>
+<p>2番人気で4着。最内枠から先行し4コーナーでは4番手まで押し上げたが、上がり40.3秒で伸びを欠いた。船橋が初戦で1800mは11戦0勝という事前の割引が、0.6秒の着差として出た形。格の高さだけでは押し切れなかった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◯</span>2 グーデンドラーク（御神本訓史）<span class="res ">5着</span></div>
+<p>3番人気で5着。逃げ争いの序列は8位だったが、実際は1コーナーから先頭に立った。ハイペースを自ら作る形になり、上がり40.8秒で止まっている。相手筆頭という評価は妥当でも、脚質の読みは外れていた。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>7 ジョーエスポワール（西啓太）<span class="res ">6着</span></div>
+<p>11番人気で6着。54kgの軽ハンデとハイペースでの差し込みを期待したが、掲示板には届かなかった。序列では先頭に立った経験が無い1頭で、後方からの競馬は想定どおり。展開は向いたのに位置が遠すぎた。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>12 ヒーローコール（山中悠希）<span class="res ">10着</span></div>
+<p>6番人気で10着。船橋巧者で先行力もあるとして△にしたが、外枠から前を追う形でハイペースに巻き込まれた。上がりは41.6秒。57kgと8枠という事前の懸念が、そのまま出た。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>10 ウィリアムバローズ（笹川翼）<span class="res ">11着</span></div>
+<p>最終1番人気3.0倍に支持されたが11着。1コーナーは2番手で、序列1位ながらハナは奪えなかった。59kgのトップハンデでハイペースを追いかける形になり、上がりは43.4秒。馬体重486kgは3kg増で気配に不安はなく、敗因は斤量と位置取りの噛み合わせにある。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">-</span>4 フォーチュンテラー（野畑凌）<span class="res hit">3着</span></div>
+<p>9番人気で3着。印は打たず、非印馬の強さ推定でも下から2番目に置いていた。逃げ争いの序列は最下位で、後方から上がり38.7秒の最速タイを使っている。ハイペースの追い込み決着で最も得をした1頭を、印でも推定値でも拾えていなかった。</p></div>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">netkeiba 結果ページ（一次データ）<span class="tag">事後</span></p><p>着順・配当・ラップ・コーナー通過を全13頭分で取得した。1コーナーは2番先頭で10番が2番手、4コーナーも2番が先頭。勝ちタイム1:53.3、天候は晴で馬場は良、ペース表記はハイ。</p><p><a href="https://nar.netkeiba.com/race/result.html?race_id=202643082611">https://nar.netkeiba.com/race/result.html?race_id=202643082611</a></p></div>
+<div class="rv-view"><p class="src">netkeiba レース特集ページ<span class="tag">事後</span></p><p>上位3頭の着順と勝ちタイムを結果ページとは別系統で照合した。1着リベイクフルシティ、2着ダテノショウグン、3着フォーチュンテラーで一致している。</p><p><a href="https://nar.netkeiba.com/special/index.html?id=0144">https://nar.netkeiba.com/special/index.html?id=0144</a></p></div>
+<div class="rv-view"><p class="src">事前評価との対比・逃げ争いの序列<span class="tag">事前</span></p><p>人気・オッズ・印を使わずに導いた序列は、1位が10番でハナ率46.2%、8位が2番だった。結果は序列8位の2番がハナを切り、序列1位の10番は2番手から11着。今回は序列の1位判定そのものが外れている。</p><p>本ページ「逃げ争いの序列」の節（2026-08-25 導出）</p></div>
+<div class="rv-view"><p class="src">事前オッズとの対比<span class="tag">事前</span></p><p>当日14時41分に取得した単勝オッズは、10番が5.2倍で3番人気、2番が2.6倍で1番人気だった。発走時は10番が3.0倍の1番人気、2番が4.2倍の3番人気。日中の並びは発走までに入れ替わっていた。</p><p>本ページの買い目前提（2026/08/26 14:41 時点のオッズ）</p></div>
+<div class="rv-view"><p class="src">関係者コメント<span class="tag">取得未完</span></p><p>優勝馬の騎手・調教師コメントを載せた報道記事の存在は検索結果で確認できた。しかし記事本文の配信元は今回の実行環境から遮断されており、原文の裏取りができなかった。推測では埋めない。次サイクルで再取得を試みる。</p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>逃げ切り前提の◎に、ハナを取れなかった場合の減点を用意していなかった</th><td class="rvClamp"><span class="rvClampBody" id="rvc-3">逃げ争いの序列で◎10ウィリアムバローズは1位、ハナ率46.2%だった。予想は「単騎逃げが叶えば軸」と条件付きで書いたが、条件が崩れた場合の評価は下げていない。実際は序列8位の◯2にハナを取られ、59kgで2番手追走から11着。ルール化候補: 逃げ切りを前提に◎を置くときは、ハナを取れなかった場合の想定着順を根拠欄に併記する。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-3">続きを読む</button></td></tr>
+<tr><th>コース傾向の前有利を、自前のハイペース診断より優先した</th><td class="rvClamp"><span class="rvClampBody" id="rvc-4">船橋1800mは前有利という傾向を採用し、相手も前受け中心に固めた。だが自前の逃げ争いの序列は、ハナ率0.28超の馬が3頭並ぶことを示していた。結果は前半1000mが1:00.8で、最後の2ハロンは13.8-13.9の前崩れ。1着から3着まで差しと追い込みが独占した。ルール化候補: ハナ率0.28超が3頭以上並ぶときは、コース傾向の前有利を割り引いて相手を組む。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-4">続きを読む</button></td></tr>
+<tr><th>本線とヘッジが「◎か◯▲が上位に来る」前提を共有した再発</th><td class="rvClamp"><span class="rvClampBody" id="rvc-5">決着した⑤-⑨-④のうち、⑤は△で⑨は☆と、どちらも印を打っていた。しかし◎を含まない組み合わせを1点も買っておらず、馬連⑤-⑨の3,790円を取り逃した。ヘッジは◯▲△に2頭を足しただけで、☆⑨を外している。同じ前提の共有は8月19日のスパーキングサマーカップでも起きており再発である。ルール化候補: 印を打った馬どうしの組み合わせを、◎を抜いた形でも最低1点は買う。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-5">続きを読む</button></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=Array.prototype.slice.call(document.querySelectorAll('.tabHd button[data-tab]'));
+  var panes=Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
+  if(!btns.length) return;
+  function select(b,moveFocus){
+    var id=b.getAttribute('data-tab');
+    btns.forEach(function(x){
+      var on=(x===b);
+      x.classList.toggle("active",on);
+      x.setAttribute('aria-selected',on?'true':'false');
+      x.tabIndex=on?0:-1;
+    });
+    panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+    if(moveFocus) b.focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){select(b,false);});
+    b.addEventListener('keydown',function(e){
+      var nx=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx=btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx=btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx=btns[0];
+      else if(e.key==='End') nx=btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      select(nx,true);
+    });
+  });
+})();
+</script>
 <a href="../" class="portalBack" aria-label="レースアーカイブに戻る">← レースアーカイブ</a>
 <style>
 .portalBack{position:fixed;left:14px;bottom:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;gap:6px;
@@ -4449,5 +4645,23 @@ body.kbModalOpen .fb-fab{display:none;}
 })();
 </script>
 
+<script>
+/* 振り返りタブの「続きを読む」。button 要素なので Enter/Space は素で効く。
+   開閉状態は aria-expanded で支援技術へ伝える（aria-controls で本文と紐付け済み） */
+(function(){
+  var btns = document.querySelectorAll('#tab-review .rvMore');
+  if(!btns.length) return;
+  Array.prototype.forEach.call(btns, function(b){
+    b.addEventListener('click', function(){
+      var host = b.parentNode;
+      while(host && !(host.classList && host.classList.contains('rvClamp'))) host = host.parentNode;
+      if(!host) return;
+      var open = host.classList.toggle('is-open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      b.textContent = open ? '閉じる' : '続きを読む';
+    });
+  });
+})();
+</script>
 </body>
 </html>
