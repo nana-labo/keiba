@@ -879,8 +879,8 @@
   <!-- 詳細ページ内タブ：シミュレーション(配分・展開・狙い目・能力比較) / データ(並び替え・過去傾向・定量ランキング)。
        1画面に全部並べると縦に長すぎるという指摘への対応でタブ分割。中身のIDや計算ロジックは従来のまま。 -->
   <nav class="dTabHd" data-page="detail" role="tablist">
-    <button type="button" role="tab" id="dTabBtn-sim" aria-selected="true" aria-controls="dTabPane-sim" class="dTabBtn active" data-dtab="sim" onclick="setDTab('sim')">シミュレーション</button>
-    <button type="button" role="tab" id="dTabBtn-data" aria-selected="false" aria-controls="dTabPane-data" class="dTabBtn" data-dtab="data" onclick="setDTab('data')">データ</button>
+    <button type="button" role="tab" id="dTabBtn-sim" aria-selected="true" aria-controls="dTabPane-sim" tabindex="0" class="dTabBtn active" data-dtab="sim" onclick="setDTab('sim')">シミュレーション</button>
+    <button type="button" role="tab" id="dTabBtn-data" aria-selected="false" aria-controls="dTabPane-data" tabindex="-1" class="dTabBtn" data-dtab="data" onclick="setDTab('data')">データ</button>
   </nav>
 
   <!-- MY注目のピン留め写真帯。シミュレーション/データ両タブで共通（タブの外に置いて両方から見える）。
@@ -2865,17 +2865,40 @@ hsSyncChips();
 renderHorseSortTable();
 
 // ========== 詳細ページ内タブ（シミュレーション / データ） ==========
-function setDTab(tab){
+function setDTab(tab, moveFocus){
+  var focusTarget = null;
   document.querySelectorAll('.dTabBtn').forEach(function(b){
     var on = b.getAttribute('data-dtab')===tab;
     b.classList.toggle('active', on);
     // 支援技術には class ではなく aria-selected で選択状態を伝える
     b.setAttribute('aria-selected', on ? 'true' : 'false');
+    // tablist の作法どおり、フォーカスは選択中のタブ1個だけが受け取る（roving tabindex）
+    b.tabIndex = on ? 0 : -1;
+    if(on) focusTarget = b;
   });
   document.querySelectorAll('.dTabPane').forEach(function(p){
     p.classList.toggle('active', p.getAttribute('data-dtab')===tab);
   });
+  if(moveFocus && focusTarget) focusTarget.focus();
 }
+(function(){
+  // 矢印キー / Home / End でタブ間を移動する（予想ページのタブと同じ実装方針）。
+  // クリックでしか切り替えられないとキーボード利用者が「データ」タブへ到達できない。
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.dTabBtn'));
+  if(!btns.length) return;
+  btns.forEach(function(b,i){
+    b.addEventListener('keydown', function(e){
+      var nx = null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx = btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx = btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx = btns[0];
+      else if(e.key==='End') nx = btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      setDTab(nx.getAttribute('data-dtab'), true);
+    });
+  });
+})();
 (function(){
   // detail.html#bet のような詳細ページへのハッシュ付きリンクで、リンク先の見出しが
   // 属するタブを自動で開く（既定は「シミュレーション」タブなので #bet はそのままでも動くが、
