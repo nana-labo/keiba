@@ -47,8 +47,9 @@ MCP を検討するときは `keiba-yosou` 側の実装を見てから判断す�
   実運用で効く**含水率・クッション値は JRA 公式にしか無く**、prepost タスクが既に取りに行っている。
   重複投資。
 - **Firecrawl** — netkeiba は自前スクレイパで解決済み。第三者サービス経由にする利点がない。
-- **Airtable / Notion / Neon** — 回顧・学習の蓄積は `data/keiba.sqlite` と `tasks/lessons.md`（R9〜R50 の
-  ルール登録簿、的中率で検証済み）で既に成立している。外部DBを足すと正典が二重になる。
+- **Airtable / Notion / Neon** — 回顧・学習の蓄積は `data/keiba.sqlite`、週次ログ `tasks/lessons.md`、
+  および R1〜R50 のルール台帳 `references/evaluation-criteria.md`（スキル同梱・chmod 400）で既に成立している。
+  外部DBを足すと正典が二重になる。
 - **Vercel** — 公開は GitHub Pages（`.github/workflows/pages.yml`）で完結。
 
 ## 注意
