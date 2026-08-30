@@ -806,8 +806,104 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+
+/* 旧語彙の別名（2026-08-26 追加）
+   北九州記念2026 だけが rv-tablewrap / rv-table / rv-head / rv-sub / rv-cap / rv-src /
+   ok / ng / t0 / t1 / lc / new という独自クラスで書かれており、定義がどこにも無かった。
+   結果 390px で12列のテーブルが横スクロールにならず、馬名が1文字ずつ縦に折り返されていた。
+   開催済みの振り返りは凍結記録なので本文は書き換えず、見た目だけをここで当て直す。
+   #tab-review へスコープして予想タブ側へ漏らさない。 */
+#tab-review .rv-head{margin-bottom:6px;}
+#tab-review .rv-head h2{margin-top:0;}
+#tab-review .rv-sub{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);line-height:1.6;margin:0;}
+#tab-review .rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+#tab-review .rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+#tab-review .rv-table th,#tab-review .rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+#tab-review .rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+#tab-review .rv-table td.nm{text-align:left;font-weight:700;}
+#tab-review .rv-table td.ok{color:var(--good);font-weight:700;}
+#tab-review .rv-table td.ng{color:var(--bad);font-weight:700;}
+#tab-review .rv-cap{font-size:.74rem;color:var(--sub);margin-top:6px;line-height:1.6;}
+#tab-review .rv-src{margin:8px 0;padding-left:1.2em;font-size:.78rem;color:var(--sub);line-height:1.7;}
+#tab-review .rv-src a{color:var(--accent);word-break:break-all;}
+#tab-review .tag.t0,#tab-review .tag.t1{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+#tab-review .lc{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;font-size:.82rem;line-height:1.6;}
+#tab-review .lc.confirm{border-left-color:var(--accent);}
+#tab-review .lc.new{border-left-color:var(--gold);}
+</style>
+<style>
+/* 振り返りタブの長文を3行に畳む。狭い画面だけで効かせ、広い画面は従来どおり全文表示 */
+#tab-review .rvMore{display:none;}
+@media (max-width:560px){
+  #tab-review .rvClampBody{
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+    overflow:hidden;
+  }
+  #tab-review .rvClamp.is-open .rvClampBody{
+    display:block;-webkit-line-clamp:none;overflow:visible;
+  }
+  #tab-review .rvMore{
+    display:inline-block;margin-top:4px;padding:2px 8px;
+    font:inherit;font-size:.78rem;line-height:1.6;color:#1a5a8a;
+    background:#eef4fa;border:1px solid #ccd6e2;border-radius:999px;cursor:pointer;
+  }
+  #tab-review .rvMore:hover{background:#e2edf7;}
+  #tab-review .rvMore:focus-visible{outline:2px solid #1a5a8a;outline-offset:2px;}
+}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist" aria-label="予想と振り返り">
+  <button type="button" role="tab" id="tabBtn-predict" data-tab="tab-predict" aria-controls="tab-predict" aria-selected="false" tabindex="-1">予想</button>
+  <button type="button" role="tab" id="tabBtn-review" data-tab="tab-review" aria-controls="tab-review" aria-selected="true" tabindex="0" class="active">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane" role="tabpanel" aria-labelledby="tabBtn-predict" tabindex="0">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4262,6 +4358,122 @@ function doApplyBetPlan(planIdx){
   });
 })();
 </script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
+<div class="rv-wrap">
+<p class="rv-lead">◎9番ジーティーマイカが1着、△4番シスキンブルームが2着、▲7番ビスケットサンドが3着で、印馬3頭が上位を独占。◯3番サンタンジェロは「追込脚質・格の裏付けが薄い」という事前のリスク注記通り5着に後退した。3連複6点・ワイド4点とも的中し、印の質と買い目配分の両方が機能したレースになった。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>8</td><td>9</td><td class="nm">ジーティーマイカ</td><td>牝2</td><td>55.0</td><td>松山弘平</td><td>1:19.7</td><td>-</td><td>33.0</td><td>1.7</td><td>1</td><td>454(+8)</td><td>◎</td></tr>
+<tr><td>2</td><td>4</td><td>4</td><td class="nm">シスキンブルーム</td><td>牝2</td><td>55.0</td><td>団野大成</td><td>1:20.0</td><td>1.3/4</td><td>33.7</td><td>9.7</td><td>4</td><td>472(+18)</td><td>△</td></tr>
+<tr><td>3</td><td>7</td><td>7</td><td class="nm">ビスケットサンド</td><td>牝2</td><td>55.0</td><td>北村友一</td><td>1:20.3</td><td>1.1/2</td><td>33.7</td><td>4.0</td><td>2</td><td>456(+2)</td><td>▲</td></tr>
+<tr><td>4</td><td>6</td><td>6</td><td class="nm">ジャスパートレノ</td><td>牡2</td><td>55.0</td><td>中井裕二</td><td>1:20.4</td><td>1</td><td>34.5</td><td>34.4</td><td>7</td><td>482(-2)</td><td></td></tr>
+<tr><td>5</td><td>3</td><td>3</td><td class="nm">サンタンジェロ</td><td>牝2</td><td>55.0</td><td>西村淳也</td><td>1:20.5</td><td>1/2</td><td>34.1</td><td>5.4</td><td>3</td><td>460(0)</td><td>◯</td></tr>
+<tr><td>6</td><td>2</td><td>2</td><td class="nm">バクソウシャチョウ</td><td>牡2</td><td>55.0</td><td>松若風馬</td><td>1:20.7</td><td>1.1/2</td><td>34.6</td><td>17.4</td><td>5</td><td>462(-8)</td><td></td></tr>
+<tr><td>7</td><td>5</td><td>5</td><td class="nm">マルモリムソウ</td><td>牡2</td><td>55.0</td><td>泉谷楓真</td><td>1:20.9</td><td>3/4</td><td>34.7</td><td>19.0</td><td>6</td><td>468(+10)</td><td>△</td></tr>
+<tr><td>8</td><td>1</td><td>1</td><td class="nm">ピコキング</td><td>牡2</td><td>55.0</td><td>田口貫太</td><td>1:20.9</td><td>クビ</td><td>34.0</td><td>137.8</td><td>8</td><td>476(+4)</td><td></td></tr>
+<tr><td>9</td><td>8</td><td>8</td><td class="nm">ピコジャック</td><td>牡2</td><td>55.0</td><td>吉村誠之助</td><td>1:21.7</td><td>5</td><td>34.8</td><td>151.7</td><td>9</td><td>444(-2)</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p class="rv-note">天候:晴、馬場:良。中京芝1400m・9頭立て。1番人気ジーティーマイカが新馬に続く重賞初挑戦2連勝で、事前予想の想定シナリオ（平均ペース・外差し有利）通りの決着だった。</p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ⑨ 170円</span>
+<span class="chip">複勝 ⑨110 / ④170 / ⑦120</span>
+<span class="chip">枠連 730円</span>
+<span class="chip">馬連 ④-⑨ <b>710円</b></span>
+<span class="chip">ワイド ④-⑨270 / ⑦-⑨160 / ④-⑦400</span>
+<span class="chip">馬単 ⑨→④ 940円</span>
+<span class="chip">3連複 ④-⑦-⑨ <b>660円</b></span>
+<span class="chip">3連単 ⑨→④→⑦ <b>2,640円</b></span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>馬場</th><td><b>予想:</b> 当日14:38時点で天候「晴」・馬場「良」を確定反映（12時台の「曇」表記を是正済み）。<br><b>結果:</b> 発走まで終日「晴・良」で変化なし。想定通りで再確認の空振りもなかった。</td></tr>
+<tr><th>展開</th><td><b>予想:</b> 平均ペース・外差し有利、chaos「中」。<br><b>結果:</b> 800m通過34.2秒の平均的な流れで、後方4番手から押し上げたジーティーマイカが直線で差し切り。2・3着も差し脚質のシスキンブルーム・ビスケットサンドで、想定シナリオとほぼ一致した。</td></tr>
+<tr><th>印判定</th><td class="rvClamp"><span class="rvClampBody" id="rvc-1"><b>予想:</b> ◎ジーティーマイカ(新馬7馬身差圧勝)を軸に、◯サンタンジェロ・▲ビスケットサンド・△シスキンブルーム・△マルモリムソウの5頭。◯には「追込脚質で9頭立ての中京は展開待ち」「格の裏付けが薄い」とリスク注記済み。<br><b>結果:</b> ◎▲△が1・3・2着を占め、リスク注記していた◯サンタンジェロは5着に後退。マルモリムソウも「実走の裏付けが無い」という注記通り7着に沈んだ。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-1">続きを読む</button></td></tr>
+<tr><th>買い目構成</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2"><b>予想:</b> 3連複は◎軸→印馬4頭(◯▲△△)の6点、ワイドは◎→◯▲△△の4点。<br><b>結果:</b> 3連複6点は④-⑦-⑨を含み的中(660円、投資600円に対し+60円)。ワイドも④-⑨・⑦-⑨の2点が的中(270+160=430円、投資400円に対し+30円)。頭数が9頭と少なく相手を絞れたことがそのまま黒字収支に直結した。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>9 ジーティーマイカ（松山弘平）<span class="res hit">1着</span></div>
+<p>新馬戦7馬身差・上がり33.6の圧勝を評価軸に据えた。1400mへの距離延長・中京コース初経験というリスクを抱えながらも1番人気の支持通り完勝、軸評価は的中。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>4 シスキンブルーム（団野大成）<span class="res hit">2着</span></div>
+<p>同型のマルモリムソウよりcourse_dist・conditionをやや上に採点していた差が結果に出た。4番人気から2着に浮上し、最有利枠(frame_pace5)を活かす形になった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>7 ビスケットサンド（北村友一）<span class="res hit">3着</span></div>
+<p>阪神1400新馬を差し切った実績通り、堅実に3着を確保。事前評価に大きなブレのない結果だった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◯</span>3 サンタンジェロ（西村淳也）<span class="res ">5着</span></div>
+<p>勝ち鞍が未勝利戦のみで格の裏付けが薄いこと、追込脚質で直線412mの中京では展開待ちになることを事前にリスク注記していた。結果はその通り5着で、対抗評価に添えたリスクが的中した形。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>5 マルモリムソウ（泉谷楓真）<span class="res ">7着</span></div>
+<p>1400m・中京コースの適性は「大橋師談話のみが根拠で実走の裏付けが無い」と評価を留保していた。結果は7着で、裏付けの薄さがそのまま出た。</p></div>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">レース映像（実況）<span class="tag">動画</span></p><p>先手を主張したジャスパートレノが800m34.2秒で通過、ジーティーマイカは後方4番手から4角で外に持ち出して直線一気。残り200で先頭に立つと、シスキンブルーム・ビスケットサンドの追撃を振り切った。</p></div>
+<div class="rv-view"><p class="src">X・note（事後）<span class="tag">未検出</span></p><p>レース終了から間もないため、X・noteとも事後の回顧コメントはまだ検索で拾えなかった。無理に断定せず、後日の振り返り更新で補う。</p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>相手を絞った買い目の効果</th><td>9頭立てという少頭数で相手を印馬4頭に絞った結果、3連複6点・ワイド4点とも黒字収支になった。同日の新潟記念（11頭立て・印馬5頭を全通り）が実質マイナスだったのと対照的で、頭数が少ないレースほど相手選定を絞る効果が出やすいことを裏付ける実例。</td></tr>
+<tr><th>◯格へのリスク注記が機能</th><td>サンタンジェロに付けた「格の裏付けが薄い」「展開待ち」という注記通り5着に後退した。対抗評価でもリスクを明示する運用（本命だけでなく対抗にも弱点を添える）が的中判断に役立った。</td></tr>
+</tbody>
+</table>
+
+<h3>レース映像</h3>
+<div class="rv-shots">
+<figure class="rv-shot"><img src="p/04970b4c009f.jpg"><figcaption>スタート（0:08）。9番ゲートのジーティーマイカもほぼ揃ってスタート。</figcaption></figure>
+<figure class="rv-shot"><img src="p/aceaad22136d.jpg"><figcaption>800m通過先行争い（0:35）。ジャスパートレノが先手、内からバクソウシャチョウが並びかける。</figcaption></figure>
+<figure class="rv-shot"><img src="p/f077ee7890de.jpg"><figcaption>4角（1:02）。ジーティーマイカは後方4番手から外へ持ち出す。</figcaption></figure>
+<figure class="rv-shot"><img src="p/0494d636c15a.jpg"><figcaption>残り200先頭交代（1:20）。外からジーティーマイカが捉えて先頭に。</figcaption></figure>
+<figure class="rv-shot"><img src="p/84cbde957567.jpg"><figcaption>ゴール前（1:31）。ジーティーマイカがそのまま押し切ってゴール。</figcaption></figure>
+</div>
+</div>
+</section><!-- /tab-review -->
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=Array.prototype.slice.call(document.querySelectorAll('.tabHd button[data-tab]'));
+  var panes=Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
+  if(!btns.length) return;
+  function select(b,moveFocus){
+    var id=b.getAttribute('data-tab');
+    btns.forEach(function(x){
+      var on=(x===b);
+      x.classList.toggle("active",on);
+      x.setAttribute('aria-selected',on?'true':'false');
+      x.tabIndex=on?0:-1;
+    });
+    panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+    if(moveFocus) b.focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){select(b,false);});
+    b.addEventListener('keydown',function(e){
+      var nx=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx=btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx=btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx=btns[0];
+      else if(e.key==='End') nx=btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      select(nx,true);
+    });
+  });
+})();
+</script>
 <a href="../" class="portalBack" aria-label="レースアーカイブに戻る">← レースアーカイブ</a>
 <style>
 .portalBack{position:fixed;left:14px;bottom:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;gap:6px;
@@ -4472,5 +4684,23 @@ body.kbModalOpen .fb-fab{display:none;}
 })();
 </script>
 
+<script>
+/* 振り返りタブの「続きを読む」。button 要素なので Enter/Space は素で効く。
+   開閉状態は aria-expanded で支援技術へ伝える（aria-controls で本文と紐付け済み） */
+(function(){
+  var btns = document.querySelectorAll('#tab-review .rvMore');
+  if(!btns.length) return;
+  Array.prototype.forEach.call(btns, function(b){
+    b.addEventListener('click', function(){
+      var host = b.parentNode;
+      while(host && !(host.classList && host.classList.contains('rvClamp'))) host = host.parentNode;
+      if(!host) return;
+      var open = host.classList.toggle('is-open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      b.textContent = open ? '閉じる' : '続きを読む';
+    });
+  });
+})();
+</script>
 </body>
 </html>
