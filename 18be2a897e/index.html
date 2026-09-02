@@ -806,8 +806,104 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+
+/* 旧語彙の別名（2026-08-26 追加）
+   北九州記念2026 だけが rv-tablewrap / rv-table / rv-head / rv-sub / rv-cap / rv-src /
+   ok / ng / t0 / t1 / lc / new という独自クラスで書かれており、定義がどこにも無かった。
+   結果 390px で12列のテーブルが横スクロールにならず、馬名が1文字ずつ縦に折り返されていた。
+   開催済みの振り返りは凍結記録なので本文は書き換えず、見た目だけをここで当て直す。
+   #tab-review へスコープして予想タブ側へ漏らさない。 */
+#tab-review .rv-head{margin-bottom:6px;}
+#tab-review .rv-head h2{margin-top:0;}
+#tab-review .rv-sub{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);line-height:1.6;margin:0;}
+#tab-review .rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+#tab-review .rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+#tab-review .rv-table th,#tab-review .rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+#tab-review .rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+#tab-review .rv-table td.nm{text-align:left;font-weight:700;}
+#tab-review .rv-table td.ok{color:var(--good);font-weight:700;}
+#tab-review .rv-table td.ng{color:var(--bad);font-weight:700;}
+#tab-review .rv-cap{font-size:.74rem;color:var(--sub);margin-top:6px;line-height:1.6;}
+#tab-review .rv-src{margin:8px 0;padding-left:1.2em;font-size:.78rem;color:var(--sub);line-height:1.7;}
+#tab-review .rv-src a{color:var(--accent);word-break:break-all;}
+#tab-review .tag.t0,#tab-review .tag.t1{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+#tab-review .lc{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;font-size:.82rem;line-height:1.6;}
+#tab-review .lc.confirm{border-left-color:var(--accent);}
+#tab-review .lc.new{border-left-color:var(--gold);}
+</style>
+<style>
+/* 振り返りタブの長文を3行に畳む。狭い画面だけで効かせ、広い画面は従来どおり全文表示 */
+#tab-review .rvMore{display:none;}
+@media (max-width:560px){
+  #tab-review .rvClampBody{
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+    overflow:hidden;
+  }
+  #tab-review .rvClamp.is-open .rvClampBody{
+    display:block;-webkit-line-clamp:none;overflow:visible;
+  }
+  #tab-review .rvMore{
+    display:inline-block;margin-top:4px;padding:2px 8px;
+    font:inherit;font-size:.78rem;line-height:1.6;color:#1a5a8a;
+    background:#eef4fa;border:1px solid #ccd6e2;border-radius:999px;cursor:pointer;
+  }
+  #tab-review .rvMore:hover{background:#e2edf7;}
+  #tab-review .rvMore:focus-visible{outline:2px solid #1a5a8a;outline-offset:2px;}
+}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist" aria-label="予想と振り返り">
+  <button type="button" role="tab" id="tabBtn-predict" data-tab="tab-predict" aria-controls="tab-predict" aria-selected="false" tabindex="-1">予想</button>
+  <button type="button" role="tab" id="tabBtn-review" data-tab="tab-review" aria-controls="tab-review" aria-selected="true" tabindex="0" class="active">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane" role="tabpanel" aria-labelledby="tabBtn-predict" tabindex="0">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4262,6 +4358,127 @@ function doApplyBetPlan(planIdx){
   });
 })();
 </script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
+<div class="rv-wrap">
+  <p class="rv-lead">◯ティントレット(1番人気・矢野貴之)が4角4番手から抜け出し、2馬身半差で重賞3勝目。◎マスターオブライフは3着で、重賞初挑戦のクラス上限だけを未知としたスコアカードの見立てにほぼ沿った結果になった。ただし2着に入ったのは無印8番人気のナスティウェザーで、印6頭のうち4頭が5着以内に入りながら3連複の本線は届かず、的中はワイド◎-◯の1点だけに終わっている。</p>
+
+  <h2>レース結果</h2>
+  <div class="rv-tbl-scroll">
+  <table class="rv-tbl">
+    <thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+    <tbody>
+      <tr class="win"><td>1</td><td>2</td><td>3</td><td class="nm">ティントレット</td><td>牡5</td><td>56.0</td><td>矢野貴之</td><td>1:11.0</td><td>-</td><td>36.3</td><td>1.9</td><td>1</td><td>494(-10)</td><td>◯</td></tr>
+      <tr><td>2</td><td>7</td><td>13</td><td class="nm">ナスティウェザー</td><td>牡5</td><td>56.0</td><td>本田正重</td><td>1:11.5</td><td>2.1/2</td><td>36.2</td><td>60.8</td><td>8</td><td>466(0)</td><td></td></tr>
+      <tr><td>3</td><td>4</td><td>8</td><td class="nm">マスターオブライフ</td><td>セ5</td><td>54.0</td><td>御神本訓史</td><td>1:11.5</td><td>クビ</td><td>36.7</td><td>4.0</td><td>2</td><td>504(0)</td><td>◎</td></tr>
+      <tr><td>4</td><td>3</td><td>6</td><td class="nm">ファーンヒル</td><td>牡7</td><td>59.0</td><td>笹川翼</td><td>1:11.8</td><td>1.3/4</td><td>37.6</td><td>9.1</td><td>4</td><td>483(+4)</td><td>△</td></tr>
+      <tr><td>5</td><td>2</td><td>4</td><td class="nm">フルム</td><td>セ7</td><td>56.0</td><td>和田譲治</td><td>1:11.9</td><td>クビ</td><td>36.9</td><td>5.6</td><td>3</td><td>483(-10)</td><td>▲</td></tr>
+      <tr><td>6</td><td>6</td><td>11</td><td class="nm">ドリームビリーバー</td><td>牡7</td><td>56.0</td><td>吉井章</td><td>1:12.1</td><td>1</td><td>35.8</td><td>63.5</td><td>9</td><td>474(-2)</td><td></td></tr>
+      <tr><td>7</td><td>8</td><td>15</td><td class="nm">ザイデルバスト</td><td>牡5</td><td>56.0</td><td>本橋孝太</td><td>1:12.2</td><td>1/2</td><td>36.4</td><td>56.4</td><td>7</td><td>462(-1)</td><td></td></tr>
+      <tr><td>8</td><td>5</td><td>9</td><td class="nm">プライルード</td><td>牡7</td><td>56.0</td><td>Ｆ．ゴンサルベス</td><td>1:12.2</td><td>クビ</td><td>36.6</td><td>38.0</td><td>6</td><td>520(+2)</td><td></td></tr>
+      <tr><td>9</td><td>4</td><td>7</td><td class="nm">ブルーメンガルテン</td><td>牡3</td><td>52.0</td><td>中山遥人</td><td>1:12.3</td><td>1/2</td><td>36.2</td><td>69.1</td><td>10</td><td>474(+1)</td><td></td></tr>
+      <tr><td>10</td><td>3</td><td>5</td><td class="nm">フリーダム</td><td>牝4</td><td>54.0</td><td>達城龍次</td><td>1:12.4</td><td>3/4</td><td>38.0</td><td>99.5</td><td>11</td><td>456(+5)</td><td>☆</td></tr>
+      <tr><td>11</td><td>5</td><td>10</td><td class="nm">シーサーペント</td><td>牡6</td><td>56.0</td><td>山中悠希</td><td>1:12.5</td><td>1/2</td><td>36.6</td><td>393.9</td><td>14</td><td>495(-1)</td><td></td></tr>
+      <tr><td>12</td><td>1</td><td>2</td><td class="nm">ティアラフォーカス</td><td>牡7</td><td>56.0</td><td>町田直希</td><td>1:12.8</td><td>1.3/4</td><td>38.9</td><td>334.3</td><td>13</td><td>556(+1)</td><td>△</td></tr>
+      <tr><td>13</td><td>8</td><td>16</td><td class="nm">ミルトクレイモー</td><td>牡6</td><td>56.0</td><td>西啓太</td><td>1:12.9</td><td>クビ</td><td>36.8</td><td>590.8</td><td>15</td><td>516(+1)</td><td></td></tr>
+      <tr><td>14</td><td>7</td><td>14</td><td class="nm">サンライズホーク</td><td>セ7</td><td>56.0</td><td>野畑凌</td><td>1:13.4</td><td>2.1/2</td><td>38.3</td><td>12.0</td><td>5</td><td>522(+10)</td><td></td></tr>
+      <tr><td>15</td><td>1</td><td>1</td><td class="nm">ユスティニアン</td><td>牡8</td><td>56.0</td><td>藤本現暉</td><td>1:13.9</td><td>2.1/2</td><td>38.8</td><td>617.3</td><td>16</td><td>457(+4)</td><td></td></tr>
+      <tr><td>16</td><td>6</td><td>12</td><td class="nm">マックス</td><td>セ9</td><td>56.0</td><td>安藤洋一</td><td>1:14.4</td><td>2.1/2</td><td>39.9</td><td>226.3</td><td>12</td><td>489(-1)</td><td></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="rv-note">天候「曇」・ダート「良」で、発走当日14:40に2ソースで確認した想定どおり。前半3F 33.9のハイペース(H)で流れ、勝ちタイム1:11.0。ハナを切った△ティアラフォーカスは12着まで下がり、1着と2着はいずれも4角で先頭から離れた位置にいた馬が占めた。</p>
+
+  <h2>払戻</h2>
+  <div class="rv-pay">
+    <span class="chip">単勝 ③ <b>190円</b></span>
+    <span class="chip">複勝 ③120 / ⑬550 / ⑧150</span>
+    <span class="chip">枠連 2-7 710円</span>
+    <span class="chip">馬連 ③-⑬ <b>4,710円</b></span>
+    <span class="chip">ワイド ③-⑬1,210 / ③-⑧230 / ⑧-⑬1,560</span>
+    <span class="chip">馬単 ③→⑬ 5,280円</span>
+    <span class="chip">3連複 ③-⑧-⑬ <b>3,420円</b></span>
+    <span class="chip">3連単 ③→⑬→⑧ <b>21,720円</b></span>
+  </div>
+
+  <h2>予想 vs 結果</h2>
+  <table class="rv-diff">
+    <tbody>
+      <tr><th>馬場</th><td class="rvClamp"><span class="rvClampBody" id="rvc-1"><b>予想:</b> 9/2 14:40の発走前確認で天候「曇」・ダート「良」を出馬表ヘッダと開催一覧の2ソースで再確認し、12:25から変化なしと判断。含水率は一次ソースへの経路が無く未取得のままとした。<br><b>結果:</b> 曇・良で発走。ナイター中の馬場変化は起きず、発走約5時間半前の確認がそのまま通用した。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-1">続きを読む</button></td></tr>
+      <tr><th>展開</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2"><b>予想:</b> 主導権予測(pace_contest)は◎マスターオブライフを逃げ筆頭(スコア59.2・1位)、次いでシーサーペント、△ティアラフォーカスの順に置いた。コース評価では「逃げ・先行が有利。ただし直線386mがあるため、前が飛ばした年は差しも届く」と両論を併記していた。<br><b>結果:</b> ハナを主張したのは3番手評価の△ティアラフォーカスで、◎マスターオブライフは3角で5〜6番手。前半3F 33.9のハイペースになり、逃げた△ティアラフォーカスは12着、2番手の△ファーンヒルも4着止まり。1着◯ティントレットは4角4番手、2着ナスティウェザーは4角9番手からの差しで、コース評価の但し書きにあたる決着になった。主導権の所在は外したが、ハイペース時に差しが届くという条件付きの読みは機能した。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
+      <tr><th>印判定</th><td class="rvClamp"><span class="rvClampBody" id="rvc-3"><b>予想:</b> ◎マスターオブライフ、◯ティントレット、▲フルム、△ファーンヒル、△ティアラフォーカス、☆フリーダムの6頭に印。市場が◯を1番人気、◎を2番人気に置いた点は「上位2頭という括りは市場と一致」として本線を動かさなかった。<br><b>結果:</b> ◯が1着、◎が3着、△ファーンヒルが4着、▲フルムが5着で、印6頭のうち4頭が5着以内。ただし2着に入ったのは無印8番人気ナスティウェザーで、3着内に印馬は2頭にとどまった。◎と◯の序列は市場のほうが正しく、こちらの評価順(◎→◯)は入れ替わっていた。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-3">続きを読む</button></td></tr>
+      <tr><th>買い目構成</th><td class="rvClamp"><span class="rvClampBody" id="rvc-4">4本立て25点(3連複◎軸10点、ワイド◎から3点、印馬5頭の3連複BOX10点、ザイデルバスト絡みのワイド2点)。決着は③-⑧-⑬で、⑬が相手プールにも印馬BOXにも入っていないため3連複は本線もヘッジも不的中。的中はワイド③-⑧の1点(230円)のみ。投資2,500円に対し回収230円で、収支マイナス2,270円・回収率9.2%。◎が3着内に入りながら大きく負けており、2着に無印馬が飛び込む決着に対して3連複中心の構成が弱いことがそのまま出た。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-4">続きを読む</button></td></tr>
+    </tbody>
+  </table>
+
+  <h2>印馬の振り返り</h2>
+  <div class="rv-card"><div class="hd"><span class="mk">◎</span>8 マスターオブライフ（御神本訓史）<span class="res hit">3着</span></div>
+  <p class="rvClamp"><span class="rvClampBody" id="rvc-5">course_dist 4.7「大井ダ1200mは5戦4回3着内」の評価どおり上位で走り切ったが、class_ceiling 2.8「3着内の最上位はA2で、重賞は今回が初挑戦」と留保した部分がそのまま3着という形で出た。leg「逃げ」でpace_contest 1位に置いた主導権は取れず、3角で5〜6番手からの競馬になっている。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-5">続きを読む</button></p></div>
+  <div class="rv-card"><div class="hd"><span class="mk">◯</span>3 ティントレット（矢野貴之）<span class="res hit">1着</span></div>
+  <p class="rvClamp"><span class="rvClampBody" id="rvc-6">class_ceiling 4.5「東京スプリント(JpnIII)2着・さきたま杯(JpnI)4着」とcourse_dist 4.6「大井ダ1200mで6戦4回3着内」の2軸が、そのまま2馬身半差の勝利につながった。weakに挙げた「直近3走を勝ってきた石川倭からの乗り替わり」でjockeyを3.4まで下げたが、矢野貴之で差し切っており、この減点は不要だったことになる。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-6">続きを読む</button></p></div>
+  <div class="rv-card"><div class="hd"><span class="mk">▲</span>4 フルム（和田譲治）<span class="res ">5着</span></div>
+  <p>「大井ダ1200mで3戦3回3着内・大井4戦で複勝率100%」という連続記録がここで止まった。weakの「2枠4番の差しで包まれるリスク」どおり4角では⑧と並ぶ6〜7番手で、上がり36.9は3着馬とほぼ同じながら位置取りの分だけ届かなかった。</p></div>
+  <div class="rv-card"><div class="hd"><span class="mk">△</span>6 ファーンヒル（笹川翼）<span class="res ">4着</span></div>
+  <p class="rvClamp"><span class="rvClampBody" id="rvc-7">class_ceiling 5.0のJpnI勝ち馬で昨年のこのレースの勝ち馬だが、weakの「59.0kgは出走馬で最も重い」が効いた形。3角2番手でハイペースを追走し、上がり37.6は掲示板に載った5頭で最も遅い。クラスの高さは示したが、斤量と位置取りの負担を同時に背負う形にはならなかった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-7">続きを読む</button></p></div>
+  <div class="rv-card"><div class="hd"><span class="mk">△</span>2 ティアラフォーカス（町田直希）<span class="res ">12着</span></div>
+  <p class="rvClamp"><span class="rvClampBody" id="rvc-8">course_dist 4.4「大井ダ1200mで10戦7回3着内は出走馬で最多」を買ったが、weakの「今年の大井は3月の14着が最後」「町田直希への乗り替わりで手掛かりが無い」側が出た。最内枠から先手を取って前半3F 33.9のハイペースを作り、上がり38.9で失速している。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-8">続きを読む</button></p></div>
+  <div class="rv-card"><div class="hd"><span class="mk">☆</span>5 フリーダム（達城龍次）<span class="res ">10着</span></div>
+  <p>track_fit 3.4で「大井1200mは昨年9月以来で距離延長がどう出るかは読みにくい」と留保し、weakにも「昨年のこのレースは9着」を置いていた。3角3〜4番手から上がり38.0で下がっており、留保した側の結果になった。54.0kgの牝馬斤量は着順に結びついていない。</p></div>
+
+  <h2>3ソース回顧</h2>
+  <div class="rv-grid">
+    <div class="rv-view"><p class="src">netkeiba(NAR)結果・払戻<span class="tag">事後</span></p><p>1着ティントレット(1人気・矢野貴之)、勝ちタイム1:11.0(良)。2着に8人気ナスティウェザー、3着に2人気マスターオブライフで3連単21,720円。コーナー通過は3角が 2,6,(5,12),(3,8) の並び、4角が 2,6,5,3,12,(8,4) の並び。</p><p><a href="https://nar.netkeiba.com/race/result.html?race_id=202644090211">nar.netkeiba.com/race/result.html</a></p></div>
+    <div class="rv-view"><p class="src">スポニチアネックス(配信記事)<span class="tag">事後</span></p><p>「ティントレットが重賞3勝目 韓国からとんぼ返りの矢野はホッ」として、好位から抜け出しての2馬身半差、単勝1.9倍の1番人気に応えた3つ目の重賞タイトルと報じた。矢野貴之騎手は9/6のコリアCに出走するディクテオンの調整でソウルに滞在しており、この騎乗のために往復したとされる。記事本文は当環境のegress制限で直接取得できず、見出しと検索結果に現れた範囲の事実のみを記載している。</p><p><a href="https://news.yahoo.co.jp/articles/4e823e15724bc0eaca87b2a0a70af63e08d66d8a">news.yahoo.co.jp/articles/4e823e1572...</a></p></div>
+    <div class="rv-view"><p class="src">レース映像(実況)<span class="tag">未取得</span></p><p>南関東の重賞は許可チャンネル一覧にNAR系の公式チャンネルが無く、加えて今回の実行環境ではPyPIへの到達が403で遮断され、動画検索に使うyt-dlpを導入できなかった。映像・字幕由来の場面描写は今回は作成していない。</p></div>
+    <div class="rv-view"><p class="src">X・note(事後)<span class="tag">未検出</span></p><p>レース終了から数時間の時点では、X・noteとも個人の事後回顧は検索で拾えなかった。存在しない引用は作らず、後日の更新で補う。</p></div>
+  </div>
+
+  <h2>今回の学び</h2>
+  <table class="rv-learn">
+    <tbody>
+      <tr><th>主導権予測と実際の逃げ馬のズレ</th><td class="rvClamp"><span class="rvClampBody" id="rvc-9">pace_contestは過去のコーナー通過位置と頭数だけで並べる設計で、◎マスターオブライフをスコア59.2の1位に置いた。実際にハナを切ったのは3位評価の△ティアラフォーカス(43.8)で、しかも最内枠だった。枠順は notes に「内側の枠なので前に行きやすい」と書かれていたが、スコア本体には反映されていない。1200mのように最初のコーナーまでが短い条件では、枠の内外をスコアへ織り込む余地がある。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-9">続きを読む</button></td></tr>
+      <tr><th>ハイペース注記が実際に効いた</th><td class="rvClamp"><span class="rvClampBody" id="rvc-10">course_profileの bias_leg には「逃げ・先行が有利。ただし直線386mがあるため、前が飛ばした年は差しも届く」と両論を書いていた。今回は前半3F 33.9のHで流れ、逃げ12着・2番手4着に対し4角4番手と9番手が1-2着。この但し書きは飾りではなく実際に分岐した。ペースがHになった場合に印の重心を後ろへ寄せる、といった条件分岐まで踏み込む価値がある。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-10">続きを読む</button></td></tr>
+      <tr><th>3連複中心の構成は2着穴に弱い</th><td class="rvClamp"><span class="rvClampBody" id="rvc-11">印6頭のうち4頭が5着以内に入り、◎も3着に来たのに回収率9.2%で終わった。原因は2着が無印8番人気だった1点に尽きる。25点のうち20点を3連複(軸1頭10点+印馬BOX10点)に置いた配分は、3頭すべてを印の内側で埋める前提になっている。ワイドや馬連で「印馬1頭+穴」の形を拾う枠が薄かった。既存の「ROI損失は買い目層に寄る」という教訓と同じ形の再発。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-11">続きを読む</button></td></tr>
+      <tr><th>乗り替わり減点の過剰</th><td class="rvClamp"><span class="rvClampBody" id="rvc-12">◯ティントレットは「直近3走を勝ってきた石川倭からの乗り替わり」を理由にjockeyを3.4へ下げ、これが◎との序列を分けた一因になった。市場は◯を1番人気に置いており、そちらが正しかった。乗り替わり自体を一律の減点材料にせず、乗り替わり先の騎手の当該コース成績を見て増減を決める形が必要。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-12">続きを読む</button></td></tr>
+      <tr><th>ナイター重賞と自動振り返りの起動時刻</th><td class="rvClamp"><span class="rvClampBody" id="rvc-13">このレースの発走は20:15で、振り返り自動生成の想定起動時刻である18:00 JSTより後になる。18:00に起動していれば結果が存在せず、何も作れないまま「動画なし」で終わっていた。大井のナイター重賞を対象に含めるなら、起動時刻を発走後にずらすか、発走時刻を見て未確定なら翌日へ持ち越す仕組みが要る。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-13">続きを読む</button></td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=Array.prototype.slice.call(document.querySelectorAll('.tabHd button[data-tab]'));
+  var panes=Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
+  if(!btns.length) return;
+  function select(b,moveFocus){
+    var id=b.getAttribute('data-tab');
+    btns.forEach(function(x){
+      var on=(x===b);
+      x.classList.toggle("active",on);
+      x.setAttribute('aria-selected',on?'true':'false');
+      x.tabIndex=on?0:-1;
+    });
+    panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+    if(moveFocus) b.focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){select(b,false);});
+    b.addEventListener('keydown',function(e){
+      var nx=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx=btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx=btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx=btns[0];
+      else if(e.key==='End') nx=btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      select(nx,true);
+    });
+  });
+})();
+</script>
 <a href="../" class="portalBack" aria-label="レースアーカイブに戻る">← レースアーカイブ</a>
 <style>
 .portalBack{position:fixed;left:14px;bottom:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;gap:6px;
@@ -4472,5 +4689,23 @@ body.kbModalOpen .fb-fab{display:none;}
 })();
 </script>
 
+<script>
+/* 振り返りタブの「続きを読む」。button 要素なので Enter/Space は素で効く。
+   開閉状態は aria-expanded で支援技術へ伝える（aria-controls で本文と紐付け済み） */
+(function(){
+  var btns = document.querySelectorAll('#tab-review .rvMore');
+  if(!btns.length) return;
+  Array.prototype.forEach.call(btns, function(b){
+    b.addEventListener('click', function(){
+      var host = b.parentNode;
+      while(host && !(host.classList && host.classList.contains('rvClamp'))) host = host.parentNode;
+      if(!host) return;
+      var open = host.classList.toggle('is-open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      b.textContent = open ? '閉じる' : '続きを読む';
+    });
+  });
+})();
+</script>
 </body>
 </html>
