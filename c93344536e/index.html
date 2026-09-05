@@ -806,8 +806,103 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+
+/* 旧語彙の別名（2026-08-26 追加）
+   北九州記念2026 だけが rv-tablewrap / rv-table / rv-head / rv-sub / rv-cap / rv-src /
+   ok / ng / t0 / t1 / lc / new という独自クラスで書かれており、定義がどこにも無かった。
+   結果 390px で12列のテーブルが横スクロールにならず、馬名が1文字ずつ縦に折り返されていた。
+   開催済みの振り返りは凍結記録なので本文は書き換えず、見た目だけをここで当て直す。
+   #tab-review へスコープして予想タブ側へ漏らさない。 */
+#tab-review .rv-head{margin-bottom:6px;}
+#tab-review .rv-head h2{margin-top:0;}
+#tab-review .rv-sub{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);line-height:1.6;margin:0;}
+#tab-review .rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+#tab-review .rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+#tab-review .rv-table th,#tab-review .rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+#tab-review .rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+#tab-review .rv-table td.nm{text-align:left;font-weight:700;}
+#tab-review .rv-table td.ok{color:var(--good);font-weight:700;}
+#tab-review .rv-table td.ng{color:var(--bad);font-weight:700;}
+#tab-review .rv-cap{font-size:.74rem;color:var(--sub);margin-top:6px;line-height:1.6;}
+#tab-review .rv-src{margin:8px 0;padding-left:1.2em;font-size:.78rem;color:var(--sub);line-height:1.7;}
+#tab-review .rv-src a{color:var(--accent);word-break:break-all;}
+#tab-review .tag.t0,#tab-review .tag.t1{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+#tab-review .lc{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;font-size:.82rem;line-height:1.6;}
+#tab-review .lc.confirm{border-left-color:var(--accent);}
+#tab-review .lc.new{border-left-color:var(--gold);}
+</style>
+<style>
+/* 振り返りタブの長文を3行に畳む。狭い画面だけで効かせ、広い画面は従来どおり全文表示 */
+#tab-review .rvMore{display:none;}
+@media (max-width:560px){
+  #tab-review .rvClampBody{
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+    overflow:hidden;
+  }
+  #tab-review .rvClamp.is-open .rvClampBody{
+    display:block;-webkit-line-clamp:none;overflow:visible;
+  }
+  #tab-review .rvMore{
+    display:inline-block;margin-top:4px;padding:2px 8px;
+    font:inherit;font-size:.78rem;line-height:1.6;color:#1a5a8a;
+    background:#eef4fa;border:1px solid #ccd6e2;border-radius:999px;cursor:pointer;
+  }
+  #tab-review .rvMore:hover{background:#e2edf7;}
+  #tab-review .rvMore:focus-visible{outline:2px solid #1a5a8a;outline-offset:2px;}
+}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist" aria-label="予想と振り返り">
+  <button type="button" role="tab" id="tabBtn-predict" data-tab="tab-predict" aria-controls="tab-predict" aria-selected="false" tabindex="-1">予想</button>
+  <button type="button" role="tab" id="tabBtn-review" data-tab="tab-review" aria-controls="tab-review" aria-selected="true" tabindex="0" class="active">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane" role="tabpanel" aria-labelledby="tabBtn-predict" tabindex="0">
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4290,6 +4385,132 @@ function doApplyBetPlan(planIdx){
   });
 })();
 </script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
+<div class="rv-wrap">
+<p class="rv-lead">無印の8番ピコローズ(10番人気・最軽量53kg)が馬群の間を割って1着、◎7番エコロブルームがトップハンデ58kgで半馬身差の2着、△3番ドロップオブライトが3着。人気上位のフォルテアンジェロ6着・レザベーション11着・ヴァルキリーバース16着と人気馬が総崩れになる中、◎の複勝270円と◎→△のワイド③-⑦2,870円が的中し、投資1,900円に対して回収3,140円(回収率165.3%)。ただし勝ち馬はスコアカードの採点対象に入れていなかった。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>4</td><td>8</td><td class="nm">ピコローズ</td><td>牝4</td><td>53.0</td><td>三浦皇成</td><td>1:32.0</td><td>-</td><td>33.6</td><td>19.6</td><td>10</td><td>444(+4)</td><td></td></tr>
+<tr><td>2</td><td>4</td><td>7</td><td class="nm">エコロブルーム</td><td>牡5</td><td>58.0</td><td>武豊</td><td>1:32.1</td><td>1/2</td><td>33.9</td><td>8.4</td><td>5</td><td>476(+4)</td><td>◎</td></tr>
+<tr><td>3</td><td>2</td><td>3</td><td class="nm">ドロップオブライト</td><td>牝7</td><td>56.5</td><td>岩田康誠</td><td>1:32.2</td><td>クビ</td><td>34.2</td><td>14.1</td><td>8</td><td>450(+2)</td><td>△</td></tr>
+<tr><td>4</td><td>3</td><td>6</td><td class="nm">ファンダム</td><td>牡4</td><td>57.0</td><td>戸崎圭太</td><td>1:32.2</td><td>ハナ</td><td>33.5</td><td>7.2</td><td>4</td><td>474(-2)</td><td>△</td></tr>
+<tr><td>5</td><td>3</td><td>5</td><td class="nm">サイルーン</td><td>セ7</td><td>57.0</td><td>大野拓弥</td><td>1:32.4</td><td>1</td><td>33.8</td><td>30.5</td><td>11</td><td>472(+6)</td><td></td></tr>
+<tr><td>6</td><td>2</td><td>4</td><td class="nm">フォルテアンジェロ</td><td>牡3</td><td>55.0</td><td>D.レーン</td><td>1:32.5</td><td>3/4</td><td>33.4</td><td>4.7</td><td>1</td><td>444(-4)</td><td>☆</td></tr>
+<tr><td>7</td><td>6</td><td>11</td><td class="nm">クランフォード</td><td>牝5</td><td>55.0</td><td>菊沢一樹</td><td>1:32.6</td><td>1</td><td>34.8</td><td>18.2</td><td>9</td><td>472(+2)</td><td>☆</td></tr>
+<tr><td>8</td><td>6</td><td>12</td><td class="nm">ディールメーカー</td><td>牡3</td><td>54.0</td><td>横山武史</td><td>1:32.6</td><td>アタマ</td><td>34.4</td><td>11.9</td><td>7</td><td>494(0)</td><td>◯</td></tr>
+<tr><td>9</td><td>1</td><td>2</td><td class="nm">ミナデオロ</td><td>牡5</td><td>56.0</td><td>M.ミシェル</td><td>1:32.6</td><td>アタマ</td><td>33.7</td><td>11.5</td><td>6</td><td>508(-2)</td><td></td></tr>
+<tr><td>10</td><td>1</td><td>1</td><td class="nm">クルゼイロドスル</td><td>牡6</td><td>57.0</td><td>小崎綾也</td><td>1:32.7</td><td>クビ</td><td>33.8</td><td>71.7</td><td>13</td><td>494(-8)</td><td></td></tr>
+<tr><td>11</td><td>5</td><td>9</td><td class="nm">レザベーション</td><td>牡3</td><td>55.0</td><td>原優介</td><td>1:32.7</td><td>クビ</td><td>34.3</td><td>5.8</td><td>2</td><td>462(+4)</td><td>▲</td></tr>
+<tr><td>12</td><td>7</td><td>14</td><td class="nm">リラボニート</td><td>牝5</td><td>54.0</td><td>丸山元気</td><td>1:32.8</td><td>1/2</td><td>34.4</td><td>87.8</td><td>15</td><td>470(-2)</td><td></td></tr>
+<tr><td>13</td><td>8</td><td>15</td><td class="nm">テレサ</td><td>牝4</td><td>55.0</td><td>津村明秀</td><td>1:33.0</td><td>1</td><td>35.0</td><td>76.7</td><td>14</td><td>452(+4)</td><td>☆</td></tr>
+<tr><td>14</td><td>8</td><td>16</td><td class="nm">ラケマーダ</td><td>牡6</td><td>56.0</td><td>杉原誠人</td><td>1:33.1</td><td>クビ</td><td>34.0</td><td>295.8</td><td>16</td><td>508(+4)</td><td></td></tr>
+<tr><td>15</td><td>7</td><td>13</td><td class="nm">メタルスピード</td><td>牡6</td><td>55.0</td><td>田辺裕信</td><td>1:33.4</td><td>2</td><td>34.3</td><td>12.0</td><td>12</td><td>516(-4)</td><td></td></tr>
+<tr><td>16</td><td>5</td><td>10</td><td class="nm">ヴァルキリーバース</td><td>牝4</td><td>55.5</td><td>C.ルメール</td><td>1:33.7</td><td>1.3/4</td><td>35.0</td><td>6.2</td><td>3</td><td>478(+4)</td><td>☆</td></tr>
+</tbody>
+</table>
+</div>
+<p class="rv-note">天候:晴、馬場:良(Bコース・開幕週)。中山芝1600m外回り・16頭立て。ラップは12.3-10.8-11.2-11.5-11.7-11.5-11.5-11.5、1000m通過57.5で前半3F 34.3・後半3F 34.5のミドルペース、勝ち時計1:32.0。コーナー通過順は2角 13-11(3,15)(7,12)(8,14,9)… → 4角 13,11,3(7,15)(8,12)… で、メタルスピードが逃げ、クランフォード・ドロップオブライトが続き、エコロブルームは4〜5番手、ピコローズはその直後の中団で脚を溜めた。出典：netkeiba レース結果(race_id 202606040111)。</p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ⑧ 1,960円</span>
+<span class="chip">複勝 ⑧480 / ⑦270 / ③450</span>
+<span class="chip">枠連 4-4 8,000円</span>
+<span class="chip">馬連 ⑦-⑧ <b>8,920円</b></span>
+<span class="chip">ワイド ⑦-⑧3,140 / ③-⑧3,350 / ③-⑦<b>2,870</b></span>
+<span class="chip">馬単 ⑧→⑦ 18,840円</span>
+<span class="chip">3連複 ③-⑦-⑧ <b>42,840円</b></span>
+<span class="chip">3連単 ⑧→⑦→③ <b>334,980円</b></span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>馬場</th><td><b>予想:</b> 当日14:45に2ソースで 晴・良 を確認して確定。12:15の稍重を根拠に入れた4件の適性補正(◎エコロブルーム+0.3 / △クランフォード+0.3 / ☆ヴァルキリーバース-0.3 / ◯ディールメーカー-0.3)は前提が消えたとして撤回した。<br><b>結果:</b> 晴・良のまま施行され、開幕週らしい1:32.0の高速決着。馬場の読みと補正の撤回は正しかった。</td></tr>
+<tr><th>展開</th><td class="rvClamp"><span class="rvClampBody" id="rvc-1"><b>予想:</b> 開幕週の中山マイルは先行有利。先頭争いの序列では54kgの◯ディールメーカーが筆頭で、◎エコロブルームはその直後で運べると読んだ。<br><b>結果:</b> 逃げたのは13番メタルスピードで、ディールメーカーは(7,12)の5〜6番手。エコロブルームは4〜5番手の外で運び、ピコローズはその内側の中団でじっと脚を溜めた。前半34.3-後半34.5のミドルで「先行有利」自体は当たり(2着・3着は4番手以内の馬)だが、勝ったのは中団から馬群を割った1頭で、先行勢に紛れた4番手集団の直後が最も恵まれた位置だった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-1">続きを読む</button></td></tr>
+<tr><th>印判定</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2"><b>予想:</b> ◎エコロブルーム(中山マイル重賞勝ち・先行力・58kgでも重量負けしないと陣営が明言)、◯ディールメーカー、▲レザベーション、△ファンダム・△ドロップオブライト、☆フォルテアンジェロ・☆ヴァルキリーバース・☆クランフォード・☆テレサの9頭。<br><b>結果:</b> ◎2着・△3着・△4着と、地力と条件実績を厚く見た3頭は掲示板に収まった。一方、◯8着・▲11着、☆4頭は6・7・13・16着で複勝圏ゼロ。勝ち馬ピコローズは9番人気想定でスコアカードの採点対象(9頭)から外れており、「なぜ下評価か」の欄も空白のままだった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
+<tr><th>買い目構成</th><td class="rvClamp"><span class="rvClampBody" id="rvc-3"><b>予想:</b> 本線は◎の複勝1点と◎から印馬8頭へのワイド8点。保険に☆3頭の複勝、ヘッジに◯から印馬7頭へのワイド7点。3連複は使わない方針。<br><b>結果:</b> ◎複勝270円、ワイド③-⑦2,870円が的中。保険の☆複勝3点とヘッジ7点は全損。投資1,900円に対し回収3,140円(回収率165.3%)。3連複③-⑦-⑧42,840円は1着馬が無印なので、仮に印馬で買っていても取れていない組み合わせだった。「◎の複勝＋◎からのワイド」に絞る新方針の初週で、ワイドが1点でも中穴を拾えば全体が浮く構造が確認できた。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-3">続きを読む</button></td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>7 エコロブルーム（武豊）<span class="res hit">2着</span></div>
+<p>中山芝1600mのニュージーランドT勝ちと先行力、加藤征弘調教師の「58キロでも重量負けしない」を根拠に◎。4〜5番手の外から直線で先頭に立ちかけたが、内から抜けたピコローズに半馬身差で交わされた。武豊騎手は「レースは上手くいきました。直線を向くまでは完璧でした。最後は外にモタれてしまい勝ち馬を締めきれませんでした」(netkeiba)。加藤師は「勝ち馬とは5キロ差あったからね」と斤量差を挙げ、マイルCSを目標に据えた。トップハンデで2着は◎の根拠がそのまま出た内容。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>3 ドロップオブライト（岩田康誠）<span class="res hit">3着</span></div>
+<p>昨年のこのレース2着とターコイズS勝ちという中山マイルの条件実績を根拠に、近走の大敗を承知で△。好スタートから3番手で運び、直線も粘り込んで3着(複勝450円)。陣営は「近走の成績はもうひとつでしたが、調教は相変わらず良かったですし、相性の良いコースなので期待していました。好スタートを切って、完璧なレースをしてくれました」(netkeiba)。条件実績を近走より優先した判断が実を結んだ。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>6 ファンダム（戸崎圭太）<span class="res ">4着</span></div>
+<p>当日に採点対象へ昇格し、芝1600m4戦2勝・中山4走2勝の条件実績で△。中団から上がり33.5で追い込んだがハナ差の4着で複勝圏を逃した。戸崎騎手は「折り合いはうまくいき、最後もよく来ています。もう少しポジションを取れればよかった」。開幕週で差し馬が届かなかった典型で、先行有利の読みと整合する。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>4 フォルテアンジェロ（D.レーン）<span class="res ">6着</span></div>
+<p>GI実績は出走馬中で最上位、マイル初挑戦とゲート難を懸念して☆。レーン騎手は「ゲートは落ち着いていました。いいスタートでしたが初の1600mで最初はペースに慣れず理想より後ろのポジションになりました。直線も手応えは良かったですがそこからスムーズに出しきれませんでした」。懸念した「マイルの流れに乗れるか」がそのまま敗因になった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>11 クランフォード（菊沢一樹）<span class="res ">7着</span></div>
+<p>関屋記念2着の先行力を評価したが、芝1600mは6戦未勝利・中山初コースを理由に☆止まり。2番手で流れに乗ったが直線で上がり34.8と失速し7着。良の高速馬場では不良の関屋記念のような粘りは出なかった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◯</span>12 ディールメーカー（横山武史）<span class="res ">8着</span></div>
+<p>中山芝1600mで2勝、ラジオNIKKEI賞2着、54kgで隊列の先頭を取りやすいと見て◯。ところが逃げたのはメタルスピードで、5〜6番手の外を回る形になり8着。先頭争いの序列で筆頭に置いた読みが外れ、ヘッジのワイド7点(700円)は全損した。追い切りで確かめた歩様の硬さも影響したかは不明。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>9 レザベーション（原優介）<span class="res ">11着</span></div>
+<p>中山マイル重賞勝ち・NHKマイルC6着に3歳55kgの恩恵で▲。4か月の休み明けで最終追い切りは輸送を考慮した軽め調整だったが、中団の内から伸びず11着。「輸送を考慮してしまいだけ」という調整過程を確定度の減点にしか使っておらず、休み明け＋軽め調整の組み合わせをもう一段割り引くべきだった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>15 テレサ（津村明秀）<span class="res ">13着</span></div>
+<p>マイル1戦1勝と最終追い切りの軽快さで☆。後方のまま13着。事前の推しポイントには「8枠16番」と書いていたが、実際の馬番は15番(8枠)で、事実表記にずれがあった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>10 ヴァルキリーバース（C.ルメール）<span class="res ">16着(最下位)</span></div>
+<p>東風S 1分32秒0の中山マイル実績と先行力で☆に置いたが、スタートから進まず最下位。ルメール騎手は「スタートから全然進んでいきませんでした。発汗していたし、テンションも高かったです。コンディション的によくありませんでした」(netkeiba)。前走府中牝馬S 14着に続く大敗で、当日のパドック気配を取っていれば拾えた類のリスクだった。</p></div>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">レース記事（netkeiba・馬トク報知・スポニチ）<span class="tag">記事</span></p><p>ピコローズは中団のインで脚を溜め、直線で馬群の間を割って「すごい加速力」(三浦皇成騎手)で抜け出し、3勝クラスから2連勝で重賞初挑戦初制覇(馬トク報知)。三浦騎手は「今日は楽にいいところを取れたので、これならと思ってうまく立ち回ってくれました」「自分のなかでも勝たないといけないというのはあったのでホッとしています」(netkeiba)。2着エコロブルームの武豊騎手は「直線を向くまでは完璧だった」(スポニチ)。</p></div>
+<div class="rv-view"><p class="src">X（事後）<span class="tag">公式</span></p><p>netkeiba公式が入線速報で「昇級初戦、重賞初挑戦で初タイトル――ピコローズが混戦を断つ！」(<a href="https://x.com/netkeiba/status/2096128575766487497" target="_blank" rel="noopener">x.com/netkeiba</a>)、JRA公式が「馬群の中から突き抜けて勝利」(<a href="https://x.com/JRA_Special/status/2096131889136550290" target="_blank" rel="noopener">x.com/JRA_Special</a>)と投稿。個人予想家の事後回顧はレース直後のため未検出。</p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>採点対象の穴</th><td class="rvClamp"><span class="rvClampBody" id="rvc-4">勝ったピコローズはスコアカードの採点対象9頭に入っておらず、印を付けなかった7頭の「なぜ下評価か」欄も空白のままだった。ハンデ戦で最軽量53kg・3勝クラスから連勝中の昇級初戦という組み合わせは、条件実績が薄くても採点対象に必ず乗せる。「下評価の理由を書けない馬」は下評価にする根拠が無い馬であり、空欄を残したまま発走を迎えないことをチェックリストに加える。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-4">続きを読む</button></td></tr>
+<tr><th>陣営談話の読み方</th><td class="rvClamp"><span class="rvClampBody" id="rvc-5">ピコローズ陣営の「時計のかかる馬場を歓迎」は、良へ回復した時点で割引材料として読んだ。しかし1:32.0の高速決着で勝っており、馬場への希望は適性の上限を示すものではなかった。「歓迎する条件」の談話は加点に使ってよいが、その条件が消えたことを減点に使うのは根拠にならない。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-5">続きを読む</button></td></tr>
+<tr><th>◎複勝＋ワイド方針</th><td class="rvClamp"><span class="rvClampBody" id="rvc-6">3連複を捨てて「◎の複勝＋◎から印馬へのワイド」に絞った初週で、◎2着・△3着の1点(2,870円)が投資1,900円を全体で回収させた。3連複42,840円は無印の1着馬を含むため印では取れず、3連複を捨てたことによる機会損失は無かった。一方、◯からのヘッジ7点は◯自身の評価が外れると全損する構造なので、◯の確定度が低いレースではヘッジ点数を絞るか◎からのワイドに寄せる。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-6">続きを読む</button></td></tr>
+<tr><th>☆の複勝圏ゼロ</th><td class="rvClamp"><span class="rvClampBody" id="rvc-7">☆4頭が6・7・13・16着で全て複勝圏外、保険の複勝300円は全損。特にヴァルキリーバースは発汗・テンションの高さを騎手が指摘しており、パドック気配を取る運用があれば☆から外せた。人気上位(1〜3番人気)に☆を回した2頭はどちらも「人気以上に走る」余地が薄く、☆本来の役割(人気薄の妙味)から外れていた。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-7">続きを読む</button></td></tr>
+<tr><th>事実表記のずれ</th><td class="rvClamp"><span class="rvClampBody" id="rvc-8">☆テレサの推しポイントに「8枠16番」と書いていたが、確定馬番は15番だった。枠順確定後に馬番を含む文章を書くときは、カードの確定値から機械的に埋める。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-8">続きを読む</button></td></tr>
+</tbody>
+</table>
+<p class="rv-note">レース映像のスクリーンショットは未取得。後日、映像を確認したうえで追記する。</p>
+</div>
+</section><!-- /tab-review -->
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=Array.prototype.slice.call(document.querySelectorAll('.tabHd button[data-tab]'));
+  var panes=Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
+  if(!btns.length) return;
+  function select(b,moveFocus){
+    var id=b.getAttribute('data-tab');
+    btns.forEach(function(x){
+      var on=(x===b);
+      x.classList.toggle("active",on);
+      x.setAttribute('aria-selected',on?'true':'false');
+      x.tabIndex=on?0:-1;
+    });
+    panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+    if(moveFocus) b.focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){select(b,false);});
+    b.addEventListener('keydown',function(e){
+      var nx=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx=btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx=btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx=btns[0];
+      else if(e.key==='End') nx=btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      select(nx,true);
+    });
+  });
+})();
+</script>
 <a href="../" class="portalBack" aria-label="レースアーカイブに戻る">← レースアーカイブ</a>
 <style>
 .portalBack{position:fixed;left:14px;bottom:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;gap:6px;
@@ -4500,5 +4721,24 @@ body.kbModalOpen .fb-fab{display:none;}
 })();
 </script>
 
+
+<script>
+/* 振り返りタブの「続きを読む」。button 要素なので Enter/Space は素で効く。
+   開閉状態は aria-expanded で支援技術へ伝える（aria-controls で本文と紐付け済み） */
+(function(){
+  var btns = document.querySelectorAll('#tab-review .rvMore');
+  if(!btns.length) return;
+  Array.prototype.forEach.call(btns, function(b){
+    b.addEventListener('click', function(){
+      var host = b.parentNode;
+      while(host && !(host.classList && host.classList.contains('rvClamp'))) host = host.parentNode;
+      if(!host) return;
+      var open = host.classList.toggle('is-open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      b.textContent = open ? '閉じる' : '続きを読む';
+    });
+  });
+})();
+</script>
 </body>
 </html>
