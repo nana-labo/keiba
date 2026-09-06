@@ -806,8 +806,104 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+
+/* 旧語彙の別名（2026-08-26 追加）
+   北九州記念2026 だけが rv-tablewrap / rv-table / rv-head / rv-sub / rv-cap / rv-src /
+   ok / ng / t0 / t1 / lc / new という独自クラスで書かれており、定義がどこにも無かった。
+   結果 390px で12列のテーブルが横スクロールにならず、馬名が1文字ずつ縦に折り返されていた。
+   開催済みの振り返りは凍結記録なので本文は書き換えず、見た目だけをここで当て直す。
+   #tab-review へスコープして予想タブ側へ漏らさない。 */
+#tab-review .rv-head{margin-bottom:6px;}
+#tab-review .rv-head h2{margin-top:0;}
+#tab-review .rv-sub{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);line-height:1.6;margin:0;}
+#tab-review .rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+#tab-review .rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+#tab-review .rv-table th,#tab-review .rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+#tab-review .rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+#tab-review .rv-table td.nm{text-align:left;font-weight:700;}
+#tab-review .rv-table td.ok{color:var(--good);font-weight:700;}
+#tab-review .rv-table td.ng{color:var(--bad);font-weight:700;}
+#tab-review .rv-cap{font-size:.74rem;color:var(--sub);margin-top:6px;line-height:1.6;}
+#tab-review .rv-src{margin:8px 0;padding-left:1.2em;font-size:.78rem;color:var(--sub);line-height:1.7;}
+#tab-review .rv-src a{color:var(--accent);word-break:break-all;}
+#tab-review .tag.t0,#tab-review .tag.t1{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+#tab-review .lc{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;font-size:.82rem;line-height:1.6;}
+#tab-review .lc.confirm{border-left-color:var(--accent);}
+#tab-review .lc.new{border-left-color:var(--gold);}
+</style>
+<style>
+/* 振り返りタブの長文を3行に畳む。狭い画面だけで効かせ、広い画面は従来どおり全文表示 */
+#tab-review .rvMore{display:none;}
+@media (max-width:560px){
+  #tab-review .rvClampBody{
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+    overflow:hidden;
+  }
+  #tab-review .rvClamp.is-open .rvClampBody{
+    display:block;-webkit-line-clamp:none;overflow:visible;
+  }
+  #tab-review .rvMore{
+    display:inline-block;margin-top:4px;padding:2px 8px;
+    font:inherit;font-size:.78rem;line-height:1.6;color:#1a5a8a;
+    background:#eef4fa;border:1px solid #ccd6e2;border-radius:999px;cursor:pointer;
+  }
+  #tab-review .rvMore:hover{background:#e2edf7;}
+  #tab-review .rvMore:focus-visible{outline:2px solid #1a5a8a;outline-offset:2px;}
+}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist" aria-label="予想と振り返り">
+  <button type="button" role="tab" id="tabBtn-predict" data-tab="tab-predict" aria-controls="tab-predict" aria-selected="false" tabindex="-1">予想</button>
+  <button type="button" role="tab" id="tabBtn-review" data-tab="tab-review" aria-controls="tab-review" aria-selected="true" tabindex="0" class="active">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane" role="tabpanel" aria-labelledby="tabBtn-predict" tabindex="0">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4290,6 +4386,123 @@ function doApplyBetPlan(planIdx){
   });
 })();
 </script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
+<div class="rv-wrap">
+<p class="rv-lead">☆マスターソアラ（7人気）が中団から差し切り、△サムシングスイートが半馬身差の2着、1番人気▲ドリームコアが3着。◎アストリルは4着で僅差惜敗、◯ジッピーチューンは10着に大敗した。当日の馬場悪化（稍重→重）を受けて印を2つ入れ替えたが、上位を占めたのは印馬6頭中3頭のみで、本線・ヘッジは全滅。保険の複勝1点だけが的中し、投資1,500円に対し回収340円にとどまった。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>4</td><td>4</td><td class="nm">マスターソアラ</td><td>牝3</td><td>55.0</td><td>大野拓弥</td><td>2:03.5</td><td>-</td><td>36.2</td><td>12.7</td><td>6</td><td>492(+10)</td><td>☆</td></tr>
+<tr><td>2</td><td>2</td><td>2</td><td class="nm">サムシングスイート</td><td>牝3</td><td>55.0</td><td>団野大成</td><td>2:03.6</td><td>1/2</td><td>36.1</td><td>7.2</td><td>4</td><td>498(+10)</td><td>△</td></tr>
+<tr><td>3</td><td>7</td><td>9</td><td class="nm">ドリームコア</td><td>牝3</td><td>55.0</td><td>Ｃ．ルメール</td><td>2:03.8</td><td>1.1/4</td><td>36.7</td><td>2.5</td><td>1</td><td>502(+4)</td><td>▲</td></tr>
+<tr><td>4</td><td>6</td><td>6</td><td class="nm">アストリル</td><td>牝3</td><td>55.0</td><td>Ｍ．ミシェル</td><td>2:04.0</td><td>1.1/4</td><td>36.5</td><td>8.9</td><td>5</td><td>452(-4)</td><td>◎</td></tr>
+<tr><td>5</td><td>1</td><td>1</td><td class="nm">ジワタネホ</td><td>牝3</td><td>55.0</td><td>三浦皇成</td><td>2:04.1</td><td>クビ</td><td>36.3</td><td>50.7</td><td>10</td><td>442(0)</td><td></td></tr>
+<tr><td>6</td><td>7</td><td>8</td><td class="nm">ナイスプレーアスク</td><td>牝3</td><td>55.0</td><td>岩田康誠</td><td>2:04.7</td><td>3.1/2</td><td>38.1</td><td>31.1</td><td>9</td><td>438(0)</td><td></td></tr>
+<tr><td>7</td><td>3</td><td>3</td><td class="nm">リアライズルミナス</td><td>牝3</td><td>55.0</td><td>津村明秀</td><td>2:04.9</td><td>1.1/4</td><td>38.0</td><td>5.2</td><td>2</td><td>492(-10)</td><td>△</td></tr>
+<tr><td>8</td><td>5</td><td>5</td><td class="nm">ファムクラジューズ</td><td>牝3</td><td>55.0</td><td>菊沢一樹</td><td>2:04.9</td><td>ハナ</td><td>37.5</td><td>20.0</td><td>8</td><td>410(+8)</td><td></td></tr>
+<tr><td>9</td><td>8</td><td>11</td><td class="nm">ベンヴェヌータ</td><td>牝3</td><td>55.0</td><td>石橋脩</td><td>2:05.1</td><td>1</td><td>37.8</td><td>15.0</td><td>7</td><td>468(+8)</td><td>☆</td></tr>
+<tr><td>10</td><td>8</td><td>10</td><td class="nm">ジッピーチューン</td><td>牝3</td><td>55.0</td><td>北村友一</td><td>2:05.4</td><td>2</td><td>38.4</td><td>6.7</td><td>3</td><td>434(+12)</td><td>◯</td></tr>
+<tr><td>11</td><td>6</td><td>7</td><td class="nm">ロングトールサリー</td><td>牝3</td><td>55.0</td><td>杉原誠人</td><td>2:07.3</td><td>大</td><td>40.6</td><td>56.9</td><td>11</td><td>498(+4)</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p class="rv-note rvClamp"><span class="rvClampBody" id="rvc-1">天候は雨、馬場は重。勝ち時計2分03秒5は前傾ラップから後半も大きく落ちない持続力型の流れだった。11頭中の差し脚質4頭（マスターソアラ・サムシングスイート・ドリームコア・アストリル）が上位4着までを占め、唯一の逃げ馬ベンヴェヌータは9着、先行のジッピーチューンは10着に沈んだ。出典はnetkeibaのレース結果ページ。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-1">続きを読む</button></p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ④ 1,270円</span>
+<span class="chip">複勝 ④340 / ②200 / ⑨130</span>
+<span class="chip">枠連 2-4 4,510円</span>
+<span class="chip">馬連 ②-④ <b>3,690円</b></span>
+<span class="chip">ワイド ②-④1,120 / ④-⑨730 / ②-⑨410</span>
+<span class="chip">馬単 ④→② 7,440円</span>
+<span class="chip">3連複 ②-④-⑨ <b>3,720円</b></span>
+<span class="chip">3連単 ④→②→⑨ <b>35,360円</b></span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>馬場</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2"><b>予想:</b> 発走前確認(14:38)で稍重→重への悪化を2ソースで確認し、過去走の道悪実績を機械集計。◎アストリルは重2着・稍2着・稍3着の3戦3複勝で最も確からしいと評価し、道悪実績の無いドリームコア・リアライズルミナス・ベンヴェヌータ・マスターソアラは補正を見送った。<br><b>結果:</b> 雨は止まず重馬場のまま施行。ところが道悪実績が最も厚いアストリルは4着に終わり、道悪実績が無い4頭のうち3頭（マスターソアラ・サムシングスイート・ドリームコア）が上位を占めた。道悪の実績データは、今回は決定打にならなかった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
+<tr><th>脚質・展開</th><td class="rvClamp"><span class="rvClampBody" id="rvc-3"><b>予想:</b> 複数の印馬に「差し脚質は内回り小回りの中山でやや不利」という減点材料を記録していた。唯一の逃げ馬☆ベンヴェヌータは中山巧者としての先行有利を期待していた。<br><b>結果:</b> 実際は前半からある程度流れる持続力型のレースになり、差し脚質の4頭が上位4着までを独占。逃げたベンヴェヌータは9着、先行のジッピーチューンは10着に沈んだ。「差しは中山で不利」という前提を減点根拠に使い続けたのは、今回の馬場・ペースでは逆方向に効いていた。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-3">続きを読む</button></td></tr>
+<tr><th>印判定</th><td class="rvClamp"><span class="rvClampBody" id="rvc-4"><b>予想:</b> 芝2000m実績と右回り実績を厚く見てアストリルを本命に据え、馬場悪化を受けて△サムシングスイート→▲ドリームコアの順に入れ替えた。<br><b>結果:</b> 入れ替え後の2頭（ドリームコア3着・サムシングスイート2着）はどちらも3着内に入ったが、序列は逆だった。本命アストリルは1.1/4馬身差の4着で僅差惜敗、対抗ジッピーチューンは10着に大敗した。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-4">続きを読む</button></td></tr>
+<tr><th>買い目構成</th><td class="rvClamp"><span class="rvClampBody" id="rvc-5"><b>予想:</b> 本命の複勝1点と、本命から印馬6頭へのワイド6点を本線にした。穴2頭の複勝を保険、対抗から印馬6頭へのワイドをヘッジに置いた。<br><b>結果:</b> 本命・対抗がともに3着内に入らず、本線7点・ヘッジ6点は全滅。保険の複勝1点（マスターソアラ・340円）だけが的中した。投資1,500円に対し回収340円で、回収率は22.7%。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-5">続きを読む</button></td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>4 マスターソアラ（大野拓弥）<span class="res hit">1着</span></div>
+<p class="rvClamp"><span class="rvClampBody" id="rvc-6">クイーンC4着とキャリア2戦の底の見えなさを理由に穴止まりにしたが、約6か月半ぶりの実戦で中団から4角外に持ち出し差し切った。蛯名正義調教師・大野騎手は秋華賞など将来の大一番を見据えて折り合い第一で臨んだと説明しており、その方針がそのまま結果に出た。距離・コース・回りがいずれも初めてという不安materialは、結果には響かなかった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-6">続きを読む</button></p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>2 サムシングスイート（団野大成）<span class="res hit">2着</span></div>
+<p>芝2000m2勝・中山1勝の実績を見つつ、馬場悪化を受けて▲から△へ格下げした（重馬場での5着実績が減点材料）。結果は半馬身差の2着で、格下げの方向とは逆に走った。重巧者かどうかより、前走からの上積みが上回っていた可能性がある。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>9 ドリームコア（Ｃ．ルメール）<span class="res hit">3着</span></div>
+<p>オークス2着・クイーンC勝ちの地力を評価しつつ、道悪実績が無いことを理由に△から格上げした一方で不安要素としても記録していた。重馬場・距離2000mへの適性不安を抱えたまま3着に踏みとどまった。1番人気の看板に応える形にはなったが、上位2頭には及ばなかった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>6 アストリル（Ｍ．ミシェル）<span class="res ">4着</span></div>
+<p class="rvClamp"><span class="rvClampBody" id="rvc-7">芝2000m5戦オール馬券圏内、右回り複勝率1.00、1週前・最終とも追い切りで先着という3拍子を根拠に本命にした。重馬場も道悪実績3戦3複勝で最も確からしいと評価していたが、結果は1.1/4馬身差の4着。鈴木慎太郎調教師は雨で切れ味勝負の馬の脚が鈍れば差が縮まると見ていたが、実際に脚が鈍ったのはアストリル自身の側だった。重賞初挑戦・中山コース初めてという不安材料が、終盤の詰めの甘さに出た可能性がある。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-7">続きを読む</button></p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>3 リアライズルミナス（津村明秀）<span class="res ">7着</span></div>
+<p>オークス4着・フローラS3着の地力と先行脚質の中山適性を評価し、前走燕特別3着の敗因（喉鳴り）にも対策済みと判断して連下にした。だが4角で手応えを失い7着に終わった。喉の状態は実戦でしか確かめられないという不安材料が的中した形。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>11 ベンヴェヌータ（石橋脩）<span class="res ">9着</span></div>
+<p>中山芝2000mを逃げ切って2戦2勝という条件実績を穴の根拠にしたが、陣営が挙げていたテンションの高さの課題、5か月半の休み明けという不安材料も抱えていた。唯一の逃げ馬という展開の恵まれを期待したが9着に終わり、休み明けとテンションの課題がそのまま出た内容だった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◯</span>10 ジッピーチューン（北村友一）<span class="res ">10着</span></div>
+<p>桜花賞3着の地力と最終追い切りの好時計を根拠に対抗にしたが、右前肢の剥離骨折から約5か月ぶりの実戦、芝2000m未経験の距離延長という2つの不安材料を抱えていた。結果は10着に大敗。詳しい敗因コメントは確認できていないが、休養明けと初距離の重なりが響いた可能性が高い。</p></div>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">レース記事<span class="tag">netkeiba・ラジオNIKKEI・umanity</span></p><p>中団内で脚をためたマスターソアラが4角で馬場中央に持ち出し直線で一気にスパートして差し切り。蛯名正義調教師・大野拓弥騎手とも「秋華賞など長い将来の大一番を見据えて折り合い第一」で臨んだ結果と説明している。1番人気ドリームコアは重馬場・距離への適性不安を抱えたまま3着、2番人気リアライズルミナスは4角で急に手応えを失い7着だった。上位3頭は秋華賞優先出走権を獲得した。</p></div>
+<div class="rv-view"><p class="src">X（事後）<span class="tag">公式</span></p><p>netkeiba公式が入線速報で、1位入線マスターソアラ(6人気)・2位入線サムシングスイート(4人気)・3位入線ドリームコア(1人気)と投稿。分析的なコメントは無し。</p></div>
+<div class="rv-view"><p class="src">YouTube事後動画<span class="tag">検索結果</span></p><p>「回顧」「敗因」「ラップ分析」等で検索したが、日曜夜〜月曜投稿の事後解説動画は見つからなかった（レース当夜時点でインデックス未反映の可能性）。netkeiba独自プレーヤーの「井崎脩五郎の反省部屋」では細江純子氏が「本命馬と激推し馬が最下位2頭に終わった」とコメントしているが、YouTube配信ではないため文字起こし対象外。個人予想家のnote・X回顧も同日夜時点では未特定。</p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>道悪実績の過信</th><td class="rvClamp"><span class="rvClampBody" id="rvc-8">過去走の道悪実績を機械集計し、重2着・稍2着・稍3着で3戦3複勝のアストリルを「最も確からしい」と本命の根拠にした。しかし結果は4着で、道悪実績が無い3頭が上位を占めた。道悪実績はサンプル数が少ないレースが多く、決定打として単独で使うと過信になる。他の軸（近走の上積み・展開）と合わせて相対化する。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-8">続きを読む</button></td></tr>
+<tr><th>脚質バイアスの逆張りリスク</th><td class="rvClamp"><span class="rvClampBody" id="rvc-9">「差しは内回り小回りの中山でやや不利」という一般論を複数馬の減点材料に使ったが、実際は差し脚質4頭が上位4着を独占した。中山芝2000mは直線310mとコースにより先行有利・差し有利が変わる。一般論のタグを機械的に減点へ使う前に、該当コース・距離のレース単位の傾向（yosou_trends）を優先参照する。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-9">続きを読む</button></td></tr>
+<tr><th>格下げ・格上げの序列</th><td class="rvClamp"><span class="rvClampBody" id="rvc-10">馬場悪化を受けてサムシングスイート▲→△、ドリームコア△→▲と入れ替えたが、結果の着順は逆（サムシングスイート2着・ドリームコア3着）だった。機械的な再計算で動かした判断自体のプロセスは正しいが、僅差での入れ替えは着順の当てものとしては脆いことが分かった。僅差の入れ替えは印の序列だけでなく買い目の相手選定にも反映する運用を検討する。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-10">続きを読む</button></td></tr>
+<tr><th>ヘッジの構造的弱点</th><td>対抗ジッピーチューンから印馬6頭へのヘッジワイド6点は、対抗が3着内に入らなければ全損する構造。今回は対抗が10着に大敗し、ヘッジは丸ごと外れた。対抗の信頼度が低いレースでは、ヘッジの相手を対抗一頭に依存させず、本命または上位2頭の複合で受ける構成を検討する。</td></tr>
+</tbody>
+</table>
+<p class="rv-note">レース映像の静止画は未取得。後日、映像を確認したうえで追記する。</p>
+</div>
+</section>
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=Array.prototype.slice.call(document.querySelectorAll('.tabHd button[data-tab]'));
+  var panes=Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
+  if(!btns.length) return;
+  function select(b,moveFocus){
+    var id=b.getAttribute('data-tab');
+    btns.forEach(function(x){
+      var on=(x===b);
+      x.classList.toggle("active",on);
+      x.setAttribute('aria-selected',on?'true':'false');
+      x.tabIndex=on?0:-1;
+    });
+    panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+    if(moveFocus) b.focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){select(b,false);});
+    b.addEventListener('keydown',function(e){
+      var nx=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx=btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx=btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx=btns[0];
+      else if(e.key==='End') nx=btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      select(nx,true);
+    });
+  });
+})();
+</script>
 <a href="../" class="portalBack" aria-label="レースアーカイブに戻る">← レースアーカイブ</a>
 <style>
 .portalBack{position:fixed;left:14px;bottom:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;gap:6px;
@@ -4500,5 +4713,23 @@ body.kbModalOpen .fb-fab{display:none;}
 })();
 </script>
 
+<script>
+/* 振り返りタブの「続きを読む」。button 要素なので Enter/Space は素で効く。
+   開閉状態は aria-expanded で支援技術へ伝える（aria-controls で本文と紐付け済み） */
+(function(){
+  var btns = document.querySelectorAll('#tab-review .rvMore');
+  if(!btns.length) return;
+  Array.prototype.forEach.call(btns, function(b){
+    b.addEventListener('click', function(){
+      var host = b.parentNode;
+      while(host && !(host.classList && host.classList.contains('rvClamp'))) host = host.parentNode;
+      if(!host) return;
+      var open = host.classList.toggle('is-open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      b.textContent = open ? '閉じる' : '続きを読む';
+    });
+  });
+})();
+</script>
 </body>
 </html>
