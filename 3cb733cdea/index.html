@@ -806,8 +806,104 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+
+/* 旧語彙の別名（2026-08-26 追加）
+   北九州記念2026 だけが rv-tablewrap / rv-table / rv-head / rv-sub / rv-cap / rv-src /
+   ok / ng / t0 / t1 / lc / new という独自クラスで書かれており、定義がどこにも無かった。
+   結果 390px で12列のテーブルが横スクロールにならず、馬名が1文字ずつ縦に折り返されていた。
+   開催済みの振り返りは凍結記録なので本文は書き換えず、見た目だけをここで当て直す。
+   #tab-review へスコープして予想タブ側へ漏らさない。 */
+#tab-review .rv-head{margin-bottom:6px;}
+#tab-review .rv-head h2{margin-top:0;}
+#tab-review .rv-sub{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);line-height:1.6;margin:0;}
+#tab-review .rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+#tab-review .rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+#tab-review .rv-table th,#tab-review .rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+#tab-review .rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+#tab-review .rv-table td.nm{text-align:left;font-weight:700;}
+#tab-review .rv-table td.ok{color:var(--good);font-weight:700;}
+#tab-review .rv-table td.ng{color:var(--bad);font-weight:700;}
+#tab-review .rv-cap{font-size:.74rem;color:var(--sub);margin-top:6px;line-height:1.6;}
+#tab-review .rv-src{margin:8px 0;padding-left:1.2em;font-size:.78rem;color:var(--sub);line-height:1.7;}
+#tab-review .rv-src a{color:var(--accent);word-break:break-all;}
+#tab-review .tag.t0,#tab-review .tag.t1{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+#tab-review .lc{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;font-size:.82rem;line-height:1.6;}
+#tab-review .lc.confirm{border-left-color:var(--accent);}
+#tab-review .lc.new{border-left-color:var(--gold);}
+</style>
+<style>
+/* 振り返りタブの長文を3行に畳む。狭い画面だけで効かせ、広い画面は従来どおり全文表示 */
+#tab-review .rvMore{display:none;}
+@media (max-width:560px){
+  #tab-review .rvClampBody{
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+    overflow:hidden;
+  }
+  #tab-review .rvClamp.is-open .rvClampBody{
+    display:block;-webkit-line-clamp:none;overflow:visible;
+  }
+  #tab-review .rvMore{
+    display:inline-block;margin-top:4px;padding:2px 8px;
+    font:inherit;font-size:.78rem;line-height:1.6;color:#1a5a8a;
+    background:#eef4fa;border:1px solid #ccd6e2;border-radius:999px;cursor:pointer;
+  }
+  #tab-review .rvMore:hover{background:#e2edf7;}
+  #tab-review .rvMore:focus-visible{outline:2px solid #1a5a8a;outline-offset:2px;}
+}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist" aria-label="予想と振り返り">
+  <button type="button" role="tab" id="tabBtn-predict" data-tab="tab-predict" aria-controls="tab-predict" aria-selected="false" tabindex="-1">予想</button>
+  <button type="button" role="tab" id="tabBtn-review" data-tab="tab-review" aria-controls="tab-review" aria-selected="true" tabindex="0" class="active">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane" role="tabpanel" aria-labelledby="tabBtn-predict" tabindex="0">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4290,6 +4386,122 @@ function doApplyBetPlan(planIdx){
   });
 })();
 </script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
+<div class="rv-wrap">
+<p class="rv-lead">☆ルースアグレッシブが大外から逃げて5馬身差で圧勝した。2着は1番人気の△ウノキボンバイエ、3着は▲ブラフキャッチ。上位3頭はすべて印馬だった。ただし本命◎コーズブルーは10着。◎を軸にした本線7点が全滅し、当たったのは保険の複勝1点だけだった。投資1,500円に対し払戻は170円で回収率11%。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>8</td><td>11</td><td class="nm">ルースアグレッシブ</td><td>牡2</td><td>54.0</td><td>笹川翼</td><td>1:36.0</td><td>-</td><td>39.8</td><td>5.1</td><td>3</td><td>517(-3)</td><td>☆</td></tr>
+<tr><td>2</td><td>5</td><td>5</td><td class="nm">ウノキボンバイエ</td><td>牡2</td><td>54.0</td><td>室陽一朗</td><td>1:37.1</td><td>5</td><td>40.7</td><td>2.1</td><td>1</td><td>467(-2)</td><td>△</td></tr>
+<tr><td>3</td><td>1</td><td>1</td><td class="nm">ブラフキャッチ</td><td>牡2</td><td>54.0</td><td>野畑凌</td><td>1:37.4</td><td>1.1/2</td><td>40.8</td><td>12.0</td><td>4</td><td>476(+8)</td><td>▲</td></tr>
+<tr><td>4</td><td>2</td><td>2</td><td class="nm">ナイトムーブ</td><td>牡2</td><td>54.0</td><td>本田正重</td><td>1:37.7</td><td>1.1/2</td><td>40.8</td><td>3.5</td><td>2</td><td>474(+4)</td><td>◯</td></tr>
+<tr><td>5</td><td>7</td><td>8</td><td class="nm">ゴールドカレラ</td><td>牡2</td><td>54.0</td><td>御神本訓</td><td>1:37.8</td><td>3/4</td><td>41.2</td><td>13.4</td><td>5</td><td>507(-1)</td><td></td></tr>
+<tr><td>6</td><td>6</td><td>7</td><td class="nm">サンバルカン</td><td>牡2</td><td>54.0</td><td>吉原寛人</td><td>1:38.2</td><td>2</td><td>41.2</td><td>18.4</td><td>7</td><td>462(+2)</td><td>△</td></tr>
+<tr><td>7</td><td>3</td><td>3</td><td class="nm">ラモンパンサー</td><td>牡2</td><td>54.0</td><td>木間塚龍</td><td>1:38.4</td><td>1</td><td>41.2</td><td>172.4</td><td>11</td><td>407(-8)</td><td></td></tr>
+<tr><td>8</td><td>7</td><td>9</td><td class="nm">ブエンディア</td><td>牡2</td><td>54.0</td><td>櫻井光輔</td><td>1:38.7</td><td>1.1/2</td><td>41.3</td><td>98.0</td><td>9</td><td>439(+10)</td><td></td></tr>
+<tr><td>9</td><td>6</td><td>6</td><td class="nm">ドゥオーモアモーレ</td><td>牡2</td><td>54.0</td><td>矢野貴之</td><td>1:39.4</td><td>3</td><td>42.2</td><td>17.8</td><td>6</td><td>481(+1)</td><td>☆</td></tr>
+<tr><td>10</td><td>8</td><td>10</td><td class="nm">コーズブルー</td><td>牡2</td><td>54.0</td><td>西啓太</td><td>1:39.8</td><td>2</td><td>42.9</td><td>47.5</td><td>8</td><td>489(+6)</td><td>◎</td></tr>
+<tr><td>11</td><td>4</td><td>4</td><td class="nm">ゴールドサンデー</td><td>牡2</td><td>54.0</td><td>中越琉世</td><td>1:40.4</td><td>3</td><td>43.2</td><td>151.0</td><td>10</td><td>447(-2)</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p class="rv-note rvClamp"><span class="rvClampBody" id="rvc-1">天候は曇、馬場は不良。勝ち時計は1分36秒0。ペースはハイで、区間は6秒0-11秒0-12秒7-14秒0-12秒5-13秒1-13秒3-13秒4。1コーナーの並びは11番を先頭に5番、1番と8番、2番、10番と続いた。この隊列は4コーナーまでほとんど変わらなかった。1着と2着には10月14日の鎌倉記念への優先出走権が与えられた。出典はnar.netkeiba.comのレース結果ページ。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-1">続きを読む</button></p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ⑪ 510円</span>
+<span class="chip">複勝 ⑪170 / ⑤130 / ①210</span>
+<span class="chip">枠連 5-8 560円</span>
+<span class="chip">馬連 ⑤-⑪ 630円</span>
+<span class="chip">ワイド ⑤-⑪300 / ①-⑪930 / ①-⑤510</span>
+<span class="chip">馬単 ⑪→⑤ 1,400円</span>
+<span class="chip">3連複 ①-⑤-⑪ <b>1,910円</b></span>
+<span class="chip">3連単 ⑪→⑤→① <b>8,510円</b></span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>馬場とペース</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2"><b>予想:</b> 川崎ダート1500mは直線300mでコーナーが4回。前に行ける馬が有利で、大外枠は距離ロスの分だけ不利になると見ていた。<br><b>結果:</b> 前有利の読みは当たった。ただし大外枠の不利は外れた。8枠11番のルースアグレッシブが気合をつけて内へ切れ込み、逃げ切っている。不良馬場も前残りを後押しした。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
+<tr><th>逃げ馬の序列</th><td class="rvClamp"><span class="rvClampBody" id="rvc-3"><b>予想:</b> 逃げ馬が4頭並び、単騎逃げは望みにくいと見た。そのうえで同じ舞台を逃げ切った◎コーズブルーを最上位に置いた。<br><b>結果:</b> ハナを取ったのは☆ルースアグレッシブだった。◎コーズブルーは6番手までしか出られず、上がり42秒9で10着。誰がハナを取るかの見極めがそのまま着順を分けた。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-3">続きを読む</button></td></tr>
+<tr><th>印の当否</th><td><b>予想:</b> 7頭に印を打ち、上位4頭は◎コーズブルー・◯ナイトムーブ・▲ブラフキャッチ・△ウノキボンバイエの順に置いた。<br><b>結果:</b> 1着から4着までを印馬が独占した。並びは☆・△・▲・◯で、印の順序が結果と逆向きだった。3連複①⑤⑪は印馬だけの組み合わせで1,910円が付いている。</td></tr>
+<tr><th>買い目の成績</th><td><b>予想:</b> ◎の複勝1点と◎からのワイド6点を本線、☆2頭の複勝を保険、◯からのワイド6点をヘッジに置いた。合計15点1,500円。<br><b>結果:</b> 的中は☆ルースアグレッシブの複勝170円のみ。回収率は11%だった。◯ナイトムーブが4着だったためヘッジ6点も不成立に終わった。</td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>10 コーズブルー（西啓太）<span class="res">10着</span></div>
+<p class="rvClamp"><span class="rvClampBody" id="rvc-4">同じ川崎1500mのオオクワガタ特別を逃げ切った実績を買って本命にした。逃げ馬が多く単騎逃げは望みにくいという不安は書いていたが、印の順位までは下げなかった。結果は6番手からの競馬で10着。上がり42秒9は11頭中10番目だった。前走の逃げ切りは同じ形を再現できたときの数字で、隊列を取れなければ残らないという弱さがそのまま出た。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-4">続きを読む</button></p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>11 ルースアグレッシブ（笹川翼）<span class="res hit">1着</span></div>
+<p class="rvClamp"><span class="rvClampBody" id="rvc-5">浦和1500mの勝ち鞍を持つ数少ない1頭として穴に置いた。前走の重賞6着と川崎が初めてという2点を割り引いていた。結果は大外枠からハナを奪っての5馬身差圧勝。笹川騎手は「これしかないと思っていた」と話している。前走の6着は発馬直後に隣の馬とぶつかったためで、能力ではなく不利による敗戦だった。この見極めができていれば評価は上がった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-5">続きを読む</button></p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>5 ウノキボンバイエ（室陽一朗）<span class="res hit">2着</span></div>
+<p class="rvClamp"><span class="rvClampBody" id="rvc-6">出走11頭で唯一の重賞勝ち馬だったが、川崎も1500mも初めてという2点を理由に連下に置いた。結果は2番手から粘っての2着。室騎手は「もっと僕が逃げる気で出していけばよかった」と悔やんでいる。重賞タイトルという最も強い実績を、コースと距離の未経験で二重に割り引いたのは下げすぎだった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-6">続きを読む</button></p></div>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>1 ブラフキャッチ（野畑凌）<span class="res hit">3着</span></div>
+<p>川崎2戦で1着と2着、最内1番枠という材料で単穴にした。結果は3着で、印の評価どおりの走りだった。野畑騎手は「仕掛けが早くて前が詰まる場面があったが、長くいい脚を使えた」と話し、距離延長も前向きに見ている。最内枠を評価した読みは機能した。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◯</span>2 ナイトムーブ（本田正重）<span class="res">4着</span></div>
+<p>川崎2戦2勝で逃げて負けていない点を買い対抗にした。結果は4着。本田騎手は「思ったよりレースが流れなかった。もう少し内でジッとしていれば結果は違ったかも」と振り返っている。逃げ馬が4頭いる中で、この馬もハナを取れないと持ち味が出ない口だった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>7 サンバルカン（吉原寛人）<span class="res">6着</span></div>
+<p>川崎3戦すべて3着以内という安定感と鞍上強化を評価して連下にした。結果は6着。前走が勝ち馬から2秒差だった点を不安に挙げていたが、そこは埋まらなかった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>6 ドゥオーモアモーレ（矢野貴之）<span class="res">9着</span></div>
+<p>重賞3着の実績と川崎1戦1勝を根拠に穴に置いた。結果は9着で、上がりは42秒2と失速した。前走が勝ち馬から1.6秒差という不安材料のほうが正しかった。</p></div>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">勝ち馬の鞍上<span class="tag">スポーツ報知・netkeiba</span></p><p>笹川翼騎手は「これ（逃げ）しかないと思っていた」と語った。「まだ自分から進む感じではなかったので、後ろの馬との距離感を大事にしながら乗った」とも話している。デビューからコンビを組む強みが出た形だった。課題も挙げており、「直線で少し離したところで気が抜けたり、メンタル面で課題はある」と続けた。</p></div>
+<div class="rv-view"><p class="src">負けた1番人気<span class="tag">デイリースポーツ・netkeiba</span></p><p>室陽一朗騎手は「悔しいですね」と第一声を発した。「前走で勝ち馬は競馬ができていなかったので、自分の競馬ができたらあれだけ走るんだって」と勝ち馬をたたえている。そのうえで「もっと僕が逃げる気で出していけばよかったです」と悔やみ、次の鎌倉記念での雪辱を誓った。</p></div>
+<div class="rv-view"><p class="src">レース展開<span class="tag">デイリースポーツ</span></p><p>ウノキボンバイエが好発から行きかけたところを、ルースアグレッシブが大外枠から気合をつけて内へ切れ込み主導権を奪った。向正面はマイペースで、3コーナーから再び加速して突き放したと伝えられている。前走のルーキーズサマーカップ6着は、発馬直後に隣のウノキボンバイエにぶつけられて自分の競馬ができなかったためだった。</p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>逃げ馬が並んだときは「誰がハナを取るか」を印に反映する</th><td>逃げ馬4頭という認識は持っていた。それでも前走を単騎で逃げ切った◎を最上位に置いたままにした。実際にハナを取ったのは大外枠の☆で、◎は6番手で失速した。逃げ馬が複数いるレースでは、ハナを取れなかった場合の着順まで見て印を決める必要がある。</td></tr>
+<tr><th>前走の敗因が不利なら、着順で割り引かない</th><td>☆ルースアグレッシブの前走6着は、発馬直後にぶつけられたことが原因だった。この情報は事前の南関東記事でも読める範囲にあったが、評価に反映できず「前走の重賞は6着」という弱点タグのまま残していた。敗因が能力か不利かの切り分けを、着順を弱点に挙げる前に必ず行う。</td></tr>
+<tr><th>印の並びは合っていたのに買い目が受けられなかった</th><td class="rvClamp"><span class="rvClampBody" id="rvc-7">上位4着までを印馬が独占したのに、回収は複勝1点の170円だけだった。原因は本線とヘッジの軸を◎と◯の2頭に絞っていたことにある。印馬だけで決まる決着を、軸1頭のワイドでは受けきれない。南関東の2歳重賞のように情報が薄く印の序列に自信が持てない場面では、軸の置き方そのものを見直す余地がある。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-7">続きを読む</button></td></tr>
+</tbody>
+</table>
+<p class="rv-note">レース映像の静止画は未取得。Xとnoteの個人回顧は本環境から到達できず未確認。</p>
+</div>
+</section>
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=Array.prototype.slice.call(document.querySelectorAll('.tabHd button[data-tab]'));
+  var panes=Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
+  if(!btns.length) return;
+  function select(b,moveFocus){
+    var id=b.getAttribute('data-tab');
+    btns.forEach(function(x){
+      var on=(x===b);
+      x.classList.toggle("active",on);
+      x.setAttribute('aria-selected',on?'true':'false');
+      x.tabIndex=on?0:-1;
+    });
+    panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+    if(moveFocus) b.focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){select(b,false);});
+    b.addEventListener('keydown',function(e){
+      var nx=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx=btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx=btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx=btns[0];
+      else if(e.key==='End') nx=btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      select(nx,true);
+    });
+  });
+})();
+</script>
 <a href="../" class="portalBack" aria-label="レースアーカイブに戻る">← レースアーカイブ</a>
 <style>
 .portalBack{position:fixed;left:14px;bottom:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;gap:6px;
@@ -4500,5 +4712,23 @@ body.kbModalOpen .fb-fab{display:none;}
 })();
 </script>
 
+<script>
+/* 振り返りタブの「続きを読む」。button 要素なので Enter/Space は素で効く。
+   開閉状態は aria-expanded で支援技術へ伝える（aria-controls で本文と紐付け済み） */
+(function(){
+  var btns = document.querySelectorAll('#tab-review .rvMore');
+  if(!btns.length) return;
+  Array.prototype.forEach.call(btns, function(b){
+    b.addEventListener('click', function(){
+      var host = b.parentNode;
+      while(host && !(host.classList && host.classList.contains('rvClamp'))) host = host.parentNode;
+      if(!host) return;
+      var open = host.classList.toggle('is-open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      b.textContent = open ? '閉じる' : '続きを読む';
+    });
+  });
+})();
+</script>
 </body>
 </html>
