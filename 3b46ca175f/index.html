@@ -806,8 +806,104 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+
+/* 旧語彙の別名（2026-08-26 追加）
+   北九州記念2026 だけが rv-tablewrap / rv-table / rv-head / rv-sub / rv-cap / rv-src /
+   ok / ng / t0 / t1 / lc / new という独自クラスで書かれており、定義がどこにも無かった。
+   結果 390px で12列のテーブルが横スクロールにならず、馬名が1文字ずつ縦に折り返されていた。
+   開催済みの振り返りは凍結記録なので本文は書き換えず、見た目だけをここで当て直す。
+   #tab-review へスコープして予想タブ側へ漏らさない。 */
+#tab-review .rv-head{margin-bottom:6px;}
+#tab-review .rv-head h2{margin-top:0;}
+#tab-review .rv-sub{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);line-height:1.6;margin:0;}
+#tab-review .rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+#tab-review .rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+#tab-review .rv-table th,#tab-review .rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+#tab-review .rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+#tab-review .rv-table td.nm{text-align:left;font-weight:700;}
+#tab-review .rv-table td.ok{color:var(--good);font-weight:700;}
+#tab-review .rv-table td.ng{color:var(--bad);font-weight:700;}
+#tab-review .rv-cap{font-size:.74rem;color:var(--sub);margin-top:6px;line-height:1.6;}
+#tab-review .rv-src{margin:8px 0;padding-left:1.2em;font-size:.78rem;color:var(--sub);line-height:1.7;}
+#tab-review .rv-src a{color:var(--accent);word-break:break-all;}
+#tab-review .tag.t0,#tab-review .tag.t1{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+#tab-review .lc{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;font-size:.82rem;line-height:1.6;}
+#tab-review .lc.confirm{border-left-color:var(--accent);}
+#tab-review .lc.new{border-left-color:var(--gold);}
+</style>
+<style>
+/* 振り返りタブの長文を3行に畳む。狭い画面だけで効かせ、広い画面は従来どおり全文表示 */
+#tab-review .rvMore{display:none;}
+@media (max-width:560px){
+  #tab-review .rvClampBody{
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+    overflow:hidden;
+  }
+  #tab-review .rvClamp.is-open .rvClampBody{
+    display:block;-webkit-line-clamp:none;overflow:visible;
+  }
+  #tab-review .rvMore{
+    display:inline-block;margin-top:4px;padding:2px 8px;
+    font:inherit;font-size:.78rem;line-height:1.6;color:#1a5a8a;
+    background:#eef4fa;border:1px solid #ccd6e2;border-radius:999px;cursor:pointer;
+  }
+  #tab-review .rvMore:hover{background:#e2edf7;}
+  #tab-review .rvMore:focus-visible{outline:2px solid #1a5a8a;outline-offset:2px;}
+}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist" aria-label="予想と振り返り">
+  <button type="button" role="tab" id="tabBtn-predict" data-tab="tab-predict" aria-controls="tab-predict" aria-selected="false" tabindex="-1">予想</button>
+  <button type="button" role="tab" id="tabBtn-review" data-tab="tab-review" aria-controls="tab-review" aria-selected="true" tabindex="0" class="active">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane" role="tabpanel" aria-labelledby="tabBtn-predict" tabindex="0">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4290,6 +4386,126 @@ function doApplyBetPlan(planIdx){
   });
 })();
 </script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
+<div class="rv-wrap">
+<p class="rv-lead">単穴▲モンローウォークが2番手追走から直線で抜け出し3馬身差の完勝。重賞初挑戦で無傷4連勝を達成し秋華賞優先出走権を獲得した。△エンネが2着、◯イクシードが3着に入り印馬3頭が上位を占めたが、本命◎タイセイボーグは骨折による約6か月半の休み明けが響き12着（最下位）に沈んだ。本命絡みの本線・保険は全滅したが、対抗イクシードからのヘッジワイド2点が的中し、投資1,800円に対し回収740円、回収率41.1%。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>6</td><td>7</td><td class="nm">モンローウォーク</td><td>牝3</td><td>55.0</td><td>戸崎圭太</td><td>1:44.5</td><td>-</td><td>34.1</td><td>1.9</td><td>1</td><td>450(-2)</td><td>▲</td></tr>
+<tr><td>2</td><td>2</td><td>2</td><td class="nm">エンネ</td><td>牝3</td><td>55.0</td><td>坂井瑠星</td><td>1:45.0</td><td>3</td><td>34.4</td><td>5.9</td><td>3</td><td>522(+10)</td><td>△</td></tr>
+<tr><td>3</td><td>5</td><td>6</td><td class="nm">イクシード</td><td>牝3</td><td>55.0</td><td>Ｃ．ルメール</td><td>1:45.2</td><td>1.1/2</td><td>34.1</td><td>5.3</td><td>2</td><td>470(+2)</td><td>◯</td></tr>
+<tr><td>4</td><td>5</td><td>5</td><td class="nm">ファストフォワード</td><td>牝3</td><td>55.0</td><td>小崎綾也</td><td>1:45.3</td><td>1/2</td><td>35.0</td><td>52.4</td><td>10</td><td>508(-2)</td><td></td></tr>
+<tr><td>5</td><td>6</td><td>8</td><td class="nm">ミリタリータトゥー</td><td>牝3</td><td>55.0</td><td>西塚洸二</td><td>1:45.5</td><td>1.1/2</td><td>34.2</td><td>58.9</td><td>11</td><td>510(+2)</td><td>☆</td></tr>
+<tr><td>6</td><td>3</td><td>3</td><td class="nm">スマートプリエール</td><td>牝3</td><td>55.0</td><td>田山雅史</td><td>1:45.6</td><td>クビ</td><td>34.7</td><td>32.2</td><td>8</td><td>486(+14)</td><td>△</td></tr>
+<tr><td>7</td><td>7</td><td>10</td><td class="nm">スウィートハピネス</td><td>牝3</td><td>55.0</td><td>佐々木大輔</td><td>1:45.6</td><td>クビ</td><td>34.8</td><td>20.0</td><td>6</td><td>444(+6)</td><td>☆</td></tr>
+<tr><td>8</td><td>4</td><td>4</td><td class="nm">アンディムジーク</td><td>牝3</td><td>55.0</td><td>古川吉洋</td><td>1:45.7</td><td>1/2</td><td>34.6</td><td>252.5</td><td>12</td><td>452(-2)</td><td></td></tr>
+<tr><td>9</td><td>1</td><td>1</td><td class="nm">アンジュドジョワ</td><td>牝3</td><td>55.0</td><td>北村友一</td><td>1:45.8</td><td>クビ</td><td>35.2</td><td>11.9</td><td>5</td><td>460(+10)</td><td></td></tr>
+<tr><td>10</td><td>8</td><td>11</td><td class="nm">レイクラシック</td><td>牝3</td><td>55.0</td><td>吉村誠之助</td><td>1:46.6</td><td>5</td><td>36.1</td><td>24.4</td><td>7</td><td>498(-6)</td><td></td></tr>
+<tr><td>11</td><td>7</td><td>9</td><td class="nm">ナムラコスモス</td><td>牝3</td><td>55.0</td><td>田口貫太</td><td>1:47.0</td><td>2.1/2</td><td>36.2</td><td>44.0</td><td>9</td><td>492(+2)</td><td>☆</td></tr>
+<tr><td>12</td><td>8</td><td>12</td><td class="nm">タイセイボーグ</td><td>牝3</td><td>55.0</td><td>西村淳也</td><td>1:47.1</td><td>クビ</td><td>36.5</td><td>9.2</td><td>4</td><td>498(+2)</td><td>◎</td></tr>
+</tbody>
+</table>
+</div>
+<p class="rv-note rvClamp"><span class="rvClampBody" id="rvc-1">天候は雨、馬場は良。1000m通過58秒9のミドルペースで、上がり上位馬は34秒1〜34秒2という瞬発力戦だった。5番ファストフォワードが先頭で進め、▲モンローウォークは2番手で追走。直線は早めに先頭に立ったモンローウォークがそのまま押し切った。出典はnetkeiba・JRA公式レース映像。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-1">続きを読む</button></p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ⑦ 190円</span>
+<span class="chip">複勝 ⑦110 / ②150 / ⑥140</span>
+<span class="chip">枠連 2-6 570円</span>
+<span class="chip">馬連 ②-⑦ <b>550円</b></span>
+<span class="chip">ワイド ②-⑦280 / ⑥-⑦260 / ②-⑥480</span>
+<span class="chip">馬単 ⑦→② 930円</span>
+<span class="chip">3連複 ②-⑥-⑦ <b>1,110円</b></span>
+<span class="chip">3連単 ⑦→②→⑥ <b>3,490円</b></span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>本命の休み明け大敗</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2"><b>予想:</b> チューリップ賞1着・阪神3戦2勝の実績と1週前追い切りの好時計を根拠に◎に据えたが、骨折による約6か月半の休み明け・1800m初距離という不安材料も記録していた。<br><b>結果:</b> 12着（最下位）に大敗。西村淳也騎手は「いいスタートでしたが、内に入れませんでした。最後は休み明けの分かなと思います」と休養明けを敗因に挙げた。抱えていた不安材料がそのまま出た内容だった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
+<tr><th>単穴の重賞初制覇</th><td class="rvClamp"><span class="rvClampBody" id="rvc-3"><b>予想:</b> デビューから3戦3勝・芝1800m2戦2勝の実績を単穴の根拠にしたが、重賞は初めてで相手強化・長距離輸送で約10キロ減る見込みという不安材料もあった。<br><b>結果:</b> 2番手追走から直線で抜け出し3馬身差の完勝。重賞初挑戦にして無傷4連勝を達成、ローズS史上24年ぶりの無傷連勝での勝利となった。地力の高さが不安材料を上回った内容だった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-3">続きを読む</button></td></tr>
+<tr><th>対抗の踏みとどまり</th><td><b>予想:</b> 3戦2勝で着外なし・イクイノックスの全妹という血統を対抗の根拠にしたが、約3か月半の休み明け・阪神も関西遠征も初めてという不安材料もあった。<br><b>結果:</b> 1.1/2馬身差の3着。決して崩れた内容ではなく「勝ち馬が強かった」形で対抗評価に応えた。</td></tr>
+<tr><th>買い目構成</th><td class="rvClamp"><span class="rvClampBody" id="rvc-4"><b>予想:</b> 本命の複勝1点と印馬7頭へのワイド7点を本線、穴3頭の複勝を保険、対抗から7頭へのワイドをヘッジに置いた。<br><b>結果:</b> 本命が12着で本線8点・保険3点は全滅。ヘッジは対抗→単穴モンローウォーク(260円)・対抗→エンネ(480円)の2点が的中した。投資1,800円に対し回収740円で、回収率は41.1%。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-4">続きを読む</button></td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>7 モンローウォーク（戸崎圭太）<span class="res hit">1着</span></div>
+<p class="rvClamp"><span class="rvClampBody" id="rvc-5">デビューから3戦3勝・芝1800m2戦2勝の実績を単穴の根拠にしたが、重賞初挑戦・長距離輸送で約10キロ減る見込みという不安材料もあった。結果は2番手追走から直線で抜け出し3馬身差の完勝。重賞初挑戦で無傷4連勝を達成し、秋華賞優先出走権を獲得した。ローズS史上、無傷連勝での勝利は2002年ファインモーション以来24年ぶりとなった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-5">続きを読む</button></p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>2 エンネ（坂井瑠星）<span class="res hit">2着</span></div>
+<p>フローラステークス2着の地力と9月5日の好時計を評価したが、約3か月半の休み明け・後方一気で枠と展開に左右されるという不安材料もあった。結果は3馬身差の2着。初ブリンカー着用が奏功した内容だった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◯</span>6 イクシード（Ｃ．ルメール）<span class="res hit">3着</span></div>
+<p>3戦2勝で着外なし・イクイノックスの全妹という血統を対抗の根拠にしたが、約3か月半の休み明け・阪神も関西遠征も初めてという不安材料もあった。結果は1.1/2馬身差の3着。決して崩れた内容ではなく、勝ち馬が強かった形で対抗評価に応えた。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>12 タイセイボーグ（西村淳也）<span class="res">12着</span></div>
+<p class="rvClamp"><span class="rvClampBody" id="rvc-6">チューリップ賞1着・阪神3戦2勝の実績と1週前追い切りの好時計を本命の根拠にしたが、骨折による約6か月半の休み明け・1800m初距離という不安材料も記録していた。結果は12着（最下位）に大敗。西村淳也騎手は「いいスタートでしたが、内に入れませんでした。最後は休み明けの分かなと思います」とコメントした。休み明けの不安材料が想定以上に大きく出た内容だった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-6">続きを読む</button></p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>8 ミリタリータトゥー（西塚洸二）<span class="res">5着</span></div>
+<p>2戦2勝で1800mは無敗という実績を穴の根拠にしたが、キャリア2戦で重賞初挑戦・阪神初めてという不安材料もあった。結果は1.1/2馬身差の5着。重賞・初コースの壁にわずかに届かなかった内容だった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>3 スマートプリエール（田山雅史）<span class="res">6着</span></div>
+<p>フラワーカップ1着・芝1800m5戦2勝の実績を評価したが、前走オークス15着・重賞での鞍上経験が浅いという不安材料もあった。結果はクビ差の6着。前走の大敗から立て直した内容だった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>10 スウィートハピネス（佐々木大輔）<span class="res">7着</span></div>
+<p>オークス5着・エルフィンステークス1着の実績を穴の根拠にしたが、阪神2戦とも馬券圏外・約3か月半の休み明けという不安材料もあった。結果はクビ差の7着。阪神との相性の悪さがそのまま出た内容だった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>9 ナムラコスモス（田口貫太）<span class="res">11着</span></div>
+<p>チューリップ賞2着の実績を穴の根拠にしたが、前走中京記念15着の大敗・1800m初距離という不安材料もあった。結果は11着。前走の大敗が継続した内容だった。</p></div>
+
+<h2>レース映像</h2>
+<div class="rv-shots"><figure class="rv-shot"><img alt="" src="p/44b3ec7b6141.jpg" loading="lazy"><figcaption>スタート</figcaption></figure><figure class="rv-shot"><img alt="" src="p/7115f767be3c.jpg" loading="lazy"><figcaption>向正面</figcaption></figure><figure class="rv-shot"><img alt="" src="p/55552fc11140.jpg" loading="lazy"><figcaption>3角（5番ファストフォワードが先頭）</figcaption></figure><figure class="rv-shot"><img alt="" src="p/ea23af723565.jpg" loading="lazy"><figcaption>直線（▲7モンローウォークが抜け出す）</figcaption></figure></div>
+<p class="rv-note">出典：ユーザー提供のJRA公式レース映像（YouTube）。</p>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">レース記事<span class="tag">netkeiba・Yahoo!ニュース</span></p><p>モンローウォーク（戸崎圭太騎手）が2番手追走から直線で楽々抜け出し3馬身差の完勝、重賞初挑戦にして無傷4連勝を達成した。西村淳也騎手（タイセイボーグ）は「いいスタートでしたが、内に入れませんでした。最後は休み明けの分かなと思います」と話し、左第1指骨骨折による約6か月半ぶりの実戦復帰の影響を敗因に挙げた。</p></div>
+<div class="rv-view"><p class="src">YouTube事後動画<span class="tag">検索結果</span></p><p>発走当日のため事後回顧・切り抜き動画はまだ見つからなかった（ヒットしたのは事前予想動画のみ）。ユーザー提供のJRA公式レース映像から静止画を取得した。</p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>骨折休養明けの初距離は評価を保守的に</th><td class="rvClamp"><span class="rvClampBody" id="rvc-7">本命タイセイボーグは「骨折による約6か月半の休み明け」と「1800m初距離」という2つの不安材料を抱えたまま本命に据えたが、12着（最下位）に大敗した。休み明けの理由が骨折（故障明け）である点は、単なる長期休養より不確実性が高いと考えられる。故障明けの休養理由が判明している馬は、tags_weakへの記録だけでなくscorecardのconditionまたはrecent_form軸で一段保守的に評価する運用を検討する。戸塚記念2026（グランヴィノス・裂蹄休み明け）と同型のパターン。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-7">続きを読む</button></td></tr>
+<tr><th>ヘッジが本線・保険の穴を埋めた実例</th><td>本線・保険が全滅する一方、ヘッジのワイド2点（対抗→単穴・対抗→連下）が740円を回収し、投資全体の41%を取り戻した。チャレンジカップ2026と同様、R51標準形の3層構成が本命不発時にも機能する実例が積み重なっている。</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=Array.prototype.slice.call(document.querySelectorAll('.tabHd button[data-tab]'));
+  var panes=Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
+  if(!btns.length) return;
+  function select(b,moveFocus){
+    var id=b.getAttribute('data-tab');
+    btns.forEach(function(x){
+      var on=(x===b);
+      x.classList.toggle("active",on);
+      x.setAttribute('aria-selected',on?'true':'false');
+      x.tabIndex=on?0:-1;
+    });
+    panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+    if(moveFocus) b.focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){select(b,false);});
+    b.addEventListener('keydown',function(e){
+      var nx=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx=btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx=btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx=btns[0];
+      else if(e.key==='End') nx=btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      select(nx,true);
+    });
+  });
+})();
+</script>
 <a href="../" class="portalBack" aria-label="レースアーカイブに戻る">← レースアーカイブ</a>
 <style>
 .portalBack{position:fixed;left:14px;bottom:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;gap:6px;
@@ -4500,5 +4716,23 @@ body.kbModalOpen .fb-fab{display:none;}
 })();
 </script>
 
+<script>
+/* 振り返りタブの「続きを読む」。button 要素なので Enter/Space は素で効く。
+   開閉状態は aria-expanded で支援技術へ伝える（aria-controls で本文と紐付け済み） */
+(function(){
+  var btns = document.querySelectorAll('#tab-review .rvMore');
+  if(!btns.length) return;
+  Array.prototype.forEach.call(btns, function(b){
+    b.addEventListener('click', function(){
+      var host = b.parentNode;
+      while(host && !(host.classList && host.classList.contains('rvClamp'))) host = host.parentNode;
+      if(!host) return;
+      var open = host.classList.toggle('is-open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      b.textContent = open ? '閉じる' : '続きを読む';
+    });
+  });
+})();
+</script>
 </body>
 </html>
