@@ -23,7 +23,10 @@
     --ease:cubic-bezier(.2,.7,.2,1); --dur:200ms;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  /* -webkit-text-size-adjust を指定しないと、iOS Safari は横にはみ出した要素を見つけた瞬間
+     「ページが縮小表示されている」と判断して本文の実効フォントを勝手に拡大する。
+     はみ出しがさらに悪化して表が読めなくなるため、自動拡大を無効化して指定どおりに描く。 */
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1;font-variant-numeric:tabular-nums;background-image:radial-gradient(1400px 700px at 85% -5%, rgba(26,90,138,.06), transparent 55%), radial-gradient(900px 600px at -5% 70%, rgba(26,90,138,.04), transparent 60%);}
   body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.5;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
   .wrap{position:relative;z-index:2;}
@@ -813,6 +816,13 @@
 .tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
 .tab-pane{display:none;}
 .tab-pane.active{display:block;}
+/* 振り返り本文はレースごとの手書きサイドカー(review_tab.html)なので、想定外に横幅の広い
+   表が混ざると document 全体が横スクロールし、position:sticky の .tabHd だけ取り残されて
+   「見出しと本文が横にズレる」実機事故になる（2026-08-07 iPhone 報告）。
+   個々の表は下で必ず折り返す/自前でスクロールさせるが、最後の砦としてペイン自体を
+   clip し、ページ本体が横に動かないことを保証する。overflow:clip はスクロールコンテナを
+   作らないため、外側の .tabHd の sticky を壊さない。 */
+#tab-review{overflow-x:clip;}
 .rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
 .rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
 .rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
@@ -823,12 +833,23 @@
 .rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
 .rv-tbl td.nm{text-align:left;font-weight:700;}
 .rv-tbl tr.win td{background:#fffbe9;}
+/* 一部のレースのサイドカーは .rv-tblscroll/.rv-tbl ではなく .rv-tablewrap/.rv-table と
+   書かれており、対応する規則が無いまま素の table として描画されていた（北九州記念）。
+   列数の多い結果表がそのまま viewport を超え、ページ全体を横にずらしていたため、
+   別名も同じ「自前で横スクロールする表」として扱う。 */
+.rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;margin:10px 0;}
+.rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-table th,.rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-table td.nm{text-align:left;font-weight:700;}
+.rv-table td.sm{text-align:left;}
+.rv-table tr.win td{background:#fffbe9;}
 .rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
 .rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
 .rv-pay .chip b{color:var(--accent-deep);}
-.rv-diff{width:100%;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
-.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
-.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:6.5em;white-space:nowrap;}
+.rv-diff{width:100%;table-layout:fixed;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;overflow-wrap:anywhere;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:min(6.5em,28%);}
 .rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
 .rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
 .rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
@@ -842,9 +863,13 @@
 .rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
 .rv-view p{margin:5px 0;}
 .rv-view a{color:var(--accent);word-break:break-all;}
-.rv-learn{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
-.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
-.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:5.5em;white-space:nowrap;}
+/* 学びの見出し列は「自前で記録した反証を握り潰した」のような長い一文が入る。
+   以前は width:5.5em + white-space:nowrap だったため、th が折り返せず表全体が
+   viewport の 1.8 倍(375px に対し 685px)へ膨張し、ページごと横にズレていた。
+   table-layout:fixed + 折り返し可で、列幅を宣言どおりに固定する。 */
+.rv-learn{width:100%;table-layout:fixed;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;overflow-wrap:anywhere;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:min(13em,32%);}
 .rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
 .rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
 @media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
@@ -1300,6 +1325,23 @@ function deJargon(txt){
     var parts = inner.split(/\s*[・,、\/／]\s*/).filter(Boolean);
     return (parts.length && parts.every(function(p){ return JARGON_RE.test(p.trim()); })) ? '' : m;
   }).replace(/[ 　]{2,}/g, ' ').trim();
+}
+// 標本数の内部表記 n=◯ を読者面の日本語へ開く（2026-08-08 指摘：n= が内部値のまま出ていた）。
+// 標本数そのものは「32.4%は34走ぶんの話」と判断の重みが変わる情報なので消さず、単位を付けて残す。
+// 表記ゆれ実例: (n=33) / (各n=22) / (n=192走) / (n=各枠20-32) / (n=103・複勝27.2%) / ・n=151)
+function sampleJa(txt){
+  return String(txt == null ? '' : txt).replace(/n\s*=\s*([^()（）、。・，]*)/g, function(m, rest){
+    var s = String(rest).trim();
+    if(!s) return '';                                  // 値の無い裸の n= は落とす
+    return /[0-9０-９]$/.test(s) ? s + '走' : s;        // 既に単位付き（192走・33ずつ）はそのまま
+  });
+}
+// 標本数を含む括弧だけを .nsm（弱いトーン）で包み、主張本文より一段落として見せる。
+// HTML 化するので、不等号の整形など素のテキストへの加工はこの前に済ませておくこと。
+function sampleDeco(txt){
+  return String(txt == null ? '' : txt).replace(/[（(]([^（()）]*)[）)]/g, function(m, inner){
+    return /n\s*=/.test(inner) ? '<span class="nsm">（' + sampleJa(inner) + '）</span>' : m;
+  });
 }
 
 // ========== 馬色バッジの文字色を自動判定 ==========
@@ -2020,8 +2062,8 @@ function pvRelTime(asof){
 // 傾向カードは1枚あたり4〜5節が1段落に詰まって走査できないため、
 // 先頭の1文だけを本文に出し、残りと出典メタは折りたたむ（2026-08-01 指摘）
 function trendDeco(s){
-  // (n=29) のような標本数は判断に効くので残すが、主張より弱く見せる
-  return deJargon(s).replace(/[（(]n=(\d+)[）)]/g,'<span class="nsm">(n=$1)</span>');
+  // (n=29) のような標本数は判断に効くので残すが、日本語へ開いたうえで主張より弱く見せる
+  return sampleDeco(deJargon(s));
 }
 document.getElementById("trendBox").innerHTML = DATA.trends.map(function(t){
   var txt=String(t.text||''), meta='';
@@ -2350,9 +2392,21 @@ function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u
   }
   var bias = '';
   if(cp.bias_leg||cp.bias_frame){
-    bias = '<div class="cp-bias"><b>バイアス</b><br>'
-      + (cp.bias_leg?'脚質: '+deJargon(cp.bias_leg)+'<br>':'')
-      + (cp.bias_frame?'枠: '+deJargon(cp.bias_frame):'') + '</div>' + fit;
+    // 「脚質: 過去11年: 先行複勝32.4%(n=34)>差し19.1%(n=47)」のまま出ていて、
+    // 集計年が両行に重複・標本数が n= の内部表記・比較が半角不等号と、読者面の文章に
+    // なっていなかった（2026-08-08 指摘）。集計年は見出しへ1回だけ寄せる。
+    var yrs = (String(cp.bias_leg||cp.bias_frame).match(/^過去(\d+)年\s*[:：]/)||[])[1];
+    var yrRe = yrs ? new RegExp('^過去'+yrs+'年\\s*[:：]\\s*') : null;
+    var biasText = function(s){
+      var t = deJargon(s);
+      if(yrRe) t = t.replace(yrRe, '');            // 見出しへ寄せた集計年は本文から落とす
+      t = t.replace(/\s*>\s*/g, ' ＞ ');            // 半角不等号の連結を読み下せる並びに
+      return sampleDeco(escHtml(t));               // HTML 化はテキスト加工をすべて終えた後
+    };
+    bias = '<div class="cp-bias"><b>バイアス</b>'
+      + (yrs ? '<span class="nsm">（過去'+yrs+'年の集計）</span>' : '') + '<br>'
+      + (cp.bias_leg?'脚質：'+biasText(cp.bias_leg)+'<br>':'')
+      + (cp.bias_frame?'枠：'+biasText(cp.bias_frame):'') + '</div>' + fit;
   }
   box.innerHTML = '<div class="courseprofile"><h3>コース特性 - '+(cp.name||'')+'</h3>'
     + '<div class="cp-grid">'+grid+'</div>' + bias + '</div>';
@@ -2733,7 +2787,8 @@ function raceDistNum(){
 // 今がプラスいくつか」という要望への対応。好走(3着以内)した過去走の体重・斤量・距離を平均し、
 // 今回の値との差分をそのまま提示する（好走が無い馬は全過去走の平均で代用し、その旨を明記する）。
 function prFitProfile(h){
-  var races = h.past_races || [];
+  // 取消・除外はゲートを出ていないので「過去N走平均」の母数に入れない（2026-08-08 指摘）
+  var races = (h.past_races || []).filter(isRanRace);
   if(!races.length) return null;
   var good = races.filter(function(r){ var f=parseInt(r.finish,10); return !isNaN(f) && f<=3; });
   var base = good.length ? good : races;
@@ -3372,11 +3427,19 @@ function prGradeColor(g){
 // 人気薄カードでも同じ見え方にできるよう切り出した。r.order は数値/数値文字列/'-' いずれも許容。
 // r.agari は「上がり」接頭辞の有無が呼び出し元によって異なる（sync_last3済みは接頭辞あり・
 // past_races直参照は接頭辞なし）ため、二重表記(「上がり 上がり34.2」)にならないよう吸収する）。
+/* 出走取消(取)・競走除外(除)はゲートを出ていない＝「走」ではない。
+   sync_last3.py / validate_race.py の NON_START と同一定義。中止・失格は出走しているので1走に数える。
+   馬カード描画より後ろに置かれる関数なので、実行順に依存する変数は持たせず判定を自己完結させる。 */
+function isRanRace(r){ return !/^[取除]$/.test(String((r && r.finish) || '').trim()); }
 /* 直近3走の行データを past_races（機械接地の正本）から作る。
-   past_races が無い馬だけ last3 にフォールバックする。 */
+   past_races が無い馬だけ last3 にフォールバックする。
+   past_races を無条件に3件切ると取消・除外が枠を潰して着順欄が「取」になり、
+   1走ぶん古い実戦が押し出される（2026-08-08 指摘。エルムSのウェイワードアクトで
+   オアシスS「取」が居座り根岸S7着が消えていた。data 側は 2026-08-05 に直したが
+   描画が past_races を直参照していたため同じ症状が再発していた）。 */
 function last3Rows(h){
   if(h.past_races && h.past_races.length){
-    return h.past_races.slice(0,3).map(function(r){
+    return h.past_races.filter(isRanRace).slice(0,3).map(function(r){
       return {race:r.race, date:r.date, order:r.finish, jockey:r.jockey,
               dist:r.dist, pass:r.pass, agari:r.agari, leg:r.style};
     });
