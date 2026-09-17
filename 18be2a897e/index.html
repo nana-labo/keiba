@@ -1033,7 +1033,7 @@
          入力開始まで約1,081pxスクロールが必要だった（2026-07-25指摘）。
          券種→軸馬→相手→金額の順を先に置き、一覧は下の折りたたみへ移した。 -->
     <div class="bsBuilder">
-      <div class="bsField"><label>買い方（券種）</label>
+      <div class="bsField"><label for="bsType">買い方（券種）</label>
         <select id="bsType" onchange="onBetTypeChange()">
           <option value="tan">単勝（1着・軸のみ）</option>
           <option value="fuku">複勝（3着内・軸のみ）</option>
@@ -1042,9 +1042,9 @@
           <option value="sanpuku">3連複（3着内3頭・軸×相手2頭以上）</option>
         </select>
       </div>
-      <div class="bsField"><label>軸馬</label><select id="bsAxis"></select></div>
+      <div class="bsField"><label for="bsAxis">軸馬</label><select id="bsAxis"></select></div>
       <div class="bsField" id="bsPartnersWrap"><label>相手（複数選択可）</label><div class="bsPartners" id="bsPartners"></div></div>
-      <div class="bsField"><label>並び順（軸馬・相手の表示順）</label>
+      <div class="bsField"><label for="bsSort">並び順（軸馬・相手の表示順）</label>
         <select id="bsSort" onchange="onBetSortChange()">
           <option value="no">馬番順</option>
           <option value="waku">枠順</option>
@@ -1052,7 +1052,7 @@
           <option value="mark">印・スコア順</option>
         </select>
       </div>
-      <div class="bsField"><label>1点あたり金額（円）</label><input type="number" id="bsAmount" value="100" min="100" step="100"></div>
+      <div class="bsField"><label for="bsAmount">1点あたり金額（円）</label><input type="number" id="bsAmount" value="100" min="100" step="100"></div>
       <div class="bsField"><label>点数・金額</label><span class="bsPreview" id="bsPreview"></span></div>
       <button class="runBtn" type="button" onclick="addBet()">＋ 買い目に追加</button>
     </div>
@@ -2380,7 +2380,7 @@ function deEmoji(t){ return String(t||'').replace(/[\u{1F000}-\u{1FAFF}\u2600-\u
     ['直線', (cp.straight_m?cp.straight_m+'m':'') + (cp.straight_note?'<br>'+cp.straight_note:'')],
     ['回り・形態', cp.turn||''],
     ['起伏', cp.undulation||''],
-    ['馬場（芝）', cp.surface||''],
+    ['馬場', cp.surface||''],
     ['スタート', cp.start||'']
   ].filter(function(x){return x[1];});
   var grid = items.map(function(x){return '<div class="cp-item"><b>'+x[0]+'</b>'+x[1]+'</div>';}).join('');
