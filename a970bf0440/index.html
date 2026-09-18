@@ -1043,7 +1043,7 @@
         </select>
       </div>
       <div class="bsField"><label for="bsAxis">軸馬</label><select id="bsAxis"></select></div>
-      <div class="bsField" id="bsPartnersWrap"><label>相手（複数選択可）</label><div class="bsPartners" id="bsPartners"></div></div>
+      <div class="bsField" id="bsPartnersWrap"><label id="bsPartnersLabel">相手（複数選択可）</label><div class="bsPartners" id="bsPartners" role="group" aria-labelledby="bsPartnersLabel"></div></div>
       <div class="bsField"><label for="bsSort">並び順（軸馬・相手の表示順）</label>
         <select id="bsSort" onchange="onBetSortChange()">
           <option value="no">馬番順</option>
