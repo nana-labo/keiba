@@ -4452,7 +4452,7 @@ function doApplyBetPlan(planIdx){
 </section><!-- /tab-predict -->
 <section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
 <div class="rv-wrap">
-<p class="rv-lead">本命◎クラムスコイが直線で競走中止となり、無印8番人気のクレームドール（張田昂・代打騎乗）が後方から4馬身差で重賞初制覇した。△マロンソレイユが2着で唯一馬券に絡み、対抗◯ロックシュガーは8着、穴3頭も4着以降で複勝圏なし。◎が競走を止めたため本線の複勝・ワイド計8点は返還（払戻金の返金）扱いになったとみられ、投資1,800円に対し返還分800円を差し引いた実質的な回収率はおよそ44%。ただしこの数値は集計スクリプトが自動算出したものではなく、競走中止時の標準的な返還ルールに基づく手計算での見積もり（下記「今回の学び」参照）。</p>
+<p class="rv-lead">本命◎クラムスコイが直線で競走中止となり、無印8番人気のクレームドール（張田昂・代打騎乗）が後方から4馬身差で重賞初制覇した。△マロンソレイユが2着で唯一馬券に絡み、対抗◯ロックシュガーは8着、穴3頭も4着以降で複勝圏なし。競走中止はゲートを出て投票が成立した後の中止のため、勝馬投票法上は返還されず、◎が絡む本線の複勝・ワイド計8点はそのまま不的中となる。投資1,800円に対し回収0円、回収率0%。</p>
 
 <h2>レース結果</h2>
 <div class="rv-tbl-scroll">
@@ -4495,7 +4495,7 @@ function doApplyBetPlan(planIdx){
 <tbody>
 <tr><th>本命の競走中止</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2"><b>予想:</b> 芙蓉賞(川崎ダ2000m)1着・船橋2200mで2着という距離延長への耐性を根拠に、南関東重賞初挑戦・8枠13番で外を回らされる不安を抱えつつも◎に据えた。<br><b>結果:</b> 直線で競走を中止し、着順が付かなかった。中止の具体的な理由（不利・故障等）を伝える一次情報は取得できていない。本命が競走を完走できなかったため、印判定の当否そのものを評価できない結果になった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
 <tr><th>人気の変動</th><td class="rvClamp"><span class="rvClampBody" id="rvc-3"><b>予想:</b> 予想時点（9/6）では◎クラムスコイが1人気、◯ロックシュガーが3人気、☆ロウリュが5人気という想定だった。<br><b>結果:</b> 最終オッズでは◎クラムスコイ5人気・◯ロックシュガー9人気・☆ロウリュ3人気と大きく入れ替わっていた。ロウリュは羽田盃3着・ハイセイコー記念3着の実績評価に反して市場は前走15着（東京ダービー）と休み明けを嫌気せず逆に評価を上げていた。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-3">続きを読む</button></td></tr>
-<tr><th>買い目構成</th><td class="rvClamp"><span class="rvClampBody" id="rvc-4"><b>予想:</b> 本命の複勝1点と印馬7頭へのワイド7点を本線、穴3頭の複勝を保険、対抗ロックシュガーから7頭へのワイドをヘッジに置いた。<br><b>結果:</b> 本命が競走中止のため本線8点（複勝1+ワイド7）は返還（払戻金の返金）扱いとみられる。対抗ロックシュガーは8着でヘッジ7点は不成立、穴3頭も4着以降で保険3点も外れた。投資1,800円のうち800円相当が返還され、実質的な回収率はおよそ44%と見積もられる（下記の学び参照）。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-4">続きを読む</button></td></tr>
+<tr><th>買い目構成</th><td class="rvClamp"><span class="rvClampBody" id="rvc-4"><b>予想:</b> 本命の複勝1点と印馬7頭へのワイド7点を本線、穴3頭の複勝を保険、対抗ロックシュガーから7頭へのワイドをヘッジに置いた。<br><b>結果:</b> 本命が競走中止のため本線8点（複勝1+ワイド7）はそのまま不的中。競走中止は発走後の中止で勝馬投票は成立しているため返還の対象にならない。対抗ロックシュガーは8着でヘッジ7点も不成立、穴3頭も4着以降で保険3点も外れ、投資1,800円に対し回収は0円だった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-4">続きを読む</button></td></tr>
 </tbody>
 </table>
 
@@ -4527,7 +4527,7 @@ function doApplyBetPlan(planIdx){
 <h2>今回の学び</h2>
 <table class="rv-learn">
 <tbody>
-<tr><th>集計スクリプトが競走中止の返還を考慮していない</th><td class="rvClamp"><span class="rvClampBody" id="rvc-6">◎クラムスコイの競走中止により、本線の複勝・ワイド計8点（800円）は標準的な地方競馬の規則に従えば返還（払戻金の返金）される見込みだが、`scoreboard.py`は着順を解析できない馬（`pos: "中止"`）を単純に99着（圏外）として扱い、その馬が絡む賭けをすべて「外れ」として計算する。自動集計は投資1,800円・回収0円（ROI 0%）と算出したが、返還を考慮した手計算では回収800円（ROI約44%）になる。この差は新しいバグではなく、既存の`_ipos`関数の仕様（着順を解析できない値は99扱い）に起因する既知の設計上のギャップ。競走中止・出走取消が絡むレースの実戦成績を正確に集計するには、`scoreboard.py`に返還ロジックの追加を検討する必要がある。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-6">続きを読む</button></td></tr>
+<tr><th>返還対象の誤認（訂正済み）</th><td class="rvClamp"><span class="rvClampBody" id="rvc-6">本レースの振り返りを最初に書いた際、競走中止の◎クラムスコイが絡む買い目を「返還される見込み」と誤って記載していた。勝馬投票法上、返還されるのは発走前に外れた馬（出走取消・競走除外・発走除外）のみで、ゲートを出た後の競走中止は投票が成立済みのため返還されない。自動集計の投資1,800円・回収0円（ROI 0%）が正しい数値で、訂正済み。2026-09-14の週次棚卸しで`scoreboard.py`に返還/非返還の区別ロジックが実装され、この誤認が判明した。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-6">続きを読む</button></td></tr>
 <tr><th>予想時点人気と最終人気の乖離</th><td class="rvClamp"><span class="rvClampBody" id="rvc-7">◎クラムスコイは予想時点で1人気だったが最終的には5人気まで下がり、◯ロックシュガーも3人気→9人気、☆ロウリュは5人気→3人気と大きく変動した。南関東重賞は最終追い切りが一般公表されないため`condition`軸の確定度が低いまま据え置かれる運用になっているが、市場（最終オッズ）の変動は追い切り以外の情報（馬体重・馬場適性再評価等）を反映している可能性がある。発走直前のオッズ変動が事前印との乖離が大きい場合は、変動の理由を可能な範囲で確認する運用を検討する。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-7">続きを読む</button></td></tr>
 <tr><th>本命の競走中止時の代替印運用</th><td class="rvClamp"><span class="rvClampBody" id="rvc-8">◎が競走を中止すると、本線・保険・ヘッジのいずれも◎を軸にした構成のため、実質的に機能したのはヘッジの一部（対抗軸）のみだった。今回は対抗ロックシュガーも8着に沈み、ヘッジも機能しなかった。◎の信頼度（confidence_avg）が特に低い場合や、南関東重賞のように直前情報の確定度が低いレースでは、本命一本足の買い目構成のリスクを認識しておく必要がある。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-8">続きを読む</button></td></tr>
 </tbody>
