@@ -809,8 +809,126 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+/* 振り返り本文はレースごとの手書きサイドカー(review_tab.html)なので、想定外に横幅の広い
+   表が混ざると document 全体が横スクロールし、position:sticky の .tabHd だけ取り残されて
+   「見出しと本文が横にズレる」実機事故になる（2026-08-07 iPhone 報告）。
+   個々の表は下で必ず折り返す/自前でスクロールさせるが、最後の砦としてペイン自体を
+   clip し、ページ本体が横に動かないことを保証する。overflow:clip はスクロールコンテナを
+   作らないため、外側の .tabHd の sticky を壊さない。 */
+#tab-review{overflow-x:clip;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+/* 一部のレースのサイドカーは .rv-tblscroll/.rv-tbl ではなく .rv-tablewrap/.rv-table と
+   書かれており、対応する規則が無いまま素の table として描画されていた（北九州記念）。
+   列数の多い結果表がそのまま viewport を超え、ページ全体を横にずらしていたため、
+   別名も同じ「自前で横スクロールする表」として扱う。 */
+.rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;margin:10px 0;}
+.rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-table th,.rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-table td.nm{text-align:left;font-weight:700;}
+.rv-table td.sm{text-align:left;}
+.rv-table tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;table-layout:fixed;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;overflow-wrap:anywhere;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:min(6.5em,28%);}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+/* 学びの見出し列は「自前で記録した反証を握り潰した」のような長い一文が入る。
+   以前は width:5.5em + white-space:nowrap だったため、th が折り返せず表全体が
+   viewport の 1.8 倍(375px に対し 685px)へ膨張し、ページごと横にズレていた。
+   table-layout:fixed + 折り返し可で、列幅を宣言どおりに固定する。 */
+.rv-learn{width:100%;table-layout:fixed;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;overflow-wrap:anywhere;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:min(13em,32%);}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+
+/* 旧語彙の別名（2026-08-26 追加）
+   北九州記念2026 だけが rv-tablewrap / rv-table / rv-head / rv-sub / rv-cap / rv-src /
+   ok / ng / t0 / t1 / lc / new という独自クラスで書かれており、定義がどこにも無かった。
+   結果 390px で12列のテーブルが横スクロールにならず、馬名が1文字ずつ縦に折り返されていた。
+   開催済みの振り返りは凍結記録なので本文は書き換えず、見た目だけをここで当て直す。
+   #tab-review へスコープして予想タブ側へ漏らさない。 */
+#tab-review .rv-head{margin-bottom:6px;}
+#tab-review .rv-head h2{margin-top:0;}
+#tab-review .rv-sub{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);line-height:1.6;margin:0;}
+#tab-review .rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+#tab-review .rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+#tab-review .rv-table th,#tab-review .rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+#tab-review .rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+#tab-review .rv-table td.nm{text-align:left;font-weight:700;}
+#tab-review .rv-table td.ok{color:var(--good);font-weight:700;}
+#tab-review .rv-table td.ng{color:var(--bad);font-weight:700;}
+#tab-review .rv-cap{font-size:.74rem;color:var(--sub);margin-top:6px;line-height:1.6;}
+#tab-review .rv-src{margin:8px 0;padding-left:1.2em;font-size:.78rem;color:var(--sub);line-height:1.7;}
+#tab-review .rv-src a{color:var(--accent);word-break:break-all;}
+#tab-review .tag.t0,#tab-review .tag.t1{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+#tab-review .lc{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;font-size:.82rem;line-height:1.6;}
+#tab-review .lc.confirm{border-left-color:var(--accent);}
+#tab-review .lc.new{border-left-color:var(--gold);}
+</style>
+<style>
+/* 振り返りタブの長文を3行に畳む。狭い画面だけで効かせ、広い画面は従来どおり全文表示 */
+#tab-review .rvMore{display:none;}
+@media (max-width:560px){
+  #tab-review .rvClampBody{
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+    overflow:hidden;
+  }
+  #tab-review .rvClamp.is-open .rvClampBody{
+    display:block;-webkit-line-clamp:none;overflow:visible;
+  }
+  #tab-review .rvMore{
+    display:inline-block;margin-top:4px;padding:2px 8px;
+    font:inherit;font-size:.78rem;line-height:1.6;color:#1a5a8a;
+    background:#eef4fa;border:1px solid #ccd6e2;border-radius:999px;cursor:pointer;
+  }
+  #tab-review .rvMore:hover{background:#e2edf7;}
+  #tab-review .rvMore:focus-visible{outline:2px solid #1a5a8a;outline-offset:2px;}
+}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist" aria-label="予想と振り返り">
+  <button type="button" role="tab" id="tabBtn-predict" data-tab="tab-predict" aria-controls="tab-predict" aria-selected="false" tabindex="-1">予想</button>
+  <button type="button" role="tab" id="tabBtn-review" data-tab="tab-review" aria-controls="tab-review" aria-selected="true" tabindex="0" class="active">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane" role="tabpanel" aria-labelledby="tabBtn-predict" tabindex="0">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4331,6 +4449,123 @@ function doApplyBetPlan(planIdx){
   });
 })();
 </script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
+<div class="rv-wrap">
+<p class="rv-lead">○タガノミストが逃げ切って重賞2連勝。◎ダノンフィーゴは3着とハナ差の4着で複勝圏を外した。2着は△インユアパレス、3着は8番人気の☆ケイズレーヴ。◎が飛んだ決着をヘッジのワイド2本が受け、投資1,800円に対し回収2,180円、回収率121%。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>4</td><td>4</td><td class="nm">タガノミスト</td><td>牝5</td><td>53.0</td><td>岩田望来</td><td>1:23.6</td><td>-</td><td>35.4</td><td>2.3</td><td>1</td><td>488(0)</td><td>○</td></tr>
+<tr><td>2</td><td>3</td><td>3</td><td class="nm">インユアパレス</td><td>牡5</td><td>54.0</td><td>戸崎圭太</td><td>1:24.0</td><td>2</td><td>35.5</td><td>3.8</td><td>3</td><td>486(-16)</td><td>△</td></tr>
+<tr><td>3</td><td>7</td><td>7</td><td class="nm">ケイズレーヴ</td><td>牡4</td><td>54.0</td><td>吉原寛人</td><td>1:24.8</td><td>4</td><td>35.6</td><td>46.0</td><td>8</td><td>429(+5)</td><td>☆</td></tr>
+<tr><td>4</td><td>1</td><td>1</td><td class="nm">ダノンフィーゴ</td><td>牡4</td><td>55.0</td><td>川田将雅</td><td>1:24.8</td><td>ハナ</td><td>35.9</td><td>3.0</td><td>2</td><td>467(+1)</td><td>◎</td></tr>
+<tr><td>5</td><td>8</td><td>8</td><td class="nm">ハッピーマン</td><td>牡4</td><td>55.0</td><td>坂井瑠星</td><td>1:24.8</td><td>アタマ</td><td>36.6</td><td>15.9</td><td>5</td><td>469(-8)</td><td>☆</td></tr>
+<tr><td>6</td><td>5</td><td>5</td><td class="nm">イグザルト</td><td>牡7</td><td>54.0</td><td>矢野貴之</td><td>1:25.1</td><td>1.1/2</td><td>36.6</td><td>10.7</td><td>4</td><td>517(+7)</td><td>△</td></tr>
+<tr><td>7</td><td>6</td><td>6</td><td class="nm">アウストロ</td><td>牡6</td><td>54.0</td><td>秋元耕成</td><td>1:26.0</td><td>4</td><td>37.3</td><td>28.6</td><td>6</td><td>554(+14)</td><td>▲</td></tr>
+<tr><td>8</td><td>8</td><td>9</td><td class="nm">ジョージテソーロ</td><td>牡5</td><td>54.0</td><td>笹川翼</td><td>1:26.3</td><td>1.1/2</td><td>37.9</td><td>41.4</td><td>7</td><td>472(+2)</td><td>☆</td></tr>
+<tr><td>9</td><td>2</td><td>2</td><td class="nm">カールスバート</td><td>牡8</td><td>54.0</td><td>和田譲治</td><td>1:26.3</td><td>ハナ</td><td>36.3</td><td>271.3</td><td>9</td><td>486(-3)</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p>天候は雨、馬場は重。前半3ハロン35秒9、勝ちタイム1分23秒6。1コーナーを先頭で回ったのは④タガノミストだった。</p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ④ 230円</span>
+<span class="chip">複勝 ④120 / ③130 / ⑦540</span>
+<span class="chip">枠連 3-4 370円</span>
+<span class="chip">馬連 ③-④ 370円</span>
+<span class="chip">ワイド ③-④190 / ④-⑦1,450 / ③-⑦1,110</span>
+<span class="chip">馬単 ④→③ 610円</span>
+<span class="chip">3連複 ③-④-⑦ 4,140円</span>
+<span class="chip">3連単 ④→③→⑦ 12,180円</span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>逃げ馬の見立て</th><td><b>予想:</b> 文章では「今回の9頭で逃げ馬はアウストロ1頭だけ」と書いていた。ただし同じ予想に載せた先行力の順位表は、タガノミストを1位に置いていた。<br><b>結果:</b> 1コーナーを先頭で回ったのはタガノミストで、そのまま逃げ切った。アウストロは4番手から7着。文章だけが順位表と食い違っていた。</td></tr>
+<tr><th>馬場の読み</th><td><b>予想:</b> 当日12時台は曇・稍重だったが、14時41分に雨・重へ書き換えた。2件のソースで一致を取っている。<br><b>結果:</b> 公式も天候雨・馬場重。読みは合っていた。道悪10戦4回3着内のアウストロが7着に沈み、差は出た。</td></tr>
+<tr><th>◎の判定</th><td><b>予想:</b> ダノンフィーゴは道悪のダート1400mを3戦して3回3着内。この実績を本命の根拠にした。<br><b>結果:</b> 4着。3着とはハナ差だった。川田将雅騎手は「今日のぶんはしっかり走り切りました」と話し、敗因には触れていない。</td></tr>
+<tr><th>☆の妙味</th><td><b>予想:</b> ケイズレーヴは7番人気の評価で☆を打った。<br><b>結果:</b> 実際は8番人気で3着に突っ込み、複勝540円。7番人気以下の☆が3着以内に入ったのは、これで2頭目になる。</td></tr>
+<tr><th>買い目</th><td><b>予想:</b> ◎の複勝1点とワイド7点を本線、☆の複勝3点を保険、○から7頭へのヘッジ7点の計18点で組んだ。<br><b>結果:</b> 本線8点は◎が4着で全滅。ヘッジのワイド2本と☆ケイズレーヴの複勝が的中した。投資1,800円に対し回収2,180円で、回収率121%。</td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">○</span>4 タガノミスト（岩田望来）<span class="res hit">1着</span></div>
+<p class="rvClamp"><span class="rvClampBody" id="rvc-1">前走スパーキングレディーカップ1着の勢いと、9頭で最も軽い53キロを評価して対抗に置いた。結果は好発から主導権を握り、上がり最速35秒4で2馬身差の完勝。岩田望来騎手は「凄く速いスタートを切ってくれました」と話し、重馬場の影響で他馬も競ってきたと振り返った。初コンビで重賞2連勝となった。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-1">続きを読む</button></p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>3 インユアパレス（戸崎圭太）<span class="res hit">2着</span></div>
+<p>道悪7戦6回3着内という安定感を評価した。結果は終始内を通って2馬身差の2着。戸崎圭太騎手は「前回乗った時に比べると、調子が良かったです」と話し、ペースが落ち着いて追ってから追いつかなかったと敗因を挙げた。馬体重は16キロ減っていたが、着順には出ていない。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>7 ケイズレーヴ（吉原寛人）<span class="res hit">3着</span></div>
+<p>中京記念・小倉記念と中央の重賞を使ってきた点を穴の根拠にした。結果は8番人気で追い込み、ゴール寸前で3着に浮上。吉原寛人騎手は「地方最先着で、JBCに向けて良い内容でした」と話した。疲れを心配していたが元気に走ったという。地方勢では最先着だった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>1 ダノンフィーゴ（川田将雅）<span class="res">4着</span></div>
+<p>道悪のダート1400m3戦3回3着内を本命の根拠にした。結果は3着とハナ差の4着で、複勝圏をわずかに外した。川田将雅騎手は「今日のぶんはしっかり走り切りました」と話すにとどまった。浦和は初めてで、これまで先頭で回った経験もない馬だった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>8 ハッピーマン（坂井瑠星）<span class="res">5着</span></div>
+<p>サマーチャンピオン・東海Sと重賞を使ってきた実績を穴の根拠にした。結果はアタマ差の5着。上がりは36秒6で、前の3頭に1秒2以上おくれた。馬体重は8キロ減っていた。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>5 イグザルト（矢野貴之）<span class="res">6着</span></div>
+<p>浦和1400mの実績を持つ大井所属馬として評価した。結果は6着。上がり36秒6で、重馬場での差し切りには届かなかった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>6 アウストロ（秋元耕成）<span class="res">7着</span></div>
+<p>9頭で唯一の逃げ馬と見て単穴に置いた。結果は7着。ハナを譲って4番手から進み、上がり37秒3で失速した。良馬場17戦15回3着内に対し道悪は10戦4回という差が、重馬場で出た形になった。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>9 ジョージテソーロ（笹川翼）<span class="res">8着</span></div>
+<p>浦和の地元勢として穴に置いた。結果は8着。上がり37秒9で、前半から離れた位置を回るままだった。</p></div>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">レース記事<span class="tag">netkeiba配信</span></p><p>タガノミストがスタート直後の先行争いでハナを奪い、後続を突き放して完勝した。<a href="https://news.netkeiba.com/?pid=news_view&amp;no=343545" target="_blank" rel="noopener">記事を見る</a>。通算20戦8勝で、重賞は前走に続く2勝目。次走はJBCレディスクラシックを目標に挙げている。</p></div>
+<div class="rv-view"><p class="src">レース後コメント<span class="tag">netkeiba配信</span></p><p>上位3頭の騎手コメントが出ている。<a href="https://news.netkeiba.com/?pid=news_view&amp;no=343550" target="_blank" rel="noopener">記事を見る</a>。3着ケイズレーヴの吉原寛人騎手は「左回りは外にモタれる感じはあるのですが、その分、脚が溜まっている感じもありました」と話した。</p></div>
+<div class="rv-view"><p class="src">人気馬の敗因<span class="tag">netkeiba配信</span></p><p>2番人気ダノンフィーゴの4着を伝える記事が出ている。<a href="https://news.netkeiba.com/?pid=news_view&amp;no=343553" target="_blank" rel="noopener">記事を見る</a>。川田将雅騎手のコメントは1行のみで、敗因の説明にあたる記述は見当たらなかった。</p></div>
+<div class="rv-view"><p class="src">取得未完<span class="tag">X・note</span></p><p>Xとnoteの回顧は取得できていない。この更新を行った環境から両サイトへ到達できないため、原文を確かめられなかった。渡辺薫彦調教師のコメントも、確認した4本の記事には載っていなかった。</p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>逃げ馬を文章で断定する前に順位表と突き合わせる</th><td>今回の予想は「逃げ馬はアウストロ1頭だけ」と書いていた。だが同じ予想に載せた先行力の順位表は、タガノミストを1位に置いていた。実際に逃げたのはタガノミストで、そのまま勝った。機械が出した並びと文章の食い違いは、公開前に機械で照合できる。次の検査項目として起票する。</td></tr>
+<tr><th>◎が飛んだ決着をヘッジ線が受けた</th><td>◎ダノンフィーゴは4着で、本線8点は全滅した。一方、○から印馬へ流したヘッジのワイドが2本当たった。◎を外した並びを受ける形は設計どおりに働いている。投資1,800円に対し回収2,180円で、回収率121%。</td></tr>
+<tr><th>浦和の回り方向を右回りと書いていた</th><td class="rvClamp"><span class="rvClampBody" id="rvc-2">このページのコース特性は浦和を右回りと書いているが、実際は左回りである。netkeibaの出馬表と結果はどちらも「ダ1400m(左)」と表示している。3着ケイズレーヴの吉原寛人騎手も左回りについて話している。事前予想は記録として凍結するため書き換えないが、誤りとして残す。採点の内訳にも同じ誤りが入っている。</span><button type="button" class="rvMore" aria-expanded="false" aria-controls="rvc-2">続きを読む</button></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=Array.prototype.slice.call(document.querySelectorAll('.tabHd button[data-tab]'));
+  var panes=Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
+  if(!btns.length) return;
+  function select(b,moveFocus){
+    var id=b.getAttribute('data-tab');
+    btns.forEach(function(x){
+      var on=(x===b);
+      x.classList.toggle("active",on);
+      x.setAttribute('aria-selected',on?'true':'false');
+      x.tabIndex=on?0:-1;
+    });
+    panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+    if(moveFocus) b.focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){select(b,false);});
+    b.addEventListener('keydown',function(e){
+      var nx=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx=btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx=btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx=btns[0];
+      else if(e.key==='End') nx=btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      select(nx,true);
+    });
+  });
+})();
+</script>
 <a href="../" class="portalBack" aria-label="レースアーカイブに戻る">← レースアーカイブ</a>
 <style>
 .portalBack{position:fixed;left:14px;bottom:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;display:inline-flex;align-items:center;gap:6px;
@@ -4541,5 +4776,23 @@ body.kbModalOpen .fb-fab{display:none;}
 })();
 </script>
 
+<script>
+/* 振り返りタブの「続きを読む」。button 要素なので Enter/Space は素で効く。
+   開閉状態は aria-expanded で支援技術へ伝える（aria-controls で本文と紐付け済み） */
+(function(){
+  var btns = document.querySelectorAll('#tab-review .rvMore');
+  if(!btns.length) return;
+  Array.prototype.forEach.call(btns, function(b){
+    b.addEventListener('click', function(){
+      var host = b.parentNode;
+      while(host && !(host.classList && host.classList.contains('rvClamp'))) host = host.parentNode;
+      if(!host) return;
+      var open = host.classList.toggle('is-open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      b.textContent = open ? '閉じる' : '続きを読む';
+    });
+  });
+})();
+</script>
 </body>
 </html>
