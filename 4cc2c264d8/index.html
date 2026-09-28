@@ -1113,7 +1113,7 @@
         &nbsp;&nbsp;weight (G1): 近走0.20 / クラス0.15 / コース距離0.15 / 状態0.13 / 騎手0.08 / 馬場0.08 / 枠展開0.06 / 血統0.08 / ローテ0.05 / 度外視0.02<br>
         &nbsp;&nbsp;weight (平場): 血統 0.10、状態 0.10 等で再配分<br>
         &nbsp;&nbsp;weight (未勝利・新馬): 血統 0.25・状態 0.18・騎手 0.13 で再配分<br>
-        ↓ 補正（adjustments）を加算（補正履歴・evidence_ids 必須 = 隠れ補正禁止）<br>
+        ↓ 補正を加算（どの補正をなぜ加えたかと、その根拠を必ず併記する = 隠れ補正禁止）<br>
         補正後 = 加重合計 + Σ(補正の差分)<br>
         情報量 = 軸ごとに集められた情報量（追切評価が複数あるか、過去走の本数、騎手データの蓄積など）の平均<br>
         &nbsp;&nbsp;0/5＝そもそも採点できる材料がない 〜 5/5＝一次情報まで揃って確信を持って採点できる<br>
@@ -1267,7 +1267,7 @@
 
   <h2 class="sec" id="pending">⏳ 今後の更新予定（チェックリスト）</h2>
   <div class="panel">
-    <p class="leadNote">この予想は <span id="predictAsofInline"></span> 時点のスナップショット。以下は確定次第 v2-v4 で更新する。</p>
+    <p class="leadNote">この予想は <span id="predictAsofInline"></span> 時点のスナップショット。以下は確定しだい順次更新する。</p>
     <div class="stageBox" id="predictStageBox"></div>
     <div class="pendingGrid" id="pendingBox"></div>
   </div>
