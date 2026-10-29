@@ -809,8 +809,106 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+/* 振り返り本文はレースごとの手書きサイドカー(review_tab.html)なので、想定外に横幅の広い
+   表が混ざると document 全体が横スクロールし、position:sticky の .tabHd だけ取り残されて
+   「見出しと本文が横にズレる」実機事故になる（2026-08-07 iPhone 報告）。
+   個々の表は下で必ず折り返す/自前でスクロールさせるが、最後の砦としてペイン自体を
+   clip し、ページ本体が横に動かないことを保証する。overflow:clip はスクロールコンテナを
+   作らないため、外側の .tabHd の sticky を壊さない。 */
+#tab-review{overflow-x:clip;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+/* 一部のレースのサイドカーは .rv-tblscroll/.rv-tbl ではなく .rv-tablewrap/.rv-table と
+   書かれており、対応する規則が無いまま素の table として描画されていた（北九州記念）。
+   列数の多い結果表がそのまま viewport を超え、ページ全体を横にずらしていたため、
+   別名も同じ「自前で横スクロールする表」として扱う。 */
+.rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;margin:10px 0;}
+.rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-table th,.rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-table td.nm{text-align:left;font-weight:700;}
+.rv-table td.sm{text-align:left;}
+.rv-table tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;table-layout:fixed;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;overflow-wrap:anywhere;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:min(6.5em,28%);}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+/* 学びの見出し列は「自前で記録した反証を握り潰した」のような長い一文が入る。
+   以前は width:5.5em + white-space:nowrap だったため、th が折り返せず表全体が
+   viewport の 1.8 倍(375px に対し 685px)へ膨張し、ページごと横にズレていた。
+   table-layout:fixed + 折り返し可で、列幅を宣言どおりに固定する。 */
+.rv-learn{width:100%;table-layout:fixed;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;overflow-wrap:anywhere;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:min(13em,32%);}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+
+/* 旧語彙の別名（2026-08-26 追加）
+   北九州記念2026 だけが rv-tablewrap / rv-table / rv-head / rv-sub / rv-cap / rv-src /
+   ok / ng / t0 / t1 / lc / new という独自クラスで書かれており、定義がどこにも無かった。
+   結果 390px で12列のテーブルが横スクロールにならず、馬名が1文字ずつ縦に折り返されていた。
+   開催済みの振り返りは凍結記録なので本文は書き換えず、見た目だけをここで当て直す。
+   #tab-review へスコープして予想タブ側へ漏らさない。 */
+#tab-review .rv-head{margin-bottom:6px;}
+#tab-review .rv-head h2{margin-top:0;}
+#tab-review .rv-sub{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);line-height:1.6;margin:0;}
+#tab-review .rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+#tab-review .rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+#tab-review .rv-table th,#tab-review .rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+#tab-review .rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+#tab-review .rv-table td.nm{text-align:left;font-weight:700;}
+#tab-review .rv-table td.ok{color:var(--good);font-weight:700;}
+#tab-review .rv-table td.ng{color:var(--bad);font-weight:700;}
+#tab-review .rv-cap{font-size:.74rem;color:var(--sub);margin-top:6px;line-height:1.6;}
+#tab-review .rv-src{margin:8px 0;padding-left:1.2em;font-size:.78rem;color:var(--sub);line-height:1.7;}
+#tab-review .rv-src a{color:var(--accent);word-break:break-all;}
+#tab-review .tag.t0,#tab-review .tag.t1{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+#tab-review .lc{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;font-size:.82rem;line-height:1.6;}
+#tab-review .lc.confirm{border-left-color:var(--accent);}
+#tab-review .lc.new{border-left-color:var(--gold);}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist" aria-label="予想と振り返り">
+  <button type="button" role="tab" id="tabBtn-predict" data-tab="tab-predict" aria-controls="tab-predict" aria-selected="false" tabindex="-1">予想</button>
+  <button type="button" role="tab" id="tabBtn-review" data-tab="tab-review" aria-controls="tab-review" aria-selected="true" tabindex="0" class="active">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane" role="tabpanel" aria-labelledby="tabBtn-predict" tabindex="0">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4327,6 +4425,124 @@ function doApplyBetPlan(planIdx){
       kbModalOpened(closeDom);
       lastFocus=document.activeElement;
       closeBtn.focus();
+    });
+  });
+})();
+</script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
+<div class="rv-wrap">
+<p class="rv-lead">▲ソニックスターが好位の外から伸び、3馬身半差で重賞初制覇。◎スマイルマンボは10着。3着内の3頭はすべて印馬だったが、◎の凡走で本線は全滅した。ヘッジのワイド2本が当たり、投資1,900円に対し回収660円、回収率35%。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>3</td><td>3</td><td class="nm">ソニックスター</td><td>セ5</td><td>56.0</td><td>笹川翼</td><td>1:39.3</td><td>-</td><td>37.6</td><td>4.4</td><td>2</td><td>548(+10)</td><td>▲</td></tr>
+<tr><td>2</td><td>5</td><td>7</td><td class="nm">リコースパロー</td><td>牡4</td><td>56.0</td><td>矢野貴之</td><td>1:40.0</td><td>3.1/2</td><td>38.7</td><td>2.2</td><td>1</td><td>525(+5)</td><td>○</td></tr>
+<tr><td>3</td><td>8</td><td>13</td><td class="nm">ナンセイホワイト</td><td>牡6</td><td>56.0</td><td>安藤洋一</td><td>1:40.1</td><td>1/2</td><td>38.7</td><td>12.8</td><td>6</td><td>511(+4)</td><td>☆</td></tr>
+<tr><td>4</td><td>5</td><td>6</td><td class="nm">ゴールドレガシー</td><td>牡8</td><td>57.0</td><td>Ｆ．ゴンサルベス</td><td>1:40.7</td><td>3</td><td>38.2</td><td>53.9</td><td>9</td><td>490(+1)</td><td></td></tr>
+<tr><td>5</td><td>4</td><td>5</td><td class="nm">ウィリアムバローズ</td><td>牡8</td><td>56.0</td><td>御神本訓史</td><td>1:40.7</td><td>クビ</td><td>38.7</td><td>6.7</td><td>4</td><td>493(+7)</td><td>☆</td></tr>
+<tr><td>6</td><td>7</td><td>11</td><td class="nm">ベルグラシアス</td><td>牝4</td><td>54.0</td><td>西優哉</td><td>1:40.9</td><td>1</td><td>37.9</td><td>484.8</td><td>13</td><td>468(-2)</td><td></td></tr>
+<tr><td>7</td><td>4</td><td>4</td><td class="nm">ランリョウオー</td><td>牡8</td><td>56.0</td><td>本橋孝太</td><td>1:40.9</td><td>クビ</td><td>38.1</td><td>52.2</td><td>8</td><td>471(-4)</td><td></td></tr>
+<tr><td>8</td><td>8</td><td>12</td><td class="nm">バハルダール</td><td>セ7</td><td>56.0</td><td>鷹見陸</td><td>1:40.9</td><td>ハナ</td><td>38.7</td><td>110.1</td><td>11</td><td>512(0)</td><td></td></tr>
+<tr><td>9</td><td>2</td><td>2</td><td class="nm">ハデスキーパー</td><td>牡8</td><td>56.0</td><td>達城龍次</td><td>1:41.1</td><td>3/4</td><td>37.9</td><td>109.7</td><td>10</td><td>512(+2)</td><td>☆</td></tr>
+<tr><td>10</td><td>1</td><td>1</td><td class="nm">スマイルマンボ</td><td>牡4</td><td>56.0</td><td>和田譲治</td><td>1:41.3</td><td>1</td><td>39.6</td><td>24.5</td><td>7</td><td>513(+2)</td><td>◎</td></tr>
+</tbody>
+</table>
+</div>
+<p>天候は晴、馬場は重。勝ちタイムは1分39秒3。前半600mは36秒6で、平均ペースだった。ラップは12秒3、11秒3、13秒0、12秒8、11秒9、12秒6、12秒7、12秒7と、終始大きく緩まなかった。</p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ③ 440円</span>
+<span class="chip">複勝 ③130 / ⑦120 / ⑬210</span>
+<span class="chip">枠連 3-5 400円</span>
+<span class="chip">馬連 ③-⑦ 420円</span>
+<span class="chip">ワイド ③-⑦210 / ③-⑬540 / ⑦-⑬450</span>
+<span class="chip">馬単 ③→⑦ 950円</span>
+<span class="chip">3連複 ③-⑦-⑬ 1,430円</span>
+<span class="chip">3連単 ③→⑦→⑬ 6,870円</span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>先行争い</th><td><b>予想:</b> 逃げ型が複数いて、ベアバッキューンを中心に前が競る並びだった。<br><b>結果:</b> リコースパローとベアバッキューンが競り合い、3コーナーでリコースパローが先頭に立った。ペースは平均で、前が潰れる流れではなかった。ベアバッキューンは13着に沈んだ。</td></tr>
+<tr><th>◎の判定</th><td><b>予想:</b> スマイルマンボは逃げ型の◎。7番人気の妙味を取った。<br><b>結果:</b> 10着。上がりは39秒6で、勝ち馬より2秒遅かった。レース後のコメントは確認できていない。</td></tr>
+<tr><th>▲の読み</th><td><b>予想:</b> ソニックスターは先行型の単穴。前走のサンタアニタトロフィーは2着だった。<br><b>結果:</b> 好位の外を進み、直線で抜け出した。重馬場でも上がり37秒6を使い、3馬身半差で勝った。</td></tr>
+<tr><th>買い目</th><td><b>予想:</b> ◎の複勝とワイド8点が本線、☆の複勝2点が保険、○からのヘッジ8点の計19点。<br><b>結果:</b> 本線と保険は全滅。ヘッジのワイド⑦-③210円と⑦-⑬450円が的中した。投資1,900円に対し回収660円、回収率35%。</td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>1 スマイルマンボ（和田譲治）<span class="res">10着</span></div>
+<p>7番人気で◎に置いた。結果は10着で、上がりも39秒6と伸びなかった。重馬場への対応は事前に採点していなかった。コメントは取得未完。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">○</span>7 リコースパロー（矢野貴之）<span class="res hit">2着</span></div>
+<p>1番人気で○に置いた。結果は先行争いに勝って3コーナーで先頭に立ち、2着。矢野貴之騎手は「前半のリズムが悪くなった。プレッシャーをかけられたなかでよく粘った」と話した。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>3 ソニックスター（笹川翼）<span class="res hit">1着</span></div>
+<p>2番人気の単穴。結果は外めを回って直線で伸び、3馬身半差の快勝。笹川翼騎手は「コーナーが苦手なので、あまり内を回りたくなかった」と話した。藤田輝信調教師は切れ味を「思った以上」と評し、次走はゴールドC(12月23日、浦和)を目標にする。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>13 ナンセイホワイト（安藤洋一）<span class="res hit">3着</span></div>
+<p>6番人気の☆。結果は3番手から3着に粘った。安藤洋一騎手は「競馬が不器用で、2コーナーからゆっくり上がりたいところで3番手になってしまった」と話した。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>5 ウィリアムバローズ（御神本訓史）<span class="res">5着</span></div>
+<p>4番人気の☆。結果は5着。御神本訓史騎手は「前回乗った時よりバランスが良くなかったが、競馬にはうまく対応できた。収穫はあった」と話した。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>9 ベアバッキューン（野畑凌）<span class="res">13着</span></div>
+<p>3番人気で△に置いた。先行争いで脚を使い、結果は最下位の13着。勝ち馬と3秒6差だった。コメントは取得未完。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>2 ハデスキーパー（達城龍次）<span class="res">9着</span></div>
+<p>差し型の☆。結果は9着。上がりは37秒9で全体2位タイだったが、位置取りが後ろ過ぎた。コメントは取得未完。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">☆</span>10 アルムラトゥール（吉原寛人）<span class="res">11着</span></div>
+<p>5番人気の☆。結果は11着で、馬体重は15キロ増だった。コメントは取得未完。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>8 アレスグート（本田正重）<span class="res">12着</span></div>
+<p>先行型の△。結果は12着。コメントは取得未完。</p></div>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">レース記事<span class="tag">スポーツ報知(netkeiba配信)</span></p><p>ソニックスターが直線で抜け出し、1番人気のリコースパローに3馬身半差をつけた。藤田輝信調教師は「思った以上」と驚いた。<a href="https://news.netkeiba.com/?pid=news_view&amp;no=347008" target="_blank" rel="noopener">記事を見る</a>。</p></div>
+<div class="rv-view"><p class="src">レース記事<span class="tag">netkeiba</span></p><p>好位から直線で外を伸びたソニックスターが完勝した。リコースパローは2番手から3コーナーで先頭に立った。ベアバッキューンは13着だった。<a href="https://news.netkeiba.com/?pid=news_view&amp;no=347010" target="_blank" rel="noopener">記事を見る</a>。</p></div>
+<div class="rv-view"><p class="src">取得未完<span class="tag">X・note</span></p><p>Xとnoteの回顧は取得できていない。この更新を行った環境から両サイトへ到達できないためだ。◎スマイルマンボの敗因を述べた談話も、確認した記事には載っていなかった。</p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>重馬場の適性は良馬場実績だけで採点しない</th><td>当日は重で、勝ちタイム1分39秒3の速い馬場だった。◎は良馬場の実績で採点したままで10着。道悪の実績を見ずに◎へ置いた点が弱かった。</td></tr>
+<tr><th>印馬は上位を押さえたが、◎の凡走で本線が全滅した</th><td>1〜3着はすべて印馬だった。しかし本線は◎起点の9点で、◎が外れると全滅した。○起点のヘッジ2本が当たり、回収率は35%。</td></tr>
+<tr><th>先行争いで競る組は2番手以降の外差しに注意する</th><td>リコースパローとベアバッキューンが競り、後者は13着。外を回った単穴が3馬身半差で勝った。逃げ型が競る並びでは、好位の外を取れる馬を厚く見る。</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=Array.prototype.slice.call(document.querySelectorAll('.tabHd button[data-tab]'));
+  var panes=Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
+  if(!btns.length) return;
+  function select(b,moveFocus){
+    var id=b.getAttribute('data-tab');
+    btns.forEach(function(x){
+      var on=(x===b);
+      x.classList.toggle("active",on);
+      x.setAttribute('aria-selected',on?'true':'false');
+      x.tabIndex=on?0:-1;
+    });
+    panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+    if(moveFocus) b.focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){select(b,false);});
+    b.addEventListener('keydown',function(e){
+      var nx=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx=btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx=btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx=btns[0];
+      else if(e.key==='End') nx=btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      select(nx,true);
     });
   });
 })();
