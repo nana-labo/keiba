@@ -809,8 +809,106 @@
   }
   @media(min-width:780px){.pickStrip .pickCard{flex-basis:234px;}}
 </style>
+<style>
+/* 振り返りタブ（スコープ: .tabHd / .tab-pane / .rv-*） */
+.tabHd{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:var(--bg-tint);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,24,36,.06);}
+.tabHd button{flex:1;max-width:240px;font:inherit;font-weight:700;font-size:.9rem;padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:9px;cursor:pointer;transition:background .15s,color .15s;}
+.tabHd button.active{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:0 2px 6px rgba(26,90,138,.3);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+/* 振り返り本文はレースごとの手書きサイドカー(review_tab.html)なので、想定外に横幅の広い
+   表が混ざると document 全体が横スクロールし、position:sticky の .tabHd だけ取り残されて
+   「見出しと本文が横にズレる」実機事故になる（2026-08-07 iPhone 報告）。
+   個々の表は下で必ず折り返す/自前でスクロールさせるが、最後の砦としてペイン自体を
+   clip し、ページ本体が横に動かないことを保証する。overflow:clip はスクロールコンテナを
+   作らないため、外側の .tabHd の sticky を壊さない。 */
+#tab-review{overflow-x:clip;}
+.rv-wrap{max-width:920px;margin:0 auto;padding:18px 14px 90px;}
+.rv-wrap h2{font-size:1.05rem;color:var(--accent-deep);border-left:5px solid var(--accent);padding-left:10px;margin:26px 0 12px;}
+.rv-wrap h3{font-size:.92rem;color:var(--accent-deep);margin:18px 0 8px;}
+.rv-lead{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);font-weight:600;line-height:1.6;}
+.rv-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.rv-tbl{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-tbl th,.rv-tbl td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-tbl th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-tbl td.nm{text-align:left;font-weight:700;}
+.rv-tbl tr.win td{background:#fffbe9;}
+/* 一部のレースのサイドカーは .rv-tblscroll/.rv-tbl ではなく .rv-tablewrap/.rv-table と
+   書かれており、対応する規則が無いまま素の table として描画されていた（北九州記念）。
+   列数の多い結果表がそのまま viewport を超え、ページ全体を横にずらしていたため、
+   別名も同じ「自前で横スクロールする表」として扱う。 */
+.rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;margin:10px 0;}
+.rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+.rv-table th,.rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+.rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+.rv-table td.nm{text-align:left;font-weight:700;}
+.rv-table td.sm{text-align:left;}
+.rv-table tr.win td{background:#fffbe9;}
+.rv-pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.rv-pay .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.76rem;}
+.rv-pay .chip b{color:var(--accent-deep);}
+.rv-diff{width:100%;table-layout:fixed;border-collapse:collapse;font-size:.8rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-diff th,.rv-diff td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;overflow-wrap:anywhere;}
+.rv-diff th{background:var(--accent-soft);color:var(--accent-deep);width:min(6.5em,28%);}
+.rv-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;}
+.rv-card .hd{font-weight:700;color:var(--accent-deep);font-size:.9rem;margin-bottom:4px;overflow:hidden;}
+.rv-card .hd .res{float:right;font-size:.8rem;color:var(--bad);font-weight:700;}
+.rv-card .hd .res.hit{color:var(--good);}
+.rv-card .mk{display:inline-block;width:1.4em;text-align:center;}
+.rv-card p{margin:5px 0;font-size:.82rem;line-height:1.6;}
+.rv-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(min-width:680px){.rv-grid{grid-template-columns:1fr 1fr;}}
+.rv-view{background:#faf7ec;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.82rem;}
+.rv-view .src{color:var(--accent-deep);font-weight:700;font-size:.76rem;}
+.rv-view .tag{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+.rv-view p{margin:5px 0;}
+.rv-view a{color:var(--accent);word-break:break-all;}
+/* 学びの見出し列は「自前で記録した反証を握り潰した」のような長い一文が入る。
+   以前は width:5.5em + white-space:nowrap だったため、th が折り返せず表全体が
+   viewport の 1.8 倍(375px に対し 685px)へ膨張し、ページごと横にズレていた。
+   table-layout:fixed + 折り返し可で、列幅を宣言どおりに固定する。 */
+.rv-learn{width:100%;table-layout:fixed;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:8px;overflow:hidden;}
+.rv-learn th,.rv-learn td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;overflow-wrap:anywhere;}
+.rv-learn th{background:var(--accent-soft);color:var(--accent-deep);width:min(13em,32%);}
+.rv-note{font-size:.74rem;color:var(--sub);margin-top:6px;}
+.rv-shots{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0;}
+@media(min-width:680px){.rv-shots{grid-template-columns:1fr 1fr;}}
+.rv-shot{margin:0;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.rv-shot img{display:block;width:100%;height:auto;}
+.rv-shot figcaption{padding:6px 10px;font-size:.74rem;color:var(--sub);line-height:1.5;}
+
+/* 旧語彙の別名（2026-08-26 追加）
+   北九州記念2026 だけが rv-tablewrap / rv-table / rv-head / rv-sub / rv-cap / rv-src /
+   ok / ng / t0 / t1 / lc / new という独自クラスで書かれており、定義がどこにも無かった。
+   結果 390px で12列のテーブルが横スクロールにならず、馬名が1文字ずつ縦に折り返されていた。
+   開催済みの振り返りは凍結記録なので本文は書き換えず、見た目だけをここで当て直す。
+   #tab-review へスコープして予想タブ側へ漏らさない。 */
+#tab-review .rv-head{margin-bottom:6px;}
+#tab-review .rv-head h2{margin-top:0;}
+#tab-review .rv-sub{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:.86rem;color:var(--accent-deep);line-height:1.6;margin:0;}
+#tab-review .rv-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+#tab-review .rv-table{width:100%;border-collapse:collapse;font-size:.76rem;background:var(--card);box-shadow:0 1px 4px rgba(11,24,36,.06);}
+#tab-review .rv-table th,#tab-review .rv-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;}
+#tab-review .rv-table th{background:var(--accent-soft);color:var(--accent-deep);font-size:.72rem;}
+#tab-review .rv-table td.nm{text-align:left;font-weight:700;}
+#tab-review .rv-table td.ok{color:var(--good);font-weight:700;}
+#tab-review .rv-table td.ng{color:var(--bad);font-weight:700;}
+#tab-review .rv-cap{font-size:.74rem;color:var(--sub);margin-top:6px;line-height:1.6;}
+#tab-review .rv-src{margin:8px 0;padding-left:1.2em;font-size:.78rem;color:var(--sub);line-height:1.7;}
+#tab-review .rv-src a{color:var(--accent);word-break:break-all;}
+#tab-review .tag.t0,#tab-review .tag.t1{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:.66rem;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:5px;}
+#tab-review .lc{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;padding:11px 13px;margin:9px 0;font-size:.82rem;line-height:1.6;}
+#tab-review .lc.confirm{border-left-color:var(--accent);}
+#tab-review .lc.new{border-left-color:var(--gold);}
+</style>
 </head>
 <body data-view="main">
+<nav class="tabHd" role="tablist" aria-label="予想と振り返り">
+  <button type="button" role="tab" id="tabBtn-predict" data-tab="tab-predict" aria-controls="tab-predict" aria-selected="false" tabindex="-1">予想</button>
+  <button type="button" role="tab" id="tabBtn-review" data-tab="tab-review" aria-controls="tab-review" aria-selected="true" tabindex="0" class="active">振り返り</button>
+</nav>
+<section id="tab-predict" class="tab-pane" role="tabpanel" aria-labelledby="tabBtn-predict" tabindex="0">
+
 <div class="wrap">
   <header class="hero">
     <h1 id="raceTitle"></h1>
@@ -4327,6 +4425,114 @@ function doApplyBetPlan(planIdx){
       kbModalOpened(closeDom);
       lastFocus=document.activeElement;
       closeBtn.focus();
+    });
+  });
+})();
+</script>
+</section><!-- /tab-predict -->
+<section id="tab-review" class="tab-pane active" role="tabpanel" aria-labelledby="tabBtn-review" tabindex="0">
+<div class="rv-wrap">
+<p class="rv-lead">◎ティンバリートスが3馬身差で完勝した。2着は無印8番人気のワイルドウルルが逃げ粘り、3着は○パープルフォッグ。◎複勝とワイド⑤-⑨が当たったが、2着が無印で他の線は外れた。投資900円に対し回収330円、回収率37%。</p>
+
+<h2>レース結果</h2>
+<div class="rv-tbl-scroll">
+<table class="rv-tbl">
+<thead><tr><th>着</th><th>枠</th><th>馬番</th><th>馬名</th><th>性齢</th><th>斤量</th><th>騎手</th><th>タイム</th><th>着差</th><th>上3F</th><th>単勝</th><th>人気</th><th>厩舎</th><th>馬体重</th><th>印</th></tr></thead>
+<tbody>
+<tr class="win"><td>1</td><td>4</td><td>5</td><td class="nm">ティンバリートス</td><td>牝2</td><td>54.0</td><td>張田昂</td><td>1:45.4</td><td>-</td><td>41.0</td><td>4.3</td><td>2</td><td>川崎 内田勝義</td><td>487(+3)</td><td>◎</td></tr>
+<tr><td>2</td><td>6</td><td>10</td><td class="nm">ワイルドウルル</td><td>牝2</td><td>54.0</td><td>福原杏</td><td>1:46.0</td><td>3</td><td>42.0</td><td>56.6</td><td>8</td><td>浦和 小久保智</td><td>459(-5)</td><td></td></tr>
+<tr><td>3</td><td>6</td><td>9</td><td class="nm">パープルフォッグ</td><td>牝2</td><td>54.0</td><td>西啓太</td><td>1:46.1</td><td>3/4</td><td>41.9</td><td>1.5</td><td>1</td><td>大井 坂井英光</td><td>473(+1)</td><td>◯</td></tr>
+<tr><td>4</td><td>3</td><td>4</td><td class="nm">リヴァールミナス</td><td>牝2</td><td>54.0</td><td>渡辺竜也</td><td>1:46.3</td><td>3/4</td><td>41.3</td><td>7.0</td><td>3</td><td>北海道 田中淳司</td><td>469(-5)</td><td>▲</td></tr>
+<tr><td>5</td><td>2</td><td>2</td><td class="nm">フルールマジック</td><td>牝2</td><td>54.0</td><td>和田譲治</td><td>1:46.6</td><td>1.1/2</td><td>40.9</td><td>51.2</td><td>7</td><td>船橋 佐々木清</td><td>451(-3)</td><td>△</td></tr>
+<tr><td>6</td><td>3</td><td>3</td><td class="nm">ミナスター</td><td>牝2</td><td>54.0</td><td>野畑凌</td><td>1:46.8</td><td>1</td><td>41.5</td><td>61.9</td><td>9</td><td>川崎 高月賢一</td><td>456(-5)</td><td></td></tr>
+<tr><td>7</td><td>4</td><td>6</td><td class="nm">シャンハイハニー</td><td>牝2</td><td>54.0</td><td>矢野貴之</td><td>1:47.1</td><td>1.1/2</td><td>41.0</td><td>25.5</td><td>5</td><td>川崎 高月賢一</td><td>495(+3)</td><td></td></tr>
+<tr><td>8</td><td>8</td><td>14</td><td class="nm">ラビリンスティアラ</td><td>牝2</td><td>54.0</td><td>笹川翼</td><td>1:48.3</td><td>6</td><td>43.5</td><td>9.8</td><td>4</td><td>北海道 村上正和</td><td>501(-4)</td><td>△</td></tr>
+<tr><td>9</td><td>5</td><td>7</td><td class="nm">チュラブロッサム</td><td>牝2</td><td>54.0</td><td>篠谷葵</td><td>1:49.3</td><td>5</td><td>43.6</td><td>26.1</td><td>6</td><td>船橋 林正人</td><td>431(-4)</td><td></td></tr>
+<tr><td>10</td><td>8</td><td>13</td><td class="nm">アキヴィオーラ</td><td>牝2</td><td>54.0</td><td>藤江渉</td><td>1:49.7</td><td>2</td><td>43.6</td><td>362.5</td><td>12</td><td>川崎 山田質</td><td>462(-4)</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p>天候は晴、馬場は重。勝ちタイムは1分45秒4。ペースはハイで、前半800mは51秒5だった。11番ゴールドモナコ（予想時点の◎）は出走取消。</p>
+
+<h2>払戻</h2>
+<div class="rv-pay">
+<span class="chip">単勝 ⑤ 430円</span>
+<span class="chip">複勝 ⑤120 / ⑩530 / ⑨110</span>
+<span class="chip">枠連 4-6 290円</span>
+<span class="chip">馬連 ⑤-⑩ 8,420円</span>
+<span class="chip">ワイド ⑤-⑩1,790 / ⑤-⑨210 / ⑨-⑩960</span>
+<span class="chip">馬単 ⑤→⑩ 14,700円</span>
+<span class="chip">3連複 ⑤-⑨-⑩ 2,730円</span>
+<span class="chip">3連単 ⑤→⑩→⑨ 39,510円</span>
+</div>
+
+<h2>予想 vs 結果</h2>
+<table class="rv-diff">
+<tbody>
+<tr><th>◎の判定</th><td><b>予想:</b> ゴールドモナコの取消を受け、機械再計算で○ティンバリートスが◎に繰り上がった。<br><b>結果:</b> 1着。好位から4角で並びかけ、直線で突き放した。</td></tr>
+<tr><th>1番人気の扱い</th><td><b>予想:</b> パープルフォッグは○。単勝1.5倍の断然人気だった。<br><b>結果:</b> 3着。2番手で運んだが、直線で伸びを欠いた。</td></tr>
+<tr><th>展開</th><td><b>予想:</b> 逃げはパープルフォッグと見ていた。ワイルドウルルは先行力の比較で5番手の評価だった。<br><b>結果:</b> ワイルドウルルが1角から先頭に立ち、そのまま2着に残った。</td></tr>
+<tr><th>買い目</th><td><b>予想:</b> ◎複勝、◎からのワイド4点、○からのヘッジ4点の計9点。<br><b>結果:</b> ◎複勝120円とワイド⑤-⑨210円が的中。投資900円に対し回収330円。</td></tr>
+</tbody>
+</table>
+
+<h2>印馬の振り返り</h2>
+<div class="rv-card"><div class="hd"><span class="mk">◎</span>5 ティンバリートス（張田昂）<span class="res hit">1着</span></div>
+<p>2番人気の◎。1角は5番手で、3角から押し上げた。4角で2番手に並び、直線で3馬身離した。コメントは取得未完。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">○</span>9 パープルフォッグ（西啓太）<span class="res hit">3着</span></div>
+<p>1番人気の○。逃げ馬の直後で運んだ。直線は2着馬も捉えられなかった。コメントは取得未完。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">▲</span>4 リヴァールミナス（渡辺竜也）<span class="res">4着</span></div>
+<p>3番人気の▲。中団から差を詰めたが、3着とは3/4馬身差だった。コメントは取得未完。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>2 フルールマジック（和田譲治）<span class="res">5着</span></div>
+<p>7番人気の△。後方から上がり40秒9は最速だったが、届かなかった。コメントは取得未完。</p></div>
+<div class="rv-card"><div class="hd"><span class="mk">△</span>14 ラビリンスティアラ（笹川翼）<span class="res">8着</span></div>
+<p>4番人気の△。中団から伸びず、上がりは43秒5だった。コメントは取得未完。</p></div>
+
+<h2>3ソース回顧</h2>
+<div class="rv-grid">
+<div class="rv-view"><p class="src">取得未完<span class="tag">X・note・Web</span></p><p>レース後の回顧記事と関係者談話は取得できていない。この更新では netkeiba の結果ページだけを一次ソースにした。敗因の断定は避ける。</p></div>
+</div>
+
+<h2>今回の学び</h2>
+<table class="rv-learn">
+<tbody>
+<tr><th>◎が勝っても、2着が無印だと回収は伸びない</th><td>◎1着でも、当たったのは複勝と○とのワイドだけ。2着の無印馬とのワイドは1,790円だった。</td></tr>
+<tr><th>前走で連対した無印の先行馬は、逃げる可能性を残す</th><td>ワイルドウルルは前走2着の先行馬。先行力の比較は5番手でも、実際は1角で先頭に立った。</td></tr>
+<tr><th>重馬場の川崎1600mは前で運んだ馬が残る</th><td>4角で3番手以内の3頭がそのまま上位を占めた。後方からの最速上がりでも5着までだった。</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<script>
+/* タブ切替（予想 / 振り返り） */
+(function(){
+  var btns=Array.prototype.slice.call(document.querySelectorAll('.tabHd button[data-tab]'));
+  var panes=Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
+  if(!btns.length) return;
+  function select(b,moveFocus){
+    var id=b.getAttribute('data-tab');
+    btns.forEach(function(x){
+      var on=(x===b);
+      x.classList.toggle("active",on);
+      x.setAttribute('aria-selected',on?'true':'false');
+      x.tabIndex=on?0:-1;
+    });
+    panes.forEach(function(p){p.classList.toggle("active",p.id===id);});
+    if(moveFocus) b.focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){select(b,false);});
+    b.addEventListener('keydown',function(e){
+      var nx=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') nx=btns[(i+1)%btns.length];
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') nx=btns[(i-1+btns.length)%btns.length];
+      else if(e.key==='Home') nx=btns[0];
+      else if(e.key==='End') nx=btns[btns.length-1];
+      if(!nx) return;
+      e.preventDefault();
+      select(nx,true);
     });
   });
 })();
